@@ -133,17 +133,43 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 .cp-disc{font-size:10.5px;color:var(--muted);text-align:center;padding:0 12px 10px}
 
 
+
+/* solutions carousel */
+#solutions{padding-top:30px}
+.caro{position:relative;max-width:720px;margin:0 auto;background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;overflow:hidden;min-height:190px}
+.caro-track{display:flex;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.slide{min-width:100%;padding:34px 60px;text-align:center}
+.slide .k{font-family:'Fira Code',monospace;font-size:12px;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
+.slide h3{font-size:24px;margin:8px 0 10px}
+.slide p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto 16px}
+.caro-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(13,17,23,.85);border:1px solid var(--line);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1}
+.caro-nav:hover{border-color:var(--red)}
+.caro-nav.l{left:10px}.caro-nav.r{right:10px}
+.caro-dots{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.caro-dots b{width:8px;height:8px;border-radius:50%;background:#2a3341;cursor:pointer;transition:.18s;display:inline-block}
+.caro-dots b.on{background:var(--red);width:22px;border-radius:6px}
+@media(max-width:520px){.slide{padding:28px 44px}}
+/* platforms */
+.plat{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.pl{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.pl:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:var(--accent,#ff2e4c)}
+.pl h3{font-size:16px}.pl p{color:var(--muted);font-size:13.5px;flex:1}
+.pl .tag{font-size:10.5px;font-weight:700;font-family:monospace;padding:3px 9px;border-radius:999px;align-self:flex-start}
+.pl .tag.on{background:rgba(46,204,113,.16);color:#54e08a}
+.pl .tag.soon{background:rgba(255,176,46,.16);color:#ffcf7a}
+
 </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-in">
-    <div class="brand mono">rocha<span>crypt</span></div>
+    <a href="/" class="brand mono">rocha<span>crypt</span></a>
     <div class="nav-links">
       <a href="#about">About</a>
       <a href="#expertise">Expertise</a>
       <a href="#projects">Projects</a>
+      <a href="#platforms">Platforms</a>
       <a href="#contact">Contact</a>
       <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener">GitHub</a>
       <a class="nav-chat" href="javascript:void(0)" onclick="openChat()">Chat with AI</a>
@@ -170,6 +196,18 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   </div>
 </header>
 
+<section id="solutions"><div class="wrap reveal">
+  <div class="sec-tag" style="text-align:center">// solutions</div>
+  <h2 style="text-align:center">What I build</h2>
+  <div class="caro" id="caro">
+    <button class="caro-nav l" id="caroL" aria-label="Previous">‹</button>
+    <div class="caro-track" id="caroTrack"></div>
+    <button class="caro-nav r" id="caroR" aria-label="Next">›</button>
+  </div>
+  <div class="caro-dots" id="caroDots"></div>
+</div></section>
+
+
 <section id="about" class="about"><div class="wrap reveal">
   <div class="sec-tag">// about</div><h2>Summary</h2>
   <p>Cybersecurity leader with <strong>over 14 years of IT experience</strong>, including <strong>7+ years specialising in Information Security, Security Operations and Cybersecurity Consulting</strong>. I combine deep technical expertise with a strategic mindset to help organisations strengthen their security posture, reduce risk and protect business continuity.</p>
@@ -180,6 +218,24 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 <section id="expertise"><div class="wrap reveal">
   <div class="sec-tag">// capabilities</div><h2>Core Expertise</h2>
   <div class="grid" id="xgrid"></div>
+</div></section>
+
+
+<section id="platforms"><div class="wrap reveal">
+  <div class="sec-tag">// saas</div><h2>Platforms — SaaS Solutions</h2>
+  <p style="color:var(--muted);max-width:720px;margin-bottom:8px">Security tools delivered as a service. Create an account, subscribe to a module (or the full bundle), and use it — all in one console. Buy one and add more any time.</p>
+  <div style="margin:14px 0 22px">
+    <a class="btn btn-primary" href="CONSOLE_URL" target="_blank" rel="noopener">Access the console</a>
+  </div>
+  <div class="plat">
+    <div class="pl" style="--accent:#ff2e4c"><span class="tag on">AVAILABLE</span><h3>Security Policy Generator</h3><p>Generate tailored security policies, incident-response plans and compliance documents with AI.</p></div>
+    <div class="pl" style="--accent:#2e6bff"><span class="tag soon">SOON</span><h3>Compliance Readiness (ISO 27001 / NIST)</h3><p>Guided self-assessment, gap analysis and a remediation roadmap.</p></div>
+    <div class="pl" style="--accent:#8a63ff"><span class="tag soon">SOON</span><h3>Log Triage Assistant</h3><p>Summarise suspicious activity from logs and map it to MITRE ATT&CK.</p></div>
+    <div class="pl" style="--accent:#2ecc71"><span class="tag soon">SOON</span><h3>Attack Surface Monitor</h3><p>Continuous recon of your own domains and exposed services.</p></div>
+    <div class="pl" style="--accent:#ffb02e"><span class="tag soon">SOON</span><h3>Breach & Leak Monitor</h3><p>Monitor emails and domains against known breach data.</p></div>
+    <div class="pl" style="--accent:#f06595"><span class="tag soon">SOON</span><h3>Phishing Simulator</h3><p>Run authorised phishing simulations and train your staff.</p></div>
+    <div class="pl" style="--accent:#22b8cf"><span class="tag soon">SOON</span><h3>URL / File Analyzer</h3><p>Submit a URL, email or file and get a risk verdict.</p></div>
+  </div>
 </div></section>
 
 <section id="projects"><div class="wrap reveal">
@@ -234,6 +290,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   <div class="cp-head">
     <div class="cp-av">AI</div>
     <div><div class="cp-tt">RochaCrypt Assistant</div><div class="cp-st"><span class="d"></span> online</div></div>
+    <a class="cp-exp" href="/chat.html" aria-label="Open in full page" title="Open in full page" style="text-decoration:none">⧉</a>
     <button class="cp-exp" id="cpExp" onclick="toggleMax()" aria-label="Maximise" title="Maximise">⤢</button>
     <button class="cp-x" onclick="toggleChat()" aria-label="Close">×</button>
   </div>
@@ -332,5 +389,37 @@ function toggleMax(){const m=panel.classList.toggle('max');const b=document.getE
   document.getElementById('csug').addEventListener('click',e=>{const s=e.target.closest('.s');if(!s)return;ask(s.textContent);});
 })();
 </script>
+
+<script>
+(function(){
+  const SLIDES=[
+    {k:"Live news portal",t:"Cyber Pulse",d:"An auto-updating cybersecurity news portal aggregating headlines from leading outlets.",u:"https://rochacrypt.github.io/cyber-pulse/",c:"#ff2e4c"},
+    {k:"366 tools",t:"Arsenal",d:"A searchable, filterable catalog of 366 security tools across 14 categories, plus my own scripts.",u:"https://rochacrypt.github.io/arsenal/",c:"#8a63ff"},
+    {k:"50 mind maps",t:"Security Knowledge Base",d:"50 certification & framework references — what each is, what it validates, and a mind map.",u:"https://github.com/RochaCrypt/security-knowledge-base",c:"#2ecc71"},
+    {k:"SaaS",t:"Security Policy Generator",d:"Generate tailored security policies and compliance documents with AI, in one console.",u:"#platforms",c:"#ff7a1a"},
+    {k:"AI assistant",t:"Ask my AI",d:"An AI assistant that answers questions about me and about cybersecurity in real time.",u:"/chat.html",c:"#2e6bff"},
+  ];
+  const track=document.getElementById('caroTrack'),dots=document.getElementById('caroDots');
+  if(!track)return;
+  SLIDES.forEach((s,i)=>{
+    const el=document.createElement('div');el.className='slide';el.style.setProperty('--accent',s.c);
+    el.innerHTML=`<div class="k">${s.k}</div><h3>${s.t}</h3><p>${s.d}</p><a class="btn btn-ghost" href="${s.u}">Open →</a>`;
+    track.appendChild(el);
+    const b=document.createElement('b');if(i===0)b.className='on';b.addEventListener('click',()=>go(i));dots.appendChild(b);
+  });
+  let idx=0,timer;
+  function render(){track.style.transform=`translateX(-${idx*100}%)`;[...dots.children].forEach((d,i)=>d.classList.toggle('on',i===idx));}
+  function go(i){idx=(i+SLIDES.length)%SLIDES.length;render();restart();}
+  function next(){go(idx+1);} function prev(){go(idx-1);}
+  function restart(){clearInterval(timer);timer=setInterval(next,5000);}
+  document.getElementById('caroR').addEventListener('click',next);
+  document.getElementById('caroL').addEventListener('click',prev);
+  const caro=document.getElementById('caro');
+  caro.addEventListener('mouseenter',()=>clearInterval(timer));
+  caro.addEventListener('mouseleave',restart);
+  render();restart();
+})();
+</script>
+
 </body>
 </html>
