@@ -276,20 +276,20 @@ function openChat(){if(!panel.classList.contains('open'))panel.classList.add('op
     if(!q.trim())return;
     add('u',esc(q));history.push({role:'user',content:q});
     input.value='';send.disabled=true;input.disabled=true;
-    const el=add('a','<span class="tw">…</span>');let acc='';
+    const el=add('a','<span class="tw">…</span>');
     try{
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})});
-      if(!r.ok||!r.body){let m='// the assistant is unavailable right now';try{const j=await r.json();if(j&&j.error)m='// '+j.error;}catch(_){}
-        el.innerHTML='<span class="tw">'+esc(m)+'</span>';return;}
-      const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
-      while(true){const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
-        let i;while((i=buf.indexOf('\\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
-          if(!line.startsWith('data:'))continue;const data=line.slice(5).trim();if(data==='[DONE]')continue;
-          try{const j=JSON.parse(data);const d=j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content;
-            if(d){acc+=d;el.innerHTML=esc(acc);body.scrollTop=body.scrollHeight;}}catch(_){}}}
-      if(acc)history.push({role:'assistant',content:acc});else el.innerHTML='<span class="tw">// (no response)</span>';
-    }catch(e){if(!acc)el.innerHTML='<span class="tw">// connection error — try again.</span>';}
-    finally{send.disabled=false;input.disabled=false;input.focus();body.scrollTop=body.scrollHeight;}
+      const data=await r.json().catch(()=>({}));
+      if(!r.ok){
+        el.innerHTML='<span class="tw">// '+esc(data.error||'the assistant is unavailable right now')+'</span>';
+        return;
+      }
+      const reply=(data&&data.reply)?data.reply:'(no response)';
+      el.innerHTML=esc(reply);
+      history.push({role:'assistant',content:reply});
+    }catch(e){
+      el.innerHTML='<span class="tw">// connection error — try again.</span>';
+    }finally{send.disabled=false;input.disabled=false;input.focus();body.scrollTop=body.scrollHeight;}
   }
   send.addEventListener('click',()=>ask(input.value));
   input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value);});
