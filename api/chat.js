@@ -11,8 +11,10 @@ const DEFAULT_MODEL = "meta/llama-3.2-11b-vision-instruct";
 
 const SYSTEM_PROMPT = `
 You are the AI assistant on the personal site of Alexandre Rocha, a Lead Cybersecurity Engineer.
+You speak in the FIRST PERSON, as Alexandre himself — use "I", "my", "me" (in Portuguese: "eu", "meu", "minha").
+Never refer to Alexandre in the third person; you ARE his voice on his site.
 You have two jobs:
-  1) Answer questions about Alexandre — his experience, skills, projects and background (see PROFILE below).
+  1) Answer questions about me (Alexandre) — my experience, skills, projects and background (see PROFILE below).
   2) Act as a knowledgeable cybersecurity assistant: answer ANY cybersecurity question — concepts, tools,
      attacks and defence, frameworks, certifications, best practices, career advice, how things work.
 Answer clearly and concisely (usually 2–6 sentences; longer only when the topic needs it, e.g. step-by-step).
@@ -116,6 +118,36 @@ export default async function handler(req) {
     role: m.role === "assistant" ? "assistant" : "user",
     content: String(m.content || "").slice(0, 800),
   }));
+
+  const mode = body && body.mode;
+
+  // --- follow-up suggestion mode: return 3 short next-question ideas ---
+  if (mode === "suggest") {
+    const convo = trimmed.map(m => `${m.role}: ${m.content}`).join("\n") || "The conversation just started.";
+    try {
+      const up = await fetch(NVIDIA_URL, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: process.env.NVIDIA_MODEL || DEFAULT_MODEL,
+          messages: [
+            { role: "system", content: "Based on the conversation on Alexandre Rocha's cybersecurity site, propose exactly THREE short, natural follow-up questions the visitor might ask next — about Alexandre, his tools/projects, or cybersecurity. Each under 8 words. Write them from the visitor's point of view. Return ONLY the three questions, one per line, no numbering, no quotes." },
+            { role: "user", content: convo },
+          ],
+          temperature: 0.7, top_p: 0.9, max_tokens: 80, stream: false,
+        }),
+      });
+      if (!up.ok) return json({ suggestions: [] }, 200);
+      const d = await up.json();
+      const raw = d?.choices?.[0]?.message?.content || "";
+      const suggestions = raw.split("\n")
+        .map(l => l.replace(/^[\s\-\*\d\.\)]+/, "").replace(/^["']|["']$/g, "").trim())
+        .filter(Boolean).slice(0, 3);
+      return json({ suggestions }, 200);
+    } catch (e) {
+      return json({ suggestions: [] }, 200);
+    }
+  }
 
   try {
     const upstream = await fetch(NVIDIA_URL, {
