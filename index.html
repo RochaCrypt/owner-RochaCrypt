@@ -116,9 +116,14 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 .msg.a{align-self:flex-start;background:var(--panel2);border:1px solid var(--line);border-top-left-radius:4px;color:var(--text)}
 .msg.u{align-self:flex-end;background:var(--red);color:#fff;border-top-right-radius:4px}
 .msg.a .tw{color:var(--muted)}
-.cp-sug{display:flex;gap:7px;padding:8px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-top:1px solid var(--line)}
+.cp-sugwrap{display:flex;align-items:center;gap:4px;padding:8px 8px;border-top:1px solid var(--line);flex:0 0 auto}
+.cp-arrow{flex:0 0 auto;width:26px;height:30px;border:1px solid #2a3341;background:var(--panel2);color:var(--muted);border-radius:8px;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center}
+.cp-arrow:hover{color:#fff;border-color:var(--red)}
+.cp-arrow:disabled{opacity:.3;cursor:default}
+.cp-sug{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth;flex:1 1 auto}
 .cp-sug::-webkit-scrollbar{display:none}
-.cp-sug .s{cursor:pointer;font-size:12px;color:var(--muted);border:1px solid #2a3341;border-radius:999px;padding:6px 12px;transition:.14s;white-space:nowrap;flex:0 0 auto;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.cp-sug .s{cursor:pointer;font-size:12px;color:var(--muted);border:1px solid #2a3341;border-radius:999px;padding:7px 13px;transition:.14s;white-space:nowrap;flex:0 0 auto;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.cp-sug .s:hover{color:#fff;border-color:var(--red)}
 .cp-sug .s:hover{color:#fff;border-color:var(--red)}
 .cp-in{display:flex;gap:8px;border-top:1px solid var(--line);padding:12px;background:var(--panel)}
 .cp-in input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;outline:none}
@@ -235,10 +240,14 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   <div class="cp-body" id="cbody">
     <div class="msg a"><span class="tw">Hi — I'm Alexandre's AI assistant. Ask me anything about his experience, skills or projects.</span></div>
   </div>
-  <div class="cp-sug" id="csug">
-    <span class="s">What does Alexandre do?</span>
-    <span class="s">Tell me about the Arsenal</span>
-    <span class="s">Which certifications?</span>
+  <div class="cp-sugwrap">
+    <button class="cp-arrow" id="sugL" aria-label="Scroll left">‹</button>
+    <div class="cp-sug" id="csug">
+      <span class="s">What does Alexandre do?</span>
+      <span class="s">Tell me about the Arsenal</span>
+      <span class="s">Which certifications?</span>
+    </div>
+    <button class="cp-arrow" id="sugR" aria-label="Scroll right">›</button>
   </div>
   <div class="cp-in">
     <input id="cin" placeholder="Type your message..." autocomplete="off" maxlength="300"/>
@@ -306,9 +315,18 @@ function toggleMax(){const m=panel.classList.toggle('max');const b=document.getE
       if(d&&Array.isArray(d.suggestions)&&d.suggestions.length){
         const sug=document.getElementById('csug');sug.innerHTML='';
         d.suggestions.slice(0,3).forEach(q=>{const el=document.createElement('span');el.className='s';el.textContent=q;sug.appendChild(el);});
+        if(window.__sugUpd)window.__sugUpd();
       }
     }catch(_){}
   }
+  (function(){
+    const row=document.getElementById('csug'),L=document.getElementById('sugL'),R=document.getElementById('sugR');
+    function upd(){const max=row.scrollWidth-row.clientWidth-2;L.disabled=row.scrollLeft<=2;R.disabled=row.scrollLeft>=max;}
+    L.addEventListener('click',()=>{row.scrollBy({left:-160,behavior:'smooth'});setTimeout(upd,250);});
+    R.addEventListener('click',()=>{row.scrollBy({left:160,behavior:'smooth'});setTimeout(upd,250);});
+    row.addEventListener('scroll',upd);
+    window.__sugUpd=upd; setTimeout(upd,100);
+  })();
   send.addEventListener('click',()=>ask(input.value));
   input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value);});
   document.getElementById('csug').addEventListener('click',e=>{const s=e.target.closest('.s');if(!s)return;ask(s.textContent);});
