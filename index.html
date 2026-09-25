@@ -181,18 +181,6 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   </div>
 </header>
 
-<section id="solutions"><div class="wrap reveal">
-  <div class="sec-tag" style="text-align:center">// solutions</div>
-  <h2 style="text-align:center">What I build</h2>
-  <div class="caro" id="caro">
-    <button class="caro-nav l" id="caroL" aria-label="Previous">‹</button>
-    <div class="caro-track" id="caroTrack"></div>
-    <button class="caro-nav r" id="caroR" aria-label="Next">›</button>
-  </div>
-  <div class="caro-dots" id="caroDots"></div>
-</div></section>
-
-
 <section id="about" class="about"><div class="wrap reveal">
   <div class="sec-tag">// about</div><h2>Summary</h2>
   <p>Cybersecurity leader with <strong>over 14 years of IT experience</strong>, including <strong>7+ years specialising in Information Security, Security Operations and Cybersecurity Consulting</strong>. I combine deep technical expertise with a strategic mindset to help organisations strengthen their security posture, reduce risk and protect business continuity.</p>
@@ -375,36 +363,7 @@ function toggleMax(){const m=panel.classList.toggle('max');const b=document.getE
 })();
 </script>
 
-<script>
-(function(){
-  const SLIDES=[
-    {k:"Live news portal",t:"Cyber Pulse",d:"An auto-updating cybersecurity news portal aggregating headlines from leading outlets.",u:"https://rochacrypt.github.io/cyber-pulse/",c:"#ff2e4c"},
-    {k:"366 tools",t:"Arsenal",d:"A searchable, filterable catalog of 366 security tools across 14 categories, plus my own scripts.",u:"https://rochacrypt.github.io/arsenal/",c:"#8a63ff"},
-    {k:"50 mind maps",t:"Security Knowledge Base",d:"50 certification & framework references — what each is, what it validates, and a mind map.",u:"https://github.com/RochaCrypt/security-knowledge-base",c:"#2ecc71"},
-    {k:"SaaS",t:"Security Policy Generator",d:"Generate tailored security policies and compliance documents with AI, in one console.",u:"#platforms",c:"#ff7a1a"},
-    {k:"AI assistant",t:"Ask my AI",d:"An AI assistant that answers questions about me and about cybersecurity in real time.",u:"/chat.html",c:"#2e6bff"},
-  ];
-  const track=document.getElementById('caroTrack'),dots=document.getElementById('caroDots');
-  if(!track)return;
-  SLIDES.forEach((s,i)=>{
-    const el=document.createElement('div');el.className='slide';el.style.setProperty('--accent',s.c);
-    el.innerHTML=`<div class="k">${s.k}</div><h3>${s.t}</h3><p>${s.d}</p><a class="btn btn-ghost" href="${s.u}">Open →</a>`;
-    track.appendChild(el);
-    const b=document.createElement('b');if(i===0)b.className='on';b.addEventListener('click',()=>go(i));dots.appendChild(b);
-  });
-  let idx=0,timer;
-  function render(){track.style.transform=`translateX(-${idx*100}%)`;[...dots.children].forEach((d,i)=>d.classList.toggle('on',i===idx));}
-  function go(i){idx=(i+SLIDES.length)%SLIDES.length;render();restart();}
-  function next(){go(idx+1);} function prev(){go(idx-1);}
-  function restart(){clearInterval(timer);timer=setInterval(next,5000);}
-  document.getElementById('caroR').addEventListener('click',next);
-  document.getElementById('caroL').addEventListener('click',prev);
-  const caro=document.getElementById('caro');
-  caro.addEventListener('mouseenter',()=>clearInterval(timer));
-  caro.addEventListener('mouseleave',restart);
-  render();restart();
-})();
-</script>
+
 
 </body>
 </html>
