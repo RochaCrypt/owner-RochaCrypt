@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Career Compass · Alexandre Rocha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1000px 500px at 50% -10%,rgba(46,107,255,.16),transparent 60%),var(--bg);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
+.wrap{max-width:820px;margin:0 auto;padding:26px 18px 70px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.brand{font-weight:800}.brand span{color:var(--red)}
+.home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
+.home:hover{color:#fff;border-color:var(--blue)}
+.hero{text-align:center;margin:22px 0 26px}
+.hero .k{font-family:'Fira Code',monospace;color:var(--blue);font-size:13px;letter-spacing:1px}
+.hero h1{font-size:clamp(30px,6vw,46px);font-weight:800;margin:6px 0;
+  background:linear-gradient(90deg,#fff,#8fb4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto}
+
+/* wizard */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin-top:10px}
+.progress{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-bottom:22px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#7aa2ff);transition:.3s}
+.step h2{font-size:20px;margin-bottom:4px}.step .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.opts{display:grid;gap:10px}
+.opt{border:1px solid var(--line2);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.14s;font-size:15px;display:flex;align-items:center;gap:12px}
+.opt:hover{border-color:var(--blue)}
+.opt.on{border-color:var(--blue);background:rgba(46,107,255,.12)}
+.opt .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line2);flex:0 0 auto}
+.opt.on .dot{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 3px var(--panel)}
+.opt.multi .dot{border-radius:5px}
+input.txt{width:100%;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 16px;color:var(--text);font-size:15px;outline:none}
+input.txt:focus{border-color:var(--blue)}
+label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
+.nav{display:flex;gap:10px;margin-top:22px}
+.btn{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;font-size:14px}
+.btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--text)}
+.btn.wa{background:#25D366}.btn.pdf{background:var(--red)}
+.spacer{flex:1}
+.err{color:#ff8a9b;font-size:14px;margin-top:12px}
+.loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}
+.loading .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line2);border-top-color:var(--blue);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* report (light, PDF-friendly) */
+.report{background:#fff;color:#0f172a;border-radius:14px;padding:40px 44px;margin-top:18px}
+.report .rhead{text-align:center;border-bottom:2px solid #eef;padding-bottom:18px;margin-bottom:22px}
+.report .rhead .tag{display:inline-block;font:600 11px/1 monospace;color:#2e6bff;border:1px solid #2e6bff;border-radius:4px;padding:4px 8px;margin-bottom:10px}
+.report h1{font-size:26px;color:#0f172a}
+.report .who{color:#475569;font-size:14px;margin-top:6px}
+.report .summary{background:#f4f7ff;border-left:3px solid #2e6bff;border-radius:8px;padding:14px 16px;margin:18px 0;font-size:15px;color:#1e293b}
+.area{border:1px solid #e5e9f0;border-radius:12px;padding:18px 20px;margin-bottom:16px}
+.area .top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.area h3{font-size:18px;color:#0f172a}
+.match{margin-left:auto;font:700 13px/1 monospace;color:#2e6bff}
+.bar{height:7px;background:#eef2f7;border-radius:6px;overflow:hidden;margin:8px 0 12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#2e6bff,#7aa2ff)}
+.area .why{color:#475569;font-size:14px;margin-bottom:12px}
+.area h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin:12px 0 6px}
+.area ul{margin:0 0 6px 18px}.area li{font-size:14px;margin:4px 0;color:#1e293b}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12px;font-weight:600;background:#eef2ff;color:#2e4bff;border-radius:999px;padding:4px 10px}
+.n90{background:#f0fdf4;border-left:3px solid #22c55e;border-radius:8px;padding:14px 16px;margin-top:8px}
+.n90 h3{font-size:15px;color:#166534;margin-bottom:8px}.n90 li{color:#14532d}
+.rfoot{margin-top:22px;text-align:center;color:#94a3b8;font-size:11px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.wa-num{margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand mono" href="/">rocha<span>crypt</span></a>
+    <a class="home" href="/">← Home</a>
+  </header>
+
+  <div class="hero">
+    <div class="k">// career compass</div>
+    <h1>Find your path in security</h1>
+    <p>Answer a few questions and get a personalised roadmap — the areas that fit you, the steps to take, and the certifications to aim for.</p>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script>
+const API="/api/career";
+const Q=[
+  {key:"situation",type:"single",q:"Where are you right now?",sub:"Pick what fits best.",
+   opts:["Student / just starting","Switching careers into tech","IT professional moving into security","Security professional leveling up"]},
+  {key:"level",type:"single",q:"Your experience level in security?",
+   opts:["None yet","Basic (some study/labs)","Intermediate (1–3 yrs)","Advanced (3+ yrs)"]},
+  {key:"background",type:"multi",q:"What's your background?",sub:"Select all that apply.",
+   opts:["Networking","Software development","Systems / Cloud","Support / Helpdesk","Non-technical","None"]},
+  {key:"interests",type:"multi",q:"What excites you most?",sub:"Select all that apply.",
+   opts:["Breaking into systems (offensive)","Defending & detecting (blue team)","Cloud security","Governance, risk & compliance","Security engineering & automation","Threat intelligence"]},
+  {key:"style",type:"single",q:"Your preferred way of working?",
+   opts:["Hands-on technical","Analytical / investigative","Advisory / consultative","Leadership / strategy"]},
+  {key:"time",type:"single",q:"Time you can dedicate weekly?",
+   opts:["Under 5 hours","5–10 hours","10–20 hours","20+ hours"]},
+  {key:"goal",type:"text",q:"What's your main goal?",sub:"e.g. land my first security job, specialise in pentest, move into management.",placeholder:"Type your goal…"},
+  {key:"language",type:"single",q:"Language for your plan?",opts:["English","Português","Español","Français","Deutsch","Italiano"]},
+  {key:"name",type:"text",q:"Your name (optional)",sub:"Used to personalise your plan.",placeholder:"Your name"},
+];
+const answers={language:"English"};
+let step=0;
+const app=document.getElementById('app');
+
+function render(){
+  if(step<Q.length){ renderStep(Q[step]); return; }
+  generate();
+}
+function renderStep(item){
+  const pct=Math.round((step/Q.length)*100);
+  let body="";
+  if(item.type==="text"){
+    body=`<input class="txt" id="txt" placeholder="${item.placeholder||''}" value="${answers[item.key]?String(answers[item.key]).replace(/"/g,'&quot;'):''}"/>`;
+  } else {
+    const sel=answers[item.key];
+    body=`<div class="opts">`+item.opts.map(o=>{
+      const on=item.type==="multi" ? (Array.isArray(sel)&&sel.includes(o)) : sel===o;
+      return `<div class="opt ${item.type==='multi'?'multi':''} ${on?'on':''}" data-o="${o.replace(/"/g,'&quot;')}"><span class="dot"></span><span>${o}</span></div>`;
+    }).join("")+`</div>`;
+  }
+  app.innerHTML=`<div class="card">
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <div class="step">
+      <h2>${item.q}</h2>${item.sub?`<div class="sub">${item.sub}</div>`:''}
+      ${body}
+    </div>
+    <div class="nav">
+      ${step>0?'<button class="btn ghost" id="back">Back</button>':''}
+      <div class="spacer"></div>
+      <button class="btn" id="next">${step===Q.length-1?'Generate my plan':'Next'}</button>
+    </div>
+  </div>`;
+
+  app.querySelectorAll('.opt').forEach(el=>el.addEventListener('click',()=>{
+    const o=el.getAttribute('data-o');
+    if(item.type==="multi"){
+      const cur=Array.isArray(answers[item.key])?answers[item.key]:[];
+      answers[item.key]=cur.includes(o)?cur.filter(x=>x!==o):[...cur,o];
+    } else { answers[item.key]=o; }
+    renderStep(item);
+  }));
+  const back=document.getElementById('back'); if(back)back.onclick=()=>{step--;render();};
+  document.getElementById('next').onclick=()=>{
+    if(item.type==="text"){ const v=document.getElementById('txt').value.trim(); if(v)answers[item.key]=v; }
+    // require an answer except optional name
+    const optional=item.key==="name";
+    const has=item.type==="multi"?(Array.isArray(answers[item.key])&&answers[item.key].length):answers[item.key];
+    if(!optional && !has){ /* gently require */ document.getElementById('next').textContent="Please pick an option"; setTimeout(()=>render(),900); return; }
+    step++; render();
+  };
+}
+
+async function generate(){
+  app.innerHTML=`<div class="card"><div class="loading"><div class="spin"></div><div>Analysing your answers and building your plan…</div></div></div>`;
+  try{
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(answers)});
+    const d=await r.json();
+    if(!r.ok||!d.plan) throw new Error(d.error||"Could not generate the plan");
+    renderReport(d.plan);
+  }catch(e){
+    app.innerHTML=`<div class="card"><p class="err">${e.message}</p><div class="nav"><button class="btn ghost" id="retry">Try again</button></div></div>`;
+    document.getElementById('retry').onclick=()=>{step=Q.length;render();};
+  }
+}
+
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function list(a){return (Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join("");}
+function pills(a){return (Array.isArray(a)?a:[]).map(x=>`<span class="pill">${esc(x)}</span>`).join("");}
+
+function renderReport(plan){
+  const name=answers.name?esc(answers.name):"";
+  const areas=(plan.areas||[]).slice(0,3).map(ar=>`
+    <div class="area">
+      <div class="top"><h3>${esc(ar.name)}</h3><span class="match">${parseInt(ar.match)||''}% match</span></div>
+      <div class="bar"><i style="width:${Math.max(0,Math.min(100,parseInt(ar.match)||0))}%"></i></div>
+      <div class="why">${esc(ar.why)}</div>
+      <h4>Roadmap</h4><ul>${list(ar.steps)}</ul>
+      <h4>Certifications</h4><div class="pills">${pills(ar.certifications)}</div>
+      <h4>Skills & tools</h4><ul>${list(ar.skills)}</ul>
+      ${ar.resources&&ar.resources.length?`<h4>Resources</h4><ul>${list(ar.resources)}</ul>`:''}
+    </div>`).join("");
+
+  const html=`<div class="report" id="report">
+    <div class="rhead">
+      <div class="tag">CYBERSECURITY CAREER PLAN</div>
+      <h1>${name?name+"'s career plan":"Your career plan"}</h1>
+      <div class="who">${esc(plan.profile||'')}</div>
+    </div>
+    ${plan.summary?`<div class="summary">${esc(plan.summary)}</div>`:''}
+    ${areas}
+    ${plan.next90days&&plan.next90days.length?`<div class="n90"><h3>Your first 90 days</h3><ul>${list(plan.next90days)}</ul></div>`:''}
+    <div class="rfoot">Generated by Career Compass · rochacrypt · this is guidance, not a guarantee.</div>
+  </div>`;
+
+  app.innerHTML=`
+    ${html}
+    <div class="actions">
+      <button class="btn pdf" id="pdf">Download PDF</button>
+      <button class="btn wa" id="wa">Send to WhatsApp</button>
+      <button class="btn ghost" id="restart">Start over</button>
+    </div>
+    <div class="wa-num"><input class="txt" id="phone" placeholder="Optional: your WhatsApp number with country code (e.g. 353871234567)"/></div>`;
+
+  document.getElementById('pdf').onclick=()=>{
+    const el=document.getElementById('report');
+    html2pdf().set({margin:8,filename:'career-plan.pdf',image:{type:'jpeg',quality:.98},
+      html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+  };
+  document.getElementById('wa').onclick=()=>{
+    const top=(plan.areas||[]).slice(0,3).map((a,i)=>`${i+1}. ${a.name} (${parseInt(a.match)||''}%)`).join("\n");
+    const certs=((plan.areas||[])[0]?.certifications||[]).slice(0,3).join(", ");
+    const msg=`My cybersecurity career plan (via Career Compass):\n\n${plan.summary||plan.profile||''}\n\nBest-fit areas:\n${top}\n\nStart with certs like: ${certs}\n\nGenerate yours: ${location.origin}/career.html`;
+    const phone=(document.getElementById('phone').value||'').replace(/\D/g,'');
+    const url=phone?`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url,'_blank');
+  };
+  document.getElementById('restart').onclick=()=>{step=0;render();};
+}
+
+render();
+</script>
+</body>
+</html>
