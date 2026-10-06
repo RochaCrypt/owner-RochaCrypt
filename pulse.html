@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Cyber Pulse - Alexandre Rocha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#070809;--surface:#0d1117;--surface2:#11161f;--elev:#151b26;--line:#1e2733;--line2:#2a3441;
+  --text:#eef2f6;--muted:#8b98a8;--faint:#5b6675;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1100px 520px at 100% -10%,rgba(255,46,76,.13),transparent 55%),var(--bg);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
+.wrap{max-width:1020px;margin:0 auto;padding:24px 18px 70px}
+.head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.title h1{font-size:clamp(26px,5vw,38px);font-weight:800;background:linear-gradient(90deg,#fff,#ff6a80);-webkit-background-clip:text;background-clip:text;color:transparent}
+.title .k{font-family:'Fira Code',monospace;color:var(--muted);font-size:13px}
+.spacer{flex:1}
+.back{border:1px solid var(--line2);border-radius:999px;padding:9px 15px;color:var(--text);font-weight:600;font-size:13px;background:var(--surface)}
+.back:hover{border-color:var(--red);color:#fff}
+.tabs{display:flex;gap:8px;margin:20px 0 16px}
+.tab{cursor:pointer;padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted)}
+.tab.on{background:var(--red);border-color:var(--red);color:#fff}
+.tab:hover{color:#fff}
+
+/* toolbar */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.search{flex:1;min-width:180px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;padding:0 13px}
+.search input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px;font-family:'Fira Code',monospace;padding:11px 0}
+.sel select{appearance:none;background:var(--surface);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-size:13px;font-weight:600;padding:10px 30px 10px 12px;cursor:pointer;outline:none}
+.refresh{background:var(--red);color:#fff;border:none;border-radius:10px;padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer}
+.refresh:disabled{opacity:.6}
+.count{margin-left:auto;color:var(--muted);font-size:12.5px;font-family:'Fira Code',monospace}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{cursor:pointer;white-space:nowrap;flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--surface2);color:var(--muted)}
+.chip.on{background:var(--red);border-color:var(--red);color:#fff}
+
+/* list */
+.list{display:grid;gap:12px}
+.item{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;transition:.14s}
+.item:hover{transform:translateY(-2px);border-color:var(--line2);background:var(--elev)}
+.item .bar{width:3px;align-self:stretch;border-radius:3px;background:var(--red)}
+.item.cve .bar{background:var(--amber)}.item.kev .bar{background:var(--green)}
+.item .body{flex:1;min-width:0}
+.item h3{font-size:15.5px;font-weight:600;line-height:1.4;margin-bottom:7px}
+.item .meta{display:flex;gap:12px;color:var(--faint);font-size:12px;font-family:'Fira Code',monospace}
+.item .src{color:#ff8a9b;font-weight:600}
+.empty{text-align:center;color:var(--muted);padding:50px 0;font-family:'Fira Code',monospace}
+
+/* analyzer */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.panel h2{font-size:20px;margin-bottom:4px}.panel .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row input.url{flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:13px 15px;color:var(--text);font-size:15px;outline:none}
+.row input.url:focus{border-color:var(--blue)}
+.btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:13px 20px;font-weight:700;cursor:pointer;font-size:14px}
+.btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.6}
+.err{color:#ff8a9b;font-size:14px;margin-top:10px}
+
+/* briefing (shared by modal + analyzer) */
+.brief .bt{font-size:19px;font-weight:700;margin-bottom:10px}
+.brief .fields{display:grid;gap:10px;margin:12px 0}
+.field{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.field .l{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);font-family:'Fira Code',monospace;margin-bottom:4px}
+.field .v{font-size:14px;color:var(--text)}
+.field.cve .v{color:#ffb86b;font-family:'Fira Code',monospace}
+.share{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sbtn{border:none;border-radius:10px;padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer;color:#fff;display:inline-flex;align-items:center;gap:7px}
+.sbtn.wa{background:#25D366}.sbtn.mail{background:#5b6675}.sbtn.li{background:#0A66C2}.sbtn.copy{background:transparent;border:1px solid var(--line2);color:var(--text)}
+.srclink{display:inline-block;margin-top:10px;color:#8fb4ff;font-size:13px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:80;background:rgba(5,6,8,.72);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow:auto}
+.modal.open{display:flex}
+.sheet{background:var(--surface);border:1px solid var(--line2);border-radius:18px;max-width:640px;width:100%;padding:24px;box-shadow:0 30px 70px rgba(0,0,0,.6);animation:pop .18s ease}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sheet .x{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.loading{text-align:center;padding:30px 0;color:var(--muted);font-family:'Fira Code',monospace}
+.spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line2);border-top-color:var(--red);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="title"><div class="k">root@rochacrypt:~# tail -f /var/log/threat-intel</div><h1>Cyber Pulse</h1></div>
+    <div class="spacer"></div>
+    <a class="back" href="/">Back to home</a>
+  </div>
+
+  <div class="tabs">
+    <span class="tab on" data-tab="feed">Feed</span>
+    <span class="tab" data-tab="analyzer">News Analyzer</span>
+  </div>
+
+  <!-- FEED -->
+  <div id="feedTab">
+    <div class="toolbar">
+      <div class="search"><input id="q" placeholder="Search headlines..." autocomplete="off"/></div>
+      <div class="sel"><select id="window"><option value="0">Any time</option><option value="10">10 min</option><option value="30">30 min</option><option value="60">1 hour</option><option value="120">2 hours</option><option value="360">6 hours</option><option value="720">12 hours</option><option value="1440">24 hours</option></select></div>
+      <button class="refresh" id="refresh">Refresh</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="chips" id="chips"><span class="chip on" data-src="all">All sources</span></div>
+    <div class="list" id="list"></div>
+    <div class="empty" id="empty" style="display:none">Loading...</div>
+  </div>
+
+  <!-- ANALYZER -->
+  <div id="analyzerTab" style="display:none">
+    <div class="panel">
+      <h2>News Analyzer</h2>
+      <div class="sub">Paste any security news link. The AI reads it and returns a clear briefing: summary, affected products, CVE, impact and remediation.</div>
+      <div class="row">
+        <input class="url" id="aUrl" placeholder="https://..." autocomplete="off"/>
+        <div class="sel"><select id="aLang"><option>English</option><option>Português</option><option>Español</option></select></div>
+        <button class="btn" id="aGo">Analyze</button>
+      </div>
+      <div id="aOut"></div>
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal" id="modal"><div class="sheet"><button class="x" id="mx">&times;</button><div id="mcontent"></div></div></div>
+
+<script>
+const NEWS="/api/news", ANALYZE="/api/analyze";
+let DATA={items:[],sources:[]}, curSrc="all", q="", win=0;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function ago(iso){if(!iso)return"";const s=(Date.now()-new Date(iso))/1000;if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";return Math.floor(s/86400)+"d ago";}
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  const feed=t.dataset.tab==='feed'; $('feedTab').style.display=feed?'block':'none'; $('analyzerTab').style.display=feed?'none':'block';
+}));
+
+/* feed */
+function buildChips(){
+  $('chips').innerHTML='<span class="chip on" data-src="all">All sources</span>';
+  (DATA.sources||[]).forEach(s=>{const c=document.createElement('span');c.className='chip';c.dataset.src=s;c.textContent=s;$('chips').appendChild(c);});
+  [...$('chips').children].forEach(c=>c.classList.toggle('on',c.dataset.src===curSrc));
+}
+function render(){
+  const now=Date.now();
+  const l=(DATA.items||[]).filter(i=>{
+    if(curSrc!=="all"&&i.source!==curSrc)return false;
+    if(q&&!(i.title||"").toLowerCase().includes(q))return false;
+    if(win>0){if(!i.date)return false;if((now-new Date(i.date))/60000>win)return false;}
+    return true;
+  });
+  $('count').textContent=l.length+" / "+(DATA.items||[]).length;
+  $('list').innerHTML=''; $('empty').style.display=l.length?'none':'block'; if(!l.length)$('empty').textContent='Nothing matches your filters';
+  l.forEach(i=>{
+    const el=document.createElement('div'); el.className='item '+(i.category||'news');
+    el.innerHTML=`<span class="bar"></span><div class="body"><h3>${esc(i.title)}</h3><div class="meta"><span class="src">${esc(i.source)}</span><span>${ago(i.date)}</span></div></div>`;
+    el.addEventListener('click',()=>openBriefing(i.url,i.title));
+    $('list').appendChild(el);
+  });
+}
+async function loadNews(){
+  const rb=$('refresh'); rb.disabled=true; rb.textContent='...';
+  try{ const r=await fetch(NEWS+'?_='+Date.now()); DATA=await r.json(); buildChips(); render(); }catch(_){ $('empty').style.display='block'; $('empty').textContent='Could not load news'; }
+  rb.disabled=false; rb.textContent='Refresh';
+}
+$('chips').addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;curSrc=c.dataset.src;[...$('chips').children].forEach(x=>x.classList.toggle('on',x===c));render();});
+$('q').addEventListener('input',e=>{q=e.target.value.toLowerCase();render();});
+$('window').addEventListener('change',e=>{win=parseInt(e.target.value,10)||0;render();});
+$('refresh').addEventListener('click',loadNews);
+
+/* briefing render + share */
+function briefText(a){
+  return `${a.title}\n\n${a.summary}\n\nAffected: ${a.affected}\nDate: ${a.date}\nCVE: ${a.cve}\nImpact: ${a.impact}\nRemediation: ${a.remediation}\n\nSource: ${a.url}`;
+}
+function briefHtml(a){
+  const f=(l,v,cls)=>`<div class="field ${cls||''}"><div class="l">${l}</div><div class="v">${esc(v||'Not specified')}</div></div>`;
+  return `<div class="brief">
+    <div class="bt">${esc(a.title)}</div>
+    <div class="fields">
+      ${f('Summary',a.summary)}
+      ${f('Affected products',a.affected)}
+      ${f('Date',a.date)}
+      ${f('CVE',a.cve,'cve')}
+      ${f('Impact',a.impact)}
+      ${f('Remediation',a.remediation)}
+    </div>
+    <a class="srclink" href="${esc(a.url)}" target="_blank" rel="noopener">Open original source</a>
+    <div class="share">
+      <button class="sbtn wa" data-s="wa">WhatsApp</button>
+      <button class="sbtn mail" data-s="mail">Email</button>
+      <button class="sbtn li" data-s="li">LinkedIn</button>
+      <button class="sbtn copy" data-s="copy">Copy briefing</button>
+    </div>
+  </div>`;
+}
+function wireShare(container,a){
+  container.querySelectorAll('.sbtn').forEach(b=>b.addEventListener('click',()=>{
+    const txt=briefText(a);
+    if(b.dataset.s==='wa') window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
+    else if(b.dataset.s==='mail') window.open('mailto:?subject='+encodeURIComponent(a.title)+'&body='+encodeURIComponent(txt),'_blank');
+    else if(b.dataset.s==='li') window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(a.url),'_blank');
+    else if(b.dataset.s==='copy'){ navigator.clipboard.writeText(txt); b.textContent='Copied'; setTimeout(()=>b.textContent='Copy briefing',1500); }
+  }));
+}
+
+/* modal flow (feed item click) */
+const modal=$('modal');
+$('mx').addEventListener('click',()=>modal.classList.remove('open'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open');});
+async function openBriefing(url,title){
+  modal.classList.add('open');
+  $('mcontent').innerHTML='<div class="loading"><div class="spin"></div><div>Analysing the article...</div></div>';
+  try{
+    const r=await fetch(ANALYZE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,lang:'English'})});
+    const d=await r.json();
+    if(!r.ok||!d.analysis) throw new Error(d.error||'Could not analyse');
+    const a=d.analysis; if(!a.title)a.title=title; a.url=a.url||url;
+    $('mcontent').innerHTML=briefHtml(a); wireShare($('mcontent'),a);
+  }catch(e){ $('mcontent').innerHTML='<p class="err">'+esc(e.message)+'</p>'; }
+}
+
+/* analyzer flow */
+$('aGo').addEventListener('click',async()=>{
+  const url=$('aUrl').value.trim(), lang=$('aLang').value;
+  if(!/^https?:\/\//i.test(url)){ $('aOut').innerHTML='<p class="err">Please paste a valid URL (http/https).</p>'; return; }
+  $('aGo').disabled=true; $('aOut').innerHTML='<div class="loading"><div class="spin"></div><div>Reading and analysing the article...</div></div>';
+  try{
+    const r=await fetch(ANALYZE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,lang})});
+    const d=await r.json();
+    if(!r.ok||!d.analysis) throw new Error(d.error||'Could not analyse');
+    const a=d.analysis; a.url=a.url||url;
+    $('aOut').innerHTML=briefHtml(a); wireShare($('aOut'),a);
+  }catch(e){ $('aOut').innerHTML='<p class="err">'+esc(e.message)+'</p>'; }
+  $('aGo').disabled=false;
+});
+$('aUrl').addEventListener('keydown',e=>{if(e.key==='Enter')$('aGo').click();});
+
+loadNews();
+setInterval(render,60000);
+</script>
+</body>
+</html>
