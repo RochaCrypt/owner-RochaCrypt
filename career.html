@@ -91,7 +91,7 @@ label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
 .acard:hover{transform:translateY(-3px);border-color:var(--accent)}
 .acard .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;
   background:color-mix(in srgb,var(--accent) 16%,#0d1117);border:1px solid color-mix(in srgb,var(--accent) 38%,#0d1117)}
-.acard .ico svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
 .acard h4{font-size:14.5px;margin-bottom:3px}
 .acard p{color:var(--muted);font-size:12.5px;line-height:1.45}
 
@@ -117,60 +117,67 @@ label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
 const API="/api/career";
 
 const LANGS=[
-  {code:"English",label:"English",fl:"EN"},
-  {code:"Português",label:"Português",fl:"PT"},
-  {code:"Español",label:"Español",fl:"ES"},
-  {code:"Français",label:"Français",fl:"FR"},
-  {code:"Deutsch",label:"Deutsch",fl:"DE"},
-  {code:"Italiano",label:"Italiano",fl:"IT"},
+  ["English","English","EN"],["Português","Português","PT"],["Español","Español","ES"],
+  ["Français","Français","FR"],["Deutsch","Deutsch","DE"],["Italiano","Italiano","IT"]
 ];
 const AREAS=[
-  {n:"Software Development",d:"Build websites, apps and systems with code.",c:"#2e6bff",
-   svg:'<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/>'},
-  {n:"Data & Analytics",d:"Turn raw data into insights and decisions.",c:"#22b8cf",
-   svg:'<line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/>'},
-  {n:"Data Science & AI",d:"Models, machine learning and automation.",c:"#8a63ff",
-   svg:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'},
-  {n:"Cloud & DevOps",d:"Run and automate systems in the cloud.",c:"#2ecc71",
-   svg:'<path d="M17 18a4 4 0 000-8 6 6 0 00-11 2 3 3 0 00-1 6z"/>'},
-  {n:"Infrastructure & Networks",d:"Servers, networks and connectivity.",c:"#ffb02e",
-   svg:'<rect x="3" y="4" width="18" height="5" rx="1"/><rect x="3" y="15" width="18" height="5" rx="1"/><line x1="7" y1="9" x2="7" y2="15"/>'},
-  {n:"Cybersecurity",d:"Protect systems, data and people.",c:"#ff2e4c",
-   svg:'<path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>'},
-  {n:"UX / UI Design",d:"Design how products look and feel.",c:"#f06595",
-   svg:'<rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>'},
-  {n:"Product & Project",d:"Plan, organise and deliver tech products.",c:"#ff7a1a",
-   svg:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>'},
-  {n:"IT Support",d:"Help people and keep systems running.",c:"#54e0c0",
-   svg:'<path d="M12 18v.01"/><rect x="5" y="2" width="14" height="20" rx="2"/>'},
-  {n:"QA & Testing",d:"Make sure software works as it should.",c:"#b388ff",
-   svg:'<path d="M20 6L9 17l-5-5"/>'},
-  {n:"Databases",d:"Store and organise information at scale.",c:"#4cc3ff",
-   svg:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/>'},
-  {n:"Game Development",d:"Create interactive games and worlds.",c:"#ff5c8a",
-   svg:'<rect x="2" y="7" width="20" height="10" rx="4"/><line x1="7" y1="12" x2="9" y2="12"/><line x1="8" y1="11" x2="8" y2="13"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/>'},
+  ["Software Development","Build websites, apps and systems with code.","#2e6bff"],
+  ["Data & Analytics","Turn raw data into insights and decisions.","#22b8cf"],
+  ["Data Science & AI","Models, machine learning and automation.","#8a63ff"],
+  ["Cloud & DevOps","Run and automate systems in the cloud.","#2ecc71"],
+  ["Infrastructure & Networks","Servers, networks and connectivity.","#ffb02e"],
+  ["Cybersecurity","Protect systems, data and people.","#ff2e4c"],
+  ["UX / UI Design","Design how products look and feel.","#f06595"],
+  ["Product & Project","Plan, organise and deliver tech products.","#ff7a1a"],
+  ["IT Support","Help people and keep systems running.","#54e0c0"],
+  ["QA & Testing","Make sure software works as it should.","#b388ff"],
+  ["Databases","Store and organise information at scale.","#4cc3ff"],
+  ["Game Development","Create interactive games and worlds.","#ff5c8a"]
 ];
 function renderIntro(){
-  app.innerHTML=`<div class="card intro">
-    <div class="block-title">The map of tech</div>
-    <p class="lead">Technology is huge, and it is normal not to know where you fit. Here are the main areas inside IT. In a minute, the tool will point you to the ones that match you best.</p>
-    <div class="areas">${AREAS.map(a=>`
-      <div class="acard" style="--accent:${a.c}">
-        <div class="ico"><svg viewBox="0 0 24 24">${a.svg}</svg></div>
-        <h4>${a.n}</h4><p>${a.d}</p>
-      </div>`).join("")}</div>
-    <div class="block-title">Choose your language</div>
-    <p class="lead" style="margin-bottom:10px">Your questions and your plan will be in the language you pick.</p>
-    <div class="lang-row" id="langRow">${LANGS.map(l=>`
-      <span class="lang ${answers.language===l.code?'on':''}" data-l="${l.code}"><span class="fl">${l.fl}</span>${l.label}</span>`).join("")}</div>
-    <div class="nav"><div class="spacer"></div><button class="btn" id="start">Start</button></div>
-  </div>`;
-  document.getElementById('langRow').addEventListener('click',e=>{
-    const el=e.target.closest('.lang'); if(!el)return;
-    answers.language=el.getAttribute('data-l');
-    [...document.querySelectorAll('.lang')].forEach(x=>x.classList.toggle('on',x===el));
+  const card=document.createElement("div"); card.className="card intro";
+
+  const t1=document.createElement("div"); t1.className="block-title"; t1.textContent="The map of tech"; card.appendChild(t1);
+  const p1=document.createElement("p"); p1.className="lead";
+  p1.textContent="Technology is huge, and it is normal not to know where you fit. Here are the main areas inside IT. In a minute, the tool will point you to the ones that match you best.";
+  card.appendChild(p1);
+
+  const grid=document.createElement("div"); grid.className="areas";
+  AREAS.forEach(function(a){
+    const ac=document.createElement("div"); ac.className="acard"; ac.style.setProperty("--accent",a[2]);
+    const ico=document.createElement("div"); ico.className="ico";
+    const dot=document.createElement("span"); dot.style.cssText="width:14px;height:14px;border-radius:4px;display:block;background:"+a[2];
+    ico.appendChild(dot); ac.appendChild(ico);
+    const h=document.createElement("h4"); h.textContent=a[0]; ac.appendChild(h);
+    const p=document.createElement("p"); p.textContent=a[1]; ac.appendChild(p);
+    grid.appendChild(ac);
   });
-  document.getElementById('start').onclick=()=>{ step=0; render(); };
+  card.appendChild(grid);
+
+  const t2=document.createElement("div"); t2.className="block-title"; t2.textContent="Choose your language"; card.appendChild(t2);
+  const p2=document.createElement("p"); p2.className="lead"; p2.style.marginBottom="10px";
+  p2.textContent="Your questions and your plan will be in the language you pick."; card.appendChild(p2);
+
+  const row=document.createElement("div"); row.className="lang-row";
+  LANGS.forEach(function(l){
+    const el=document.createElement("span"); el.className="lang"+(answers.language===l[0]?" on":"");
+    const fl=document.createElement("span"); fl.className="fl"; fl.textContent=l[2];
+    el.appendChild(fl); el.appendChild(document.createTextNode(l[1]));
+    el.addEventListener("click",function(){
+      answers.language=l[0];
+      Array.prototype.forEach.call(row.children,function(x){x.classList.toggle("on",x===el);});
+    });
+    row.appendChild(el);
+  });
+  card.appendChild(row);
+
+  const nav=document.createElement("div"); nav.className="nav";
+  const sp=document.createElement("div"); sp.className="spacer"; nav.appendChild(sp);
+  const start=document.createElement("button"); start.className="btn"; start.textContent="Start";
+  start.addEventListener("click",function(){ step=0; render(); });
+  nav.appendChild(start); card.appendChild(nav);
+
+  app.innerHTML=""; app.appendChild(card);
 }
 
 const Q=[
