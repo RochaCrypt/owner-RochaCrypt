@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Career Compass — Find your path in tech</title>
+<title>Career Compass: Find your path in tech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -74,6 +74,27 @@ label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
 .rfoot{margin-top:22px;text-align:center;color:#94a3b8;font-size:11px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 .wa-num{margin-top:10px}
+
+/* intro screen */
+.intro{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.lead{color:var(--muted);font-size:15px;max-width:620px;margin:0 0 20px}
+.lang-row{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 24px}
+.lang{cursor:pointer;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);
+  border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;transition:.14s;display:flex;align-items:center;gap:8px}
+.lang:hover{color:#fff;border-color:var(--blue)}
+.lang.on{color:#fff;background:rgba(46,107,255,.14);border-color:var(--blue)}
+.lang .fl{font-family:'Fira Code',monospace;font-size:12px;opacity:.75}
+.block-title{font-size:13px;font-family:'Fira Code',monospace;color:var(--blue);letter-spacing:1px;margin:4px 0 10px;text-transform:uppercase}
+.areas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:24px}
+.acard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px 16px;transition:.14s}
+.acard:hover{transform:translateY(-3px);border-color:var(--accent)}
+.acard .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;
+  background:color-mix(in srgb,var(--accent) 16%,#0d1117);border:1px solid color-mix(in srgb,var(--accent) 38%,#0d1117)}
+.acard .ico svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.acard h4{font-size:14.5px;margin-bottom:3px}
+.acard p{color:var(--muted);font-size:12.5px;line-height:1.45}
+
 </style>
 </head>
 <body>
@@ -86,7 +107,7 @@ label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
   <div class="hero">
     <div class="k">// career compass</div>
     <h1>Find your path in tech</h1>
-    <p>New to technology and not sure where to start? Answer a few questions about you, and get a personalised roadmap — the tech areas that fit your personality, and a step-by-step path from zero.</p>
+    <p>New to technology and not sure where to start? Answer a few questions about you, and get a personalised roadmap of the tech areas that fit your personality, and a step by step path from zero.</p>
   </div>
 
   <div id="app"></div>
@@ -94,6 +115,64 @@ label.lbl{font-size:13px;color:var(--muted);display:block;margin:14px 0 6px}
 
 <script>
 const API="/api/career";
+
+const LANGS=[
+  {code:"English",label:"English",fl:"EN"},
+  {code:"Português",label:"Português",fl:"PT"},
+  {code:"Español",label:"Español",fl:"ES"},
+  {code:"Français",label:"Français",fl:"FR"},
+  {code:"Deutsch",label:"Deutsch",fl:"DE"},
+  {code:"Italiano",label:"Italiano",fl:"IT"},
+];
+const AREAS=[
+  {n:"Software Development",d:"Build websites, apps and systems with code.",c:"#2e6bff",
+   svg:'<polyline points="8 6 3 12 8 18"/><polyline points="16 6 21 12 16 18"/>'},
+  {n:"Data & Analytics",d:"Turn raw data into insights and decisions.",c:"#22b8cf",
+   svg:'<line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="14"/>'},
+  {n:"Data Science & AI",d:"Models, machine learning and automation.",c:"#8a63ff",
+   svg:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'},
+  {n:"Cloud & DevOps",d:"Run and automate systems in the cloud.",c:"#2ecc71",
+   svg:'<path d="M17 18a4 4 0 000-8 6 6 0 00-11 2 3 3 0 00-1 6z"/>'},
+  {n:"Infrastructure & Networks",d:"Servers, networks and connectivity.",c:"#ffb02e",
+   svg:'<rect x="3" y="4" width="18" height="5" rx="1"/><rect x="3" y="15" width="18" height="5" rx="1"/><line x1="7" y1="9" x2="7" y2="15"/>'},
+  {n:"Cybersecurity",d:"Protect systems, data and people.",c:"#ff2e4c",
+   svg:'<path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>'},
+  {n:"UX / UI Design",d:"Design how products look and feel.",c:"#f06595",
+   svg:'<rect x="3" y="4" width="18" height="14" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>'},
+  {n:"Product & Project",d:"Plan, organise and deliver tech products.",c:"#ff7a1a",
+   svg:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>'},
+  {n:"IT Support",d:"Help people and keep systems running.",c:"#54e0c0",
+   svg:'<path d="M12 18v.01"/><rect x="5" y="2" width="14" height="20" rx="2"/>'},
+  {n:"QA & Testing",d:"Make sure software works as it should.",c:"#b388ff",
+   svg:'<path d="M20 6L9 17l-5-5"/>'},
+  {n:"Databases",d:"Store and organise information at scale.",c:"#4cc3ff",
+   svg:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/>'},
+  {n:"Game Development",d:"Create interactive games and worlds.",c:"#ff5c8a",
+   svg:'<rect x="2" y="7" width="20" height="10" rx="4"/><line x1="7" y1="12" x2="9" y2="12"/><line x1="8" y1="11" x2="8" y2="13"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/>'},
+];
+function renderIntro(){
+  app.innerHTML=`<div class="card intro">
+    <div class="block-title">The map of tech</div>
+    <p class="lead">Technology is huge, and it is normal not to know where you fit. Here are the main areas inside IT. In a minute, the tool will point you to the ones that match you best.</p>
+    <div class="areas">${AREAS.map(a=>`
+      <div class="acard" style="--accent:${a.c}">
+        <div class="ico"><svg viewBox="0 0 24 24">${a.svg}</svg></div>
+        <h4>${a.n}</h4><p>${a.d}</p>
+      </div>`).join("")}</div>
+    <div class="block-title">Choose your language</div>
+    <p class="lead" style="margin-bottom:10px">Your questions and your plan will be in the language you pick.</p>
+    <div class="lang-row" id="langRow">${LANGS.map(l=>`
+      <span class="lang ${answers.language===l.code?'on':''}" data-l="${l.code}"><span class="fl">${l.fl}</span>${l.label}</span>`).join("")}</div>
+    <div class="nav"><div class="spacer"></div><button class="btn" id="start">Start</button></div>
+  </div>`;
+  document.getElementById('langRow').addEventListener('click',e=>{
+    const el=e.target.closest('.lang'); if(!el)return;
+    answers.language=el.getAttribute('data-l');
+    [...document.querySelectorAll('.lang')].forEach(x=>x.classList.toggle('on',x===el));
+  });
+  document.getElementById('start').onclick=()=>{ step=0; render(); };
+}
+
 const Q=[
   {key:"situation",type:"single",q:"Where are you right now?",sub:"Pick what fits best.",
    opts:["Student / just starting out","Thinking of switching careers into tech","Curious but I know nothing about tech yet","Already work near tech and want to go deeper"]},
@@ -101,7 +180,7 @@ const Q=[
    opts:["Building and creating things","Solving puzzles and logic problems","Working with numbers and data","Designing how things look and feel","Organising and planning","Helping and supporting people","Understanding how systems work"]},
   {key:"strength",type:"single",q:"Which best describes you?",
    opts:["Creative","Analytical / logical","Detail-oriented","Big-picture / strategic","People-person / communicative"]},
-  {key:"interests",type:"multi",q:"Which of these sound interesting?",sub:"Don't worry if you don't fully know them — go by gut. Select all that apply.",
+  {key:"interests",type:"multi",q:"Which of these sound interesting?",sub:"Don't worry if you don't fully know them, just go by gut. Select all that apply.",
    opts:["Making websites or apps","Working with data & AI","Cloud and automation","Networks and infrastructure","Cybersecurity","Design (UX/UI)","Product / project management","Tech support & problem solving","Games"]},
   {key:"math",type:"single",q:"How do you feel about maths?",
    opts:["I enjoy it","I'm okay with it","I'd rather avoid it","Not sure"]},
@@ -110,14 +189,14 @@ const Q=[
   {key:"time",type:"single",q:"Time you can dedicate to learning weekly?",
    opts:["Under 5 hours","5–10 hours","10–20 hours","20+ hours"]},
   {key:"goal",type:"text",q:"What's your main goal?",sub:"e.g. get my first tech job, change careers, understand which area is for me.",placeholder:"Type your goal…"},
-  {key:"language",type:"single",q:"Language for your plan?",opts:["English","Português","Español","Français","Deutsch","Italiano"]},
   {key:"name",type:"text",q:"Your name (optional)",sub:"Used to personalise your plan.",placeholder:"Your name"},
 ];
 const answers={language:"English"};
-let step=0;
+let step=-1;
 const app=document.getElementById('app');
 
 function render(){
+  if(step<0){ renderIntro(); return; }
   if(step<Q.length){ renderStep(Q[step]); return; }
   generate();
 }
@@ -140,7 +219,7 @@ function renderStep(item){
       ${body}
     </div>
     <div class="nav">
-      ${step>0?'<button class="btn ghost" id="back">Back</button>':''}
+      <button class="btn ghost" id="back">Back</button>
       <div class="spacer"></div>
       <button class="btn" id="next">${step===Q.length-1?'Generate my plan':'Next'}</button>
     </div>
@@ -230,7 +309,7 @@ function renderReport(plan){
     const url=phone?`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`:`https://wa.me/?text=${encodeURIComponent(msg)}`;
     window.open(url,'_blank');
   };
-  document.getElementById('restart').onclick=()=>{step=0;render();};
+  document.getElementById('restart').onclick=()=>{step=-1;render();};
 }
 
 render();
