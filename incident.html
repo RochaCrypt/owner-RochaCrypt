@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Incident Cost Estimator: quantify cyber risk and ROSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--accent:#ff2e4c;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1000px 500px at 50% -10%,rgba(255,46,76,.16),transparent 60%),var(--bg);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
+.wrap{max-width:860px;margin:0 auto;padding:26px 18px 70px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.brand{font-weight:800}.brand span{color:var(--red)}
+.home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
+.home:hover{color:#fff;border-color:var(--accent)}
+.hero{text-align:center;margin:22px 0 20px}
+.hero .k{font-family:'Fira Code',monospace;color:var(--accent);font-size:13px;letter-spacing:1px}
+.hero h1{font-size:clamp(28px,6vw,44px);font-weight:800;margin:6px 0;
+  background:linear-gradient(90deg,#fff,#ffb0bd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:560px;margin:0 auto}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin-top:10px}
+.progress{height:6px;background:var(--panel2);border-radius:6px;overflow:hidden;margin-bottom:22px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ff7a8e);transition:.3s}
+.step h2{font-size:20px;margin-bottom:4px}.step .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+.opts{display:grid;gap:10px}
+.opt{border:1px solid var(--line2);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.14s;font-size:15px;display:flex;align-items:center;gap:12px}
+.opt:hover{border-color:var(--accent)}
+.opt.on{border-color:var(--accent);background:rgba(255,46,76,.12)}
+.opt .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line2);flex:0 0 auto}
+.opt.on .dot{border-color:var(--accent);background:var(--accent);box-shadow:inset 0 0 0 3px var(--panel)}
+.opt .od{display:flex;flex-direction:column;gap:1px}
+.opt .od small{color:var(--muted);font-size:12.5px}
+input.txt,select.txt{width:100%;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:13px 14px;color:var(--text);font-size:15px;outline:none;font-family:inherit}
+input.txt:focus,select.txt:focus{border-color:var(--accent)}
+input.num{font-family:'Fira Code',monospace}
+label.lbl{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;margin:14px 0 6px}
+label.lbl .hint{color:var(--line2);cursor:help}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.inline-sym{position:relative}
+.nav{display:flex;gap:10px;margin-top:24px}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:13px 22px;font-weight:700;cursor:pointer;font-size:14px}
+.btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--text)}
+.btn.wa{background:#25D366}.btn.pdf{background:var(--red)}
+.btn.sm{padding:9px 14px;font-size:13px}
+.spacer{flex:1}
+.err{color:#ff8a9b;font-size:14px;margin-top:12px}
+.loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}
+.loading .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.note{font-size:12.5px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:8px;padding:11px 13px;margin-top:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 6px}
+.chip{cursor:pointer;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:600;transition:.14s}
+.chip:hover{color:#fff;border-color:var(--accent)}
+.chip.on{color:#fff;background:rgba(255,46,76,.14);border-color:var(--accent)}
+.rng{display:flex;align-items:center;gap:12px}
+.rng input[type=range]{flex:1;accent-color:var(--accent)}
+.rng .val{font-family:'Fira Code',monospace;min-width:52px;text-align:right;color:var(--text)}
+.intro{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.lead{color:var(--muted);font-size:15px;max-width:640px;margin:0 0 20px}
+.block-title{font-size:13px;font-family:'Fira Code',monospace;color:var(--accent);letter-spacing:1px;margin:14px 0 10px;text-transform:uppercase}
+.how{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:12px}
+.hcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.hcard .n{font-family:'Fira Code',monospace;color:var(--accent);font-size:12px}
+.hcard h4{font-size:14.5px;margin:6px 0 3px}
+.hcard p{color:var(--muted);font-size:12.5px;line-height:1.45}
+
+/* report (light, PDF-friendly) */
+.report{background:#fff;color:#0f172a;border-radius:14px;padding:38px 40px;margin-top:18px}
+.report .rhead{text-align:center;border-bottom:2px solid #fee;padding-bottom:18px;margin-bottom:20px}
+.report .rhead .tag{display:inline-block;font:600 11px/1 monospace;color:#c9243a;border:1px solid #c9243a;border-radius:4px;padding:4px 8px;margin-bottom:10px}
+.report h1{font-size:25px;color:#0f172a}
+.report .who{color:#475569;font-size:13.5px;margin-top:6px}
+.verdict{border-radius:10px;padding:16px 18px;margin:18px 0;font-size:15px}
+.verdict.go{background:#f0fdf4;border-left:4px solid #22c55e;color:#14532d}
+.verdict.cond{background:#fffbeb;border-left:4px solid #f59e0b;color:#713f12}
+.verdict.no{background:#fef2f2;border-left:4px solid #ef4444;color:#7f1d1d}
+.verdict b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;opacity:.85}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{border:1px solid #e5e9f0;border-radius:11px;padding:14px 15px;background:#fafbfd}
+.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#64748b;margin-bottom:5px}
+.kpi .v{font:700 20px/1.1 'Fira Code',monospace;color:#0f172a}
+.kpi .v.pos{color:#15803d}.kpi .v.neg{color:#b91c1c}
+.kpi .sub{font-size:11.5px;color:#94a3b8;margin-top:4px}
+.sec-h{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin:22px 0 8px}
+table.scn{width:100%;border-collapse:collapse;font-size:13.5px}
+table.scn th,table.scn td{text-align:right;padding:9px 10px;border-bottom:1px solid #eef2f7}
+table.scn th:first-child,table.scn td:first-child{text-align:left}
+table.scn thead th{color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+table.scn td.mono{font-family:'Fira Code',monospace}
+table.scn tr.base{background:#fff7f8}
+.narr{background:#f8fafc;border:1px solid #e5e9f0;border-radius:11px;padding:16px 18px;margin:16px 0}
+.narr h3{font-size:16px;color:#0f172a;margin-bottom:8px}
+.narr p{font-size:14px;color:#1e293b;margin-bottom:10px}
+.narr h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#64748b;margin:12px 0 5px}
+.narr ul{margin:0 0 4px 18px}.narr li{font-size:13.5px;margin:3px 0;color:#1e293b}
+.nvidia{font:600 10px/1 monospace;color:#76b900;border:1px solid #76b900;border-radius:4px;padding:3px 7px;display:inline-block;margin-left:8px;vertical-align:middle}
+.disc{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:13px 15px;margin-top:16px;font-size:12.5px;color:#7c2d12}
+.rfoot{margin-top:20px;text-align:center;color:#94a3b8;font-size:11px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand mono" href="/">rocha<span>crypt</span></a>
+    <a class="home" href="/">&larr; Home</a>
+  </header>
+
+  <div class="hero">
+    <div class="k">// incident cost estimator</div>
+    <h1>What is cyber risk worth to your business?</h1>
+    <p>Turn a security decision into numbers a board understands: annual loss exposure, the cost of doing nothing, and the return on a proposed investment (ROSI, payback and NPV). Every figure is computed locally in your browser.</p>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script>
+const API="/api/incident-narrative";
+
+/* ========================================================================
+   DETERMINISTIC ENGINE  (mirrors incident-calc/engine.js, 13/13 tests)
+   Pure math. The AI never touches these numbers.
+   ===================================================================== */
+const n = v => (isFinite(+v) ? +v : 0);
+function lossMagnitude(c){
+  const sum=(c.responseCost||0)+(c.operationalLoss||0)+(c.revenueLoss||0)+
+            (c.legalRegulatoryCost||0)+(c.reputationCost||0)+(c.longTermCost||0);
+  return Math.max(0, sum-(c.insuranceRecovery||0));
+}
+const ALE=(p,l)=>n(p)*n(l);
+function scenario(o){
+  const p0=n(o.annualProbability),L0=n(o.loss);
+  const ale_before=ALE(p0,L0);
+  const p1=Math.max(0,p0*(1-n(o.probReduction)));
+  const L1=Math.max(0,L0*(1-n(o.impactReduction)));
+  const ale_after=ALE(p1,L1);
+  const riskReductionBenefit=Math.max(0,ale_before-ale_after);
+  const netAnnualBenefit=riskReductionBenefit+n(o.additionalOperationalBenefits)-n(o.recurringAnnualSecurityCost);
+  return{ale_before,ale_after,riskReductionBenefit,netAnnualBenefit,residualProbability:p1,residualLoss:L1};
+}
+function tco(inv,years){
+  const initial=(inv.initial||0)+(inv.implementation||0)+(inv.integration||0)+(inv.training||0)+(inv.migration||0)+(inv.infrastructure||0)+(inv.internalLabor||0);
+  const recurring=(inv.recurringAnnual||0)*years;
+  return initial+recurring+(inv.exitCost||0);
+}
+const totalInvestment=inv=>(inv.initial||0)+(inv.implementation||0)+(inv.integration||0)+(inv.training||0)+(inv.migration||0)+(inv.infrastructure||0)+(inv.internalLabor||0);
+function rosi(cum,tcoV){if(tcoV<=0)return null;return((cum-tcoV)/tcoV)*100;}
+function roi(tb,tcoV){if(tcoV<=0)return null;return((tb-tcoV)/tcoV)*100;}
+function paybackMonths(totalInv,net){const m=net/12;if(m<=0)return null;return totalInv/m;}
+function npv(init,net,years,rate){let v=-n(init);for(let t=1;t<=years;t++)v+=net/Math.pow(1+rate,t);return v;}
+function costOfInaction(aB,aA,years){return(n(aB)-n(aA))*years;}
+
+/* ========================================================================
+   STATE
+   ===================================================================== */
+const A={
+  language:"English", currency:"USD", size:"", sector:"", orgName:"", years:3,
+  scenarioType:"", annualProbability:20,
+  costs:{responseCost:0,operationalLoss:0,revenueLoss:0,legalRegulatoryCost:0,reputationCost:0,longTermCost:0,insuranceRecovery:0},
+  investment:{initial:0,implementation:0,integration:0,training:0,migration:0,infrastructure:0,internalLabor:0,recurringAnnual:0},
+  probReduction:40, impactReduction:50, additionalBenefits:0, discountRate:10
+};
+
+/* scenario presets (synthetic starting points, fully editable) */
+const PRESETS={
+ "Ransomware":{p:25,c:{responseCost:150000,operationalLoss:200000,revenueLoss:120000,legalRegulatoryCost:60000,reputationCost:80000,longTermCost:50000,insuranceRecovery:100000},pr:40,ir:50},
+ "Data breach":{p:20,c:{responseCost:120000,operationalLoss:90000,revenueLoss:100000,legalRegulatoryCost:180000,reputationCost:150000,longTermCost:90000,insuranceRecovery:120000},pr:35,ir:45},
+ "Email fraud / BEC":{p:30,c:{responseCost:40000,operationalLoss:20000,revenueLoss:120000,legalRegulatoryCost:20000,reputationCost:30000,longTermCost:10000,insuranceRecovery:0},pr:50,ir:40},
+ "Service outage / DDoS":{p:35,c:{responseCost:30000,operationalLoss:120000,revenueLoss:90000,legalRegulatoryCost:0,reputationCost:20000,longTermCost:10000,insuranceRecovery:0},pr:45,ir:60},
+ "Insider / data loss":{p:15,c:{responseCost:80000,operationalLoss:60000,revenueLoss:50000,legalRegulatoryCost:70000,reputationCost:60000,longTermCost:40000,insuranceRecovery:30000},pr:30,ir:35},
+ "Custom":{p:20,c:{responseCost:0,operationalLoss:0,revenueLoss:0,legalRegulatoryCost:0,reputationCost:0,longTermCost:0,insuranceRecovery:0},pr:40,ir:50}
+};
+const INV_DEFAULT={initial:80000,implementation:30000,integration:15000,training:15000,migration:0,infrastructure:20000,internalLabor:25000,recurringAnnual:60000};
+
+const LANGS=["English","Português","Español","Français","Deutsch","Italiano"];
+const SECTORS=["Finance / Banking","Healthcare","Retail / E-commerce","Technology / SaaS","Manufacturing / Industrial","Public sector","Education","Other"];
+const SYM={USD:"$",EUR:"€",BRL:"R$",GBP:"£"};
+
+/* ========================================================================
+   HELPERS
+   ===================================================================== */
+const app=document.getElementById('app');
+let step=-1;
+function sym(){return SYM[A.currency]||"$";}
+function money(v){if(v==null||!isFinite(v))return"n/a";const neg=v<0;const r=Math.round(Math.abs(v)).toLocaleString('en-US');return(neg?"-":"")+sym()+r;}
+function pct(v,signed){if(v==null||!isFinite(v))return"n/a";return((signed&&v>=0)?"+":"")+v.toFixed(0)+"%";}
+function months(v){if(v==null)return"Not reached";if(v>120)return">10 yrs";return v.toFixed(1)+" mo";}
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function list(a){return(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join("");}
+
+/* ========================================================================
+   COMPUTE  (three scenarios: conservative / probable / severe)
+   ===================================================================== */
+function computeAll(){
+  const years=n(A.years), disc=n(A.discountRate)/100;
+  const inv=A.investment;
+  const tcoV=tco(inv,years), totalInv=totalInvestment(inv);
+  const baseLoss=lossMagnitude(A.costs);
+  const baseProb=n(A.annualProbability)/100;
+  const probRed=n(A.probReduction)/100, impRed=n(A.impactReduction)/100;
+  const add=n(A.additionalBenefits), rec=n(inv.recurringAnnual);
+  const BANDS=[
+    {key:"conservative",label:"Conservative",pMul:0.6,lMul:0.7},
+    {key:"probable",label:"Probable",pMul:1.0,lMul:1.0},
+    {key:"severe",label:"Severe",pMul:1.4,lMul:1.5}
+  ];
+  const out={};
+  BANDS.forEach(b=>{
+    const s=scenario({annualProbability:baseProb*b.pMul,loss:baseLoss*b.lMul,
+      probReduction:probRed,impactReduction:impRed,recurringAnnualSecurityCost:rec,additionalOperationalBenefits:add});
+    const cumRisk=s.riskReductionBenefit*years;
+    const totalBenefits=(s.riskReductionBenefit+add)*years;
+    out[b.key]={label:b.label,
+      ale_before:s.ale_before, ale_after:s.ale_after,
+      riskReductionBenefit:s.riskReductionBenefit, netAnnualBenefit:s.netAnnualBenefit,
+      rosi:rosi(cumRisk,tcoV), roi:roi(totalBenefits,tcoV),
+      payback:paybackMonths(totalInv,s.netAnnualBenefit),
+      npv:npv(totalInv,s.netAnnualBenefit,years,disc),
+      inaction:costOfInaction(s.ale_before,s.ale_after,years)};
+  });
+  return{years,tcoV,totalInv,baseLoss,bands:out};
+}
+
+/* ========================================================================
+   WIZARD RENDER
+   ===================================================================== */
+const STEPS=["Organisation","Threat scenario","Incident costs","Security investment","Effectiveness","Results"];
+function render(){
+  if(step<0){renderIntro();return;}
+  if(step===0){renderOrg();return;}
+  if(step===1){renderThreat();return;}
+  if(step===2){renderCosts();return;}
+  if(step===3){renderInvestment();return;}
+  if(step===4){renderEffectiveness();return;}
+  compute();
+}
+function shell(inner,nextLabel){
+  const pct=Math.round((step/ (STEPS.length-1))*100);
+  return `<div class="card">
+    <div class="progress"><i style="width:${pct}%"></i></div>
+    <div class="step">${inner}</div>
+    <div class="nav">
+      <button class="btn ghost" id="back">Back</button>
+      <div class="spacer"></div>
+      <button class="btn" id="next">${nextLabel||"Next"}</button>
+    </div>
+  </div>`;
+}
+function wireNav(onNext){
+  const back=document.getElementById('back');
+  back.onclick=()=>{step--;render();};
+  document.getElementById('next').onclick=onNext;
+}
+
+function renderIntro(){
+  app.innerHTML=`<div class="card intro">
+    <div class="block-title">How it works</div>
+    <p class="lead">A security budget is easier to defend when it is framed as avoided loss. This tool walks through five short steps, then produces a board-ready estimate. Nothing you type leaves your browser except the final numbers, which are sent only to generate the written summary.</p>
+    <div class="how">
+      <div class="hcard"><div class="n">01</div><h4>Exposure</h4><p>How likely an incident is, and what one would cost across response, downtime, revenue, legal and reputation.</p></div>
+      <div class="hcard"><div class="n">02</div><h4>Investment</h4><p>The full cost of the control you are considering, including recurring and internal effort (TCO).</p></div>
+      <div class="hcard"><div class="n">03</div><h4>Effect</h4><p>How much the control is expected to cut the likelihood and the impact.</p></div>
+      <div class="hcard"><div class="n">04</div><h4>Decision</h4><p>ROSI, payback, NPV and the cost of inaction, across a conservative to severe range.</p></div>
+    </div>
+    <div class="block-title">Narrative language</div>
+    <p class="lead" style="margin-bottom:10px">The numbers are always the same. Pick the language for the written executive summary.</p>
+    <div class="chips" id="langs"></div>
+    <div class="note">This is a decision-support estimate built on your own assumptions. It is not a guarantee of loss or return, and it does not replace a formal risk assessment. Do not enter confidential data, victim names, credentials or incident evidence.</div>
+    <div class="nav"><div class="spacer"></div><button class="btn" id="start">Start</button></div>
+  </div>`;
+  const row=document.getElementById('langs');
+  LANGS.forEach(l=>{
+    const c=document.createElement('span');c.className="chip"+(A.language===l?" on":"");c.textContent=l;
+    c.onclick=()=>{A.language=l;Array.prototype.forEach.call(row.children,x=>x.classList.toggle("on",x===c));};
+    row.appendChild(c);
+  });
+  document.getElementById('start').onclick=()=>{step=0;render();};
+}
+
+function renderOrg(){
+  const sizes=["Small (under 50)","Medium (50-250)","Large (250-1000)","Enterprise (1000+)"];
+  const inner=`<h2>Your organisation</h2>
+    <div class="sub">Used only for context in the summary. The organisation name is optional and stays in your browser.</div>
+    <label class="lbl">Organisation name (optional)</label>
+    <input class="txt" id="orgName" placeholder="Leave blank to keep it anonymous" value="${esc(A.orgName)}"/>
+    <div class="grid2">
+      <div><label class="lbl">Currency</label>
+        <select class="txt" id="currency">${["USD","EUR","BRL","GBP"].map(c=>`<option ${A.currency===c?"selected":""}>${c}</option>`).join("")}</select></div>
+      <div><label class="lbl">Analysis horizon</label>
+        <select class="txt" id="years">${[1,2,3,5].map(y=>`<option value="${y}" ${A.years==y?"selected":""}>${y} year${y>1?"s":""}</option>`).join("")}</select></div>
+    </div>
+    <label class="lbl">Sector</label>
+    <select class="txt" id="sector"><option value="">Select (optional)</option>${SECTORS.map(s=>`<option ${A.sector===s?"selected":""}>${s}</option>`).join("")}</select>
+    <label class="lbl">Size</label>
+    <div class="chips" id="sizes">${sizes.map(s=>`<span class="chip ${A.size===s?"on":""}" data-s="${esc(s)}">${s}</span>`).join("")}</div>`;
+  app.innerHTML=shell(inner);
+  app.querySelectorAll('#sizes .chip').forEach(c=>c.onclick=()=>{
+    A.size=c.getAttribute('data-s');
+    app.querySelectorAll('#sizes .chip').forEach(x=>x.classList.toggle("on",x===c));
+  });
+  wireNav(()=>{
+    A.orgName=document.getElementById('orgName').value.trim();
+    A.currency=document.getElementById('currency').value;
+    A.years=+document.getElementById('years').value;
+    A.sector=document.getElementById('sector').value;
+    step=1;render();
+  });
+}
+
+function renderThreat(){
+  const inner=`<h2>Which risk are you quantifying?</h2>
+    <div class="sub">Pick a starting point, then adjust the likelihood. Every cost is editable on the next step.</div>
+    <div class="chips" id="types">${Object.keys(PRESETS).map(t=>`<span class="chip ${A.scenarioType===t?"on":""}" data-t="${esc(t)}">${t}</span>`).join("")}</div>
+    <label class="lbl">Annual likelihood of at least one such incident</label>
+    <div class="rng"><input type="range" id="prob" min="1" max="100" value="${A.annualProbability}"/><span class="val mono" id="probv">${A.annualProbability}%</span></div>
+    <div class="note">Likelihood is your best estimate of the chance this happens in a given year. If you expect more than one event per year, set it toward the top of the range. This drives the Annualised Loss Expectancy (likelihood multiplied by cost per incident).</div>`;
+  app.innerHTML=shell(inner);
+  app.querySelectorAll('#types .chip').forEach(c=>c.onclick=()=>{
+    const t=c.getAttribute('data-t');A.scenarioType=t;
+    const pr=PRESETS[t];
+    A.annualProbability=pr.p;A.costs=Object.assign({},pr.c);A.probReduction=pr.pr;A.impactReduction=pr.ir;
+    if(totalInvestment(A.investment)===0)A.investment=Object.assign({},INV_DEFAULT);
+    app.querySelectorAll('#types .chip').forEach(x=>x.classList.toggle("on",x===c));
+    const r=document.getElementById('prob');r.value=pr.p;document.getElementById('probv').textContent=pr.p+"%";
+  });
+  const r=document.getElementById('prob');
+  r.oninput=()=>{A.annualProbability=+r.value;document.getElementById('probv').textContent=r.value+"%";};
+  wireNav(()=>{
+    if(!A.scenarioType){document.getElementById('next').textContent="Pick a scenario";setTimeout(render,900);return;}
+    step=2;render();
+  });
+}
+
+function moneyRow(id,label,val){
+  return `<div><label class="lbl">${label}</label><input class="txt num" id="${id}" type="number" min="0" step="1000" value="${n(val)}"/></div>`;
+}
+function renderCosts(){
+  const c=A.costs;
+  const inner=`<h2>Cost of a single incident</h2>
+    <div class="sub">Estimate the impact of one incident in ${A.currency}. Leave a line at zero if it does not apply.</div>
+    <div class="grid2">
+      ${moneyRow("responseCost","Response & recovery",c.responseCost)}
+      ${moneyRow("operationalLoss","Operational downtime",c.operationalLoss)}
+      ${moneyRow("revenueLoss","Lost revenue / sales",c.revenueLoss)}
+      ${moneyRow("legalRegulatoryCost","Legal, fines & regulatory",c.legalRegulatoryCost)}
+      ${moneyRow("reputationCost","Reputation & customer loss",c.reputationCost)}
+      ${moneyRow("longTermCost","Long-term (premiums, remediation)",c.longTermCost)}
+    </div>
+    <label class="lbl">Insurance recovery (subtracted from the total)</label>
+    <input class="txt num" id="insuranceRecovery" type="number" min="0" step="1000" value="${n(c.insuranceRecovery)}"/>
+    <div class="note">The gross sum minus insurance recovery becomes the loss per incident used in every calculation.</div>`;
+  app.innerHTML=shell(inner);
+  wireNav(()=>{
+    ["responseCost","operationalLoss","revenueLoss","legalRegulatoryCost","reputationCost","longTermCost","insuranceRecovery"]
+      .forEach(k=>A.costs[k]=n(document.getElementById(k).value));
+    step=3;render();
+  });
+}
+
+function renderInvestment(){
+  const i=A.investment;
+  const inner=`<h2>The security investment</h2>
+    <div class="sub">The full cost of the control you are evaluating, over ${A.years} year${A.years>1?"s":""}. This is the TCO basis.</div>
+    <div class="grid2">
+      ${moneyRow("initial","Initial / licences",i.initial)}
+      ${moneyRow("implementation","Implementation",i.implementation)}
+      ${moneyRow("integration","Integration",i.integration)}
+      ${moneyRow("training","Training",i.training)}
+      ${moneyRow("infrastructure","Infrastructure",i.infrastructure)}
+      ${moneyRow("internalLabor","Internal labour",i.internalLabor)}
+    </div>
+    <label class="lbl">Recurring annual cost (support, subscription, upkeep)</label>
+    <input class="txt num" id="recurringAnnual" type="number" min="0" step="1000" value="${n(i.recurringAnnual)}"/>
+    <div class="note">TCO = one-off costs + recurring cost over the horizon. Recurring cost is also charged against the annual benefit.</div>`;
+  app.innerHTML=shell(inner);
+  wireNav(()=>{
+    ["initial","implementation","integration","training","infrastructure","internalLabor","recurringAnnual"]
+      .forEach(k=>A.investment[k]=n(document.getElementById(k).value));
+    step=4;render();
+  });
+}
+
+function renderEffectiveness(){
+  const inner=`<h2>How effective is the control?</h2>
+    <div class="sub">Your expectation of how much this investment reduces the risk. Be conservative; these two numbers drive the whole return.</div>
+    <label class="lbl">Reduction in likelihood</label>
+    <div class="rng"><input type="range" id="pr" min="0" max="95" value="${A.probReduction}"/><span class="val mono" id="prv">${A.probReduction}%</span></div>
+    <label class="lbl">Reduction in impact per incident</label>
+    <div class="rng"><input type="range" id="ir" min="0" max="95" value="${A.impactReduction}"/><span class="val mono" id="irv">${A.impactReduction}%</span></div>
+    <div class="grid2">
+      <div><label class="lbl">Other annual benefits (optional)</label><input class="txt num" id="addb" type="number" min="0" step="1000" value="${n(A.additionalBenefits)}"/></div>
+      <div><label class="lbl">Discount rate for NPV</label><input class="txt num" id="disc" type="number" min="0" max="40" step="0.5" value="${A.discountRate}"/></div>
+    </div>
+    <div class="note">Other benefits can include efficiency gains, lower insurance premiums or compliance value. The discount rate reflects the time value of money for the NPV.</div>`;
+  app.innerHTML=shell(inner,"Calculate");
+  const pr=document.getElementById('pr'),ir=document.getElementById('ir');
+  pr.oninput=()=>{A.probReduction=+pr.value;document.getElementById('prv').textContent=pr.value+"%";};
+  ir.oninput=()=>{A.impactReduction=+ir.value;document.getElementById('irv').textContent=ir.value+"%";};
+  wireNav(()=>{
+    A.probReduction=+pr.value;A.impactReduction=+ir.value;
+    A.additionalBenefits=n(document.getElementById('addb').value);
+    A.discountRate=n(document.getElementById('disc').value);
+    step=5;render();
+  });
+}
+
+/* ========================================================================
+   RESULTS
+   ===================================================================== */
+let LAST=null;
+async function compute(){
+  const R=computeAll();LAST=R;
+  renderReport(R,null,"loading");
+  // AI narrative is optional: calculations already stand on their own.
+  const payload={
+    scenarioType:A.scenarioType, sector:A.sector||"unspecified", size:A.size||"unspecified",
+    currency:A.currency, horizon_years:R.years,
+    annual_exposure_before:Math.round(R.bands.probable.ale_before),
+    annual_exposure_after_residual:Math.round(R.bands.probable.ale_after),
+    annual_risk_reduction_benefit:Math.round(R.bands.probable.riskReductionBenefit),
+    total_initial_investment:Math.round(R.totalInv),
+    tco_over_horizon:Math.round(R.tcoV),
+    rosi_percent:R.bands.probable.rosi==null?null:Math.round(R.bands.probable.rosi),
+    roi_percent:R.bands.probable.roi==null?null:Math.round(R.bands.probable.roi),
+    payback_months:R.bands.probable.payback==null?null:+R.bands.probable.payback.toFixed(1),
+    npv:Math.round(R.bands.probable.npv),
+    cost_of_inaction_over_horizon:Math.round(R.bands.probable.inaction),
+    range:{
+      annual_exposure_before:[Math.round(R.bands.conservative.ale_before),Math.round(R.bands.severe.ale_before)],
+      rosi_percent:[R.bands.conservative.rosi==null?null:Math.round(R.bands.conservative.rosi),R.bands.severe.rosi==null?null:Math.round(R.bands.severe.rosi)]
+    }
+  };
+  try{
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({lang:A.language,results:payload})});
+    const raw=await r.text();let d={};try{d=JSON.parse(raw);}catch(_){}
+    if(r.ok&&d.narrative)renderReport(R,d.narrative,"ai");
+    else renderReport(R,fallbackNarrative(R),"fallback");
+  }catch(e){renderReport(R,fallbackNarrative(R),"fallback");}
+}
+
+/* deterministic narrative so the tool is fully usable with no AI */
+function fallbackNarrative(R){
+  const b=R.bands.probable;
+  const verdict=b.rosi!=null&&b.rosi>0&&b.payback!=null;
+  return{
+    headline:verdict
+      ? `Investing is projected to return about ${pct(b.rosi)} over ${R.years} year${R.years>1?"s":""} while cutting annual exposure to ${money(b.ale_after)}.`
+      : `Under these assumptions the investment does not pay back financially; the case rests on risk tolerance and non-financial factors.`,
+    narrative:`Annual loss exposure is estimated at ${money(b.ale_before)} before the control and ${money(b.ale_after)} after. The investment carries a total cost of ownership of ${money(R.tcoV)} over ${R.years} year${R.years>1?"s":""}. That yields a return on security investment of ${pct(b.rosi,true)}, with payback ${b.payback==null?"not reached":"at roughly "+months(b.payback)}. Doing nothing over the horizon carries an expected avoidable loss of ${money(b.inaction)}.`,
+    drivers:["Likelihood and cost per incident set the exposure","Control effectiveness (likelihood and impact reduction) sets the benefit","Recurring cost and horizon shape the net return"],
+    recommendation:verdict
+      ? "The numbers support the investment. Confirm the effectiveness estimates with the vendor or a pilot before committing."
+      : "Treat this as marginal on finance alone. Revisit the effectiveness assumptions, consider a lower-cost control, or justify on compliance and resilience grounds.",
+    caveats:["These are estimates for decision support, not a guarantee of loss or return.","Results are only as good as the assumptions you entered.","A conservative-to-severe range is shown because single-point estimates overstate certainty."]
+  };
+}
+
+function kpi(lab,val,cls,sub){return `<div class="kpi"><div class="lab">${lab}</div><div class="v ${cls||''}">${val}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;}
+
+function renderReport(R,narr,mode){
+  const b=R.bands.probable,c=R.bands.conservative,s=R.bands.severe;
+  const who=[A.orgName,A.sector,A.size].filter(Boolean).join(" · ")||"Anonymous estimate";
+  const vclass=b.rosi!=null&&b.rosi>0&&b.payback!=null?"go":(b.rosi!=null&&b.rosi>-40?"cond":"no");
+
+  const scnRows=[["Conservative",c],["Probable",b],["Severe",s]].map(([lab,x])=>`
+    <tr class="${lab==='Probable'?'base':''}">
+      <td>${lab}</td>
+      <td class="mono">${money(x.ale_before)}</td>
+      <td class="mono">${money(x.ale_after)}</td>
+      <td class="mono">${pct(x.rosi,true)}</td>
+      <td class="mono">${months(x.payback)}</td>
+      <td class="mono">${money(x.npv)}</td>
+    </tr>`).join("");
+
+  let narrBlock="";
+  if(mode==="loading"){
+    narrBlock=`<div class="narr"><div class="loading" style="padding:20px 0"><div class="spin"></div><div>Writing the executive summary...</div></div></div>`;
+  }else if(narr){
+    const badge=mode==="ai"?`<span class="nvidia">AI via NVIDIA</span>`:``;
+    const vlabel=vclass==="go"?"Recommended":(vclass==="cond"?"Conditional":"Not justified on finance alone");
+    narrBlock=`
+      <div class="verdict ${vclass}"><b>Bottom line ${badge}</b>${esc(narr.headline||"")}</div>
+      <div class="narr">
+        <h3>Executive summary</h3>
+        <p>${esc(narr.narrative||"")}</p>
+        ${narr.drivers&&narr.drivers.length?`<h4>Main drivers</h4><ul>${list(narr.drivers)}</ul>`:''}
+        <h4>Recommendation (${vlabel})</h4><p style="margin-bottom:0">${esc(narr.recommendation||"")}</p>
+        ${narr.caveats&&narr.caveats.length?`<h4>Caveats</h4><ul>${list(narr.caveats)}</ul>`:''}
+      </div>`;
+  }
+
+  const html=`<div class="report" id="report">
+    <div class="rhead">
+      <div class="tag">CYBER INVESTMENT CASE</div>
+      <h1>${A.scenarioType?esc(A.scenarioType):"Security"} investment analysis</h1>
+      <div class="who">${esc(who)} · ${A.years}-year horizon · ${A.currency}</div>
+    </div>
+    ${narrBlock}
+    <div class="sec-h">Headline numbers (probable case)</div>
+    <div class="kpis">
+      ${kpi("Annual exposure (before)",money(b.ale_before),"neg")}
+      ${kpi("Residual exposure (after)",money(b.ale_after),"")}
+      ${kpi("Risk reduced / year",money(b.riskReductionBenefit),"pos")}
+      ${kpi("Investment (TCO)",money(R.tcoV),"","one-off "+money(R.totalInv))}
+      ${kpi("ROSI",pct(b.rosi,true),b.rosi!=null&&b.rosi>=0?"pos":"neg","over "+R.years+" yr")}
+      ${kpi("Payback",months(b.payback),b.payback!=null?"pos":"neg")}
+      ${kpi("NPV",money(b.npv),b.npv>=0?"pos":"neg","at "+A.discountRate+"% discount")}
+      ${kpi("ROI",pct(b.roi,true),b.roi!=null&&b.roi>=0?"pos":"neg")}
+      ${kpi("Cost of inaction",money(b.inaction),"neg","expected avoidable loss")}
+    </div>
+    <div class="sec-h">Scenario range</div>
+    <table class="scn">
+      <thead><tr><th>Scenario</th><th>Exposure before</th><th>Residual after</th><th>ROSI</th><th>Payback</th><th>NPV</th></tr></thead>
+      <tbody>${scnRows}</tbody>
+    </table>
+    <div class="disc"><b>Decision-support estimate, not a guarantee.</b> All figures are derived from the assumptions you entered (likelihood, cost per incident and expected control effectiveness) using standard risk-quantification formulas. They do not predict an actual loss or return and do not replace a formal risk assessment. The conservative and severe columns vary the likelihood and cost to reflect uncertainty.</div>
+    <div class="rfoot">Incident Cost Estimator · rochacrypt · calculations run locally in your browser · generated ${new Date().toISOString().slice(0,10)}</div>
+  </div>`;
+
+  app.innerHTML=html+`
+    <div class="actions">
+      <button class="btn pdf" id="pdf">Download PDF</button>
+      <button class="btn wa" id="wa">Share summary</button>
+      <button class="btn ghost" id="edit">Edit inputs</button>
+      <button class="btn ghost" id="restart">Start over</button>
+    </div>`;
+
+  document.getElementById('pdf').onclick=()=>{
+    const el=document.getElementById('report');
+    html2pdf().set({margin:8,filename:'cyber-investment-case.pdf',image:{type:'jpeg',quality:.98},
+      html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+  };
+  document.getElementById('wa').onclick=()=>{
+    const msg=`Cyber investment case (${A.scenarioType||"security"}):\n`+
+      `Annual exposure: ${money(b.ale_before)} -> ${money(b.ale_after)}\n`+
+      `Investment (TCO ${A.years}yr): ${money(R.tcoV)}\n`+
+      `ROSI: ${pct(b.rosi,true)} | Payback: ${months(b.payback)} | NPV: ${money(b.npv)}\n`+
+      `Cost of inaction: ${money(b.inaction)}\n\nBuilt with ${location.origin}/incident.html`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+  };
+  document.getElementById('edit').onclick=()=>{step=4;render();};
+  document.getElementById('restart').onclick=()=>{step=-1;render();};
+}
+
+render();
+</script>
+</body>
+</html>
