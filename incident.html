@@ -6,7 +6,6 @@
 <title>Incident Cost Estimator: quantify cyber risk and ROSI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 :root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--accent:#ff2e4c;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
@@ -108,6 +107,18 @@ table.scn tr.base{background:#fff7f8}
 .disc{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:13px 15px;margin-top:16px;font-size:12.5px;color:#7c2d12}
 .rfoot{margin-top:20px;text-align:center;color:#94a3b8;font-size:11px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+
+/* native print to PDF: show only the report, let it flow across A4 pages */
+@media print{
+  @page{size:A4;margin:12mm}
+  html,body{background:#fff !important}
+  header,.hero,.actions,.note,.progress{display:none !important}
+  .wrap{max-width:none;margin:0;padding:0}
+  .report{border-radius:0;margin:0;padding:0;box-shadow:none}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .kpi,.verdict,.narr,table.scn tr,.disc{break-inside:avoid;page-break-inside:avoid}
+  .narr,.verdict,.disc{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
 </style>
 </head>
 <body>
@@ -532,17 +543,14 @@ function renderReport(R,narr,mode){
 
   app.innerHTML=html+`
     <div class="actions">
-      <button class="btn pdf" id="pdf">Download PDF</button>
+      <button class="btn pdf" id="pdf">Save as PDF</button>
       <button class="btn wa" id="wa">Share summary</button>
       <button class="btn ghost" id="edit">Edit inputs</button>
       <button class="btn ghost" id="restart">Start over</button>
-    </div>`;
+    </div>
+    <div class="note">For the PDF, choose "Save as PDF" as the destination in the print dialog.</div>`;
 
-  document.getElementById('pdf').onclick=()=>{
-    const el=document.getElementById('report');
-    html2pdf().set({margin:8,filename:'cyber-investment-case.pdf',image:{type:'jpeg',quality:.98},
-      html2canvas:{scale:2,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
-  };
+  document.getElementById('pdf').onclick=()=>{ window.print(); };
   document.getElementById('wa').onclick=()=>{
     const msg=`Cyber investment case (${A.scenarioType||"security"}):\n`+
       `Annual exposure: ${money(b.ale_before)} -> ${money(b.ale_after)}\n`+
