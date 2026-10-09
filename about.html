@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data: https://i.ibb.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action 'self'"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#08090c"/>
+<title>About | Alexandre Rocha</title>
+<meta name="description" content="About Alexandre Rocha: cybersecurity engineer in Dublin. Offensive security, threat detection and response, cloud security, and the free tools he builds."/>
+<meta property="og:title" content="About | Alexandre Rocha"/>
+<meta property="og:description" content="Cybersecurity engineer in Dublin. Who I am, what I do, experience and certifications."/>
+<meta property="og:type" content="profile"/>
+<meta property="og:image" content="/logo.png"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="apple-touch-icon" href="/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07080b;--panel:#0d1117;--panel2:#11161f;--line:#1b2431;--line2:#28313f;
+  --text:#e9eef4;--muted:#8a97a7;--red:#ff2e4c;--red-d:#3a0008;--blue:#2e6bff;--purple:#8a63ff;--green:#2ecc71;
+  --nav-h:66px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 12px)}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;overflow-x:hidden;
+  padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.mono{font-family:'Fira Code',monospace}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px;position:relative;z-index:2}
+img{max-width:100%}
+
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg .grid{position:absolute;inset:-2px;
+  background-image:linear-gradient(rgba(255,46,76,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,46,76,.045) 1px,transparent 1px);
+  background-size:46px 46px;mask:radial-gradient(1200px 700px at 50% -5%,#000,transparent 72%);
+  -webkit-mask:radial-gradient(1200px 700px at 50% -5%,#000,transparent 72%)}
+.bg .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;will-change:transform}
+.bg .b1{width:560px;height:560px;left:-140px;top:-180px;background:radial-gradient(circle,rgba(255,46,76,.55),transparent 65%);animation:drift1 22s ease-in-out infinite}
+.bg .b2{width:520px;height:520px;right:-160px;top:40px;background:radial-gradient(circle,rgba(138,99,255,.4),transparent 65%);animation:drift2 26s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,70px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,50px)}}
+
+.reveal{opacity:0;transform:translateY(26px);transition:.7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* nav */
+nav{position:sticky;top:0;z-index:60;background:rgba(9,11,15,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
+.nav-in{max-width:1120px;margin:0 auto;height:var(--nav-h);padding:0 20px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center}
+.brand .logo{height:40px;display:block;filter:drop-shadow(0 2px 10px rgba(255,46,76,.25))}
+.nav-desktop{margin-left:auto;display:flex;gap:6px;align-items:center}
+.nav-desktop>a,.ddt{color:var(--muted);font-size:14px;font-weight:600;padding:9px 12px;border-radius:9px;transition:.15s;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.nav-desktop>a:hover,.ddt:hover,.nav-desktop>a.active{color:#fff;background:rgba(255,255,255,.05)}
+.nav-cta{background:var(--red)!important;color:#fff!important;padding:9px 16px!important;border-radius:999px!important;font-weight:700}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(255,46,76,.4)}
+.dd{position:relative}
+.ddt:after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-top:-3px;opacity:.6;transition:.15s}
+.dd:hover .ddt:after,.dd:focus-within .ddt:after{transform:rotate(225deg);margin-top:2px}
+.dd .menu{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(8px);
+  background:rgba(13,17,23,.98);border:1px solid var(--line2);border-radius:14px;padding:8px;min-width:260px;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);opacity:0;visibility:hidden;transition:.18s;z-index:70}
+.dd:hover .menu,.dd:focus-within .menu{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+.dd .menu:before{content:"";position:absolute;top:-10px;left:0;right:0;height:10px}
+.dd .menu a{display:block;padding:10px 12px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--text)}
+.dd .menu a:hover{background:var(--panel2);color:#fff}
+.dd .menu a small{display:block;color:var(--muted);font-weight:400;font-size:11.5px;margin-top:2px}
+.nav-toggle{display:none;margin-left:auto;width:44px;height:44px;border:1px solid var(--line2);background:var(--panel2);
+  border-radius:11px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+.nav-toggle span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px;transition:.25s}
+body.menu-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.menu-open .nav-toggle span:nth-child(2){opacity:0}
+body.menu-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.m-menu{position:fixed;top:var(--nav-h);left:0;right:0;bottom:0;z-index:55;background:rgba(7,8,11,.98);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  padding:18px 20px calc(30px + env(safe-area-inset-bottom,0));overflow-y:auto;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;gap:6px}
+body.menu-open .m-menu{transform:none}
+.m-menu>a,.m-head{display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:15px 16px;border-radius:12px;font-size:17px;font-weight:600;color:var(--text);
+  background:var(--panel);border:1px solid var(--line);cursor:pointer;font-family:inherit;text-align:left}
+.m-head:after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:.22s;flex:0 0 auto}
+.m-group.open .m-head:after{transform:rotate(-135deg)}
+.m-group{display:flex;flex-direction:column;gap:6px}
+.m-sub{max-height:0;overflow:hidden;transition:max-height .3s ease;display:flex;flex-direction:column;gap:6px;padding-left:8px}
+.m-group.open .m-sub{max-height:520px;margin-top:2px}
+.m-sub a{display:block;padding:13px 16px;border-radius:11px;background:var(--panel2);border:1px solid var(--line);font-size:14.5px;font-weight:600;color:var(--text)}
+.m-sub a small{display:block;color:var(--muted);font-weight:400;font-size:12px;margin-top:2px}
+.m-cta{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;justify-content:center!important;font-weight:700}
+
+/* page + about */
+.page{padding:48px 0 70px;position:relative;z-index:2}
+.sec-tag{color:var(--red);font-family:'Fira Code',monospace;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+h1.title{font-family:'Space Grotesk',sans-serif;font-size:clamp(30px,6vw,52px);font-weight:700;letter-spacing:-1px;margin:8px 0 6px}
+.about-grid{display:grid;grid-template-columns:320px 1fr;gap:30px;align-items:start;margin-top:18px}
+@media(max-width:760px){.about-grid{grid-template-columns:1fr;gap:20px}}
+.about-media{position:relative;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.about-media img{display:block;width:100%;height:auto}
+.about-media:after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,46,76,.18)}
+.about-copy p{color:#c9d3df;font-size:15.5px;margin-bottom:12px}
+.about-copy p strong{color:#fff}
+.pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0 4px}
+@media(max-width:520px){.pillars{grid-template-columns:1fr}}
+.pillar{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:11px;padding:12px 14px}
+.pillar h4{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:2px}
+.pillar p{color:var(--muted);font-size:12.5px;margin:0}
+.about-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:30px 0 6px}
+.about-stat{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.about-stat b{font-family:'Space Grotesk',sans-serif;font-size:26px;color:var(--red);display:block;line-height:1;margin-bottom:4px}
+.about-stat span{font-size:12px;color:var(--muted)}
+.about-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.about-links a{font-size:13px;font-weight:600;color:var(--text);border:1px solid var(--line2);border-radius:999px;padding:10px 17px;transition:.15s}
+.about-links a:hover{border-color:var(--red);color:#fff}
+.about-links a.primary{background:var(--red);border-color:var(--red);color:#fff}
+
+footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:var(--muted);font-size:12.5px;position:relative;z-index:2}
+
+@media(max-width:860px){ .nav-desktop{display:none} .nav-toggle{display:flex} }
+@media(min-width:861px){ .m-menu{display:none} }
+@media(max-width:480px){ .brand .logo{height:34px} }
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="grid"></div></div>
+
+<nav>
+  <div class="nav-in">
+    <a href="/" class="brand" aria-label="rochacrypt home"><img src="/logo.png" alt="rochacrypt" class="logo"/></a>
+    <div class="nav-desktop">
+      <a href="/about.html" class="active">About</a>
+      <a href="/#expertise">Expertise</a>
+      <div class="dd">
+        <span class="ddt" tabindex="0" role="button">Projects</span>
+        <div class="menu">
+          <a href="/pulse.html">Cyber Pulse<small>Security news, analysed by AI</small></a>
+          <a href="https://arsenal.rochacrypt.com" target="_blank" rel="noopener noreferrer">Arsenal<small>Catalog of 366 security tools</small></a>
+          <a href="https://kb.rochacrypt.com" target="_blank" rel="noopener noreferrer">Knowledge Base<small>50 certification mind maps</small></a>
+        </div>
+      </div>
+      <div class="dd">
+        <span class="ddt" tabindex="0" role="button">Tools</span>
+        <div class="menu">
+          <a href="https://career.rochacrypt.com" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
+          <a href="/incident.html">Incident Cost Estimator<small>Quantify risk and ROSI (AI)</small></a>
+          <a href="https://url.rochacrypt.com" target="_blank" rel="noopener noreferrer">URL Sentinel<small>Coming soon</small></a>
+          <a href="https://cve.rochacrypt.com" target="_blank" rel="noopener noreferrer">CVE Radar<small>Coming soon</small></a>
+        </div>
+      </div>
+      <a href="/#contact">Contact</a>
+      <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="nav-cta" href="/chat.html">Chat with AI</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="m-menu" id="mobileMenu">
+  <a href="/about.html">About</a>
+  <a href="/#expertise">Expertise</a>
+  <div class="m-group">
+    <button class="m-head" type="button">Projects</button>
+    <div class="m-sub">
+      <a href="/pulse.html">Cyber Pulse<small>Security news, analysed by AI</small></a>
+      <a href="https://arsenal.rochacrypt.com" target="_blank" rel="noopener noreferrer">Arsenal<small>Catalog of 366 security tools</small></a>
+      <a href="https://kb.rochacrypt.com" target="_blank" rel="noopener noreferrer">Knowledge Base<small>50 certification mind maps</small></a>
+    </div>
+  </div>
+  <div class="m-group">
+    <button class="m-head" type="button">Tools</button>
+    <div class="m-sub">
+      <a href="https://career.rochacrypt.com" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
+      <a href="/incident.html">Incident Cost Estimator<small>Quantify risk and ROSI (AI)</small></a>
+      <a href="https://url.rochacrypt.com" target="_blank" rel="noopener noreferrer">URL Sentinel<small>Coming soon</small></a>
+      <a href="https://cve.rochacrypt.com" target="_blank" rel="noopener noreferrer">CVE Radar<small>Coming soon</small></a>
+    </div>
+  </div>
+  <a href="/#contact">Contact</a>
+  <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <a class="m-cta" href="/chat.html">Chat with AI</a>
+</div>
+
+<main class="page"><div class="wrap reveal">
+  <div class="sec-tag">// about me</div>
+  <h1 class="title">Who I am</h1>
+  <div class="about-grid">
+    <div class="about-media">
+      <img id="aboutImg" src="https://i.ibb.co/8gmTp11L/Designer.png" alt="Alexandre Rocha"/>
+    </div>
+    <div class="about-copy">
+      <p>I'm <strong>Alexandre Rocha</strong>, a cybersecurity engineer based in Dublin, Ireland, with <strong>14+ years in technology</strong> and <strong>7+ years focused on security</strong>. I work on both sides of the fence, offensive and defensive, which is to say I like breaking things to understand how to make them safer.</p>
+      <p>Day to day I lead security across enterprise and multi-tenant cloud environments: running penetration tests and vulnerability management, building detection and response in the SOC (SIEM, EDR and XDR), and tying it together under governance frameworks like ISO 27001, NIST CSF and MITRE ATT&amp;CK.</p>
+      <div class="pillars">
+        <div class="pillar"><h4>Offensive Security</h4><p>Pentesting and purple teaming across web, network and infrastructure.</p></div>
+        <div class="pillar"><h4>Detection &amp; Response</h4><p>SOC operations, threat hunting and EDR/XDR/MDR incident response.</p></div>
+        <div class="pillar"><h4>Cloud Security</h4><p>Securing enterprise and multi-tenant cloud on AWS, Azure and GCP.</p></div>
+        <div class="pillar"><h4>Governance &amp; Risk</h4><p>ISO 27001, NIST CSF and MITRE ATT&amp;CK; vulnerability and risk management.</p></div>
+      </div>
+      <p>Outside of that, I build, and everything here is free to use: a live AI news portal (<strong>Cyber Pulse</strong>), a catalogue of 366 security tools (<strong>Arsenal</strong>), 50 certification mind maps (<strong>Knowledge Base</strong>), and hands-on tools like the <strong>Career Compass</strong> and the <strong>Incident Cost Estimator</strong>. I write and share what I learn so that people starting out in tech and security have a clearer path.</p>
+      <p>On the certification side I hold credentials across offensive security, blue team and cloud, including <strong>CEH</strong>, CrowdStrike <strong>CCFA</strong>, LLM security (<strong>CLLMSP</strong>), <strong>Fortinet</strong>, and the AWS Solutions Architect, Security, AI and Cloud Practitioner tracks.</p>
+    </div>
+  </div>
+  <div class="about-stats">
+    <div class="about-stat"><b>14+</b><span>Years in IT</span></div>
+    <div class="about-stat"><b>7+</b><span>Years in security</span></div>
+    <div class="about-stat"><b>9</b><span>Certifications</span></div>
+    <div class="about-stat"><b>366</b><span>Tools catalogued</span></div>
+  </div>
+  <div class="about-links">
+    <a class="primary" href="/#projects">Projects and products</a>
+    <a href="/#portfolio">Past projects</a>
+    <a href="/#expertise">Expertise</a>
+    <a href="/#certs">Certifications</a>
+    <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="/#contact">Get in touch</a>
+  </div>
+</div></main>
+
+<footer><div class="mono">Alexandre Rocha · Dublin, Ireland · All techniques and tooling are used exclusively in authorised engagements.</div></footer>
+
+<script>
+/* about image: hide frame gracefully if the external image fails */
+(function(){const ai=document.getElementById('aboutImg');if(!ai)return;
+  ai.addEventListener('error',()=>{const m=ai.closest('.about-media');if(m)m.style.display='none';
+    const g=document.querySelector('.about-grid');if(g)g.style.gridTemplateColumns='1fr';});})();
+/* mobile menu */
+(function(){
+  const body=document.body,toggle=document.getElementById('navToggle'),menu=document.getElementById('mobileMenu');
+  function setOpen(o){body.classList.toggle('menu-open',o);toggle.setAttribute('aria-expanded',o?'true':'false');body.style.overflow=o?'hidden':'';}
+  toggle.addEventListener('click',()=>setOpen(!body.classList.contains('menu-open')));
+  menu.querySelectorAll('.m-group .m-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
+  window.addEventListener('resize',()=>{if(window.innerWidth>860)setOpen(false);});
+  window.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false);});
+})();
+/* reveal */
+(function(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));})();
+</script>
+</body>
+</html>
