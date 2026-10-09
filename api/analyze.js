@@ -35,18 +35,23 @@ export default async function handler(req) {
   } catch {}
   const basis = text && text.length > 120 ? `Article text:\n"""${text}"""` : `The article text could not be fetched. Analyse based on the URL and your knowledge: ${url}`;
 
-  const prompt = `You are a cybersecurity analyst. Produce a concise structured briefing of this news item.
+  const prompt = `You are a senior cybersecurity threat-intelligence analyst writing a professional briefing for a SOC and security leadership audience.
 ${basis}
+
+Write a precise, neutral and factual briefing. Use clear professional language: no marketing terms, no hype, no speculation. If a detail is not present in the source, use "Not specified" or "Unknown". Never invent CVE IDs, product versions, dates or vendor names.
 
 Return ONLY a valid JSON object (no markdown, no commentary), all text written in ${language}:
 {
-  "title": "the headline",
-  "summary": "2-3 sentence plain-language summary",
-  "affected": "affected products, vendors or systems, or 'Not specified'",
-  "date": "publication date if known, else 'Unknown'",
-  "cve": "comma-separated CVE IDs mentioned, or 'None'",
-  "impact": "1-2 sentences on the real-world impact / risk",
-  "remediation": "1-2 sentences on how to mitigate or what to do, or 'Not specified'"
+  "title": "the headline, cleaned up and neutral",
+  "severity": "your best assessment, exactly one of: Critical, High, Medium, Low, Informational",
+  "category": "short type label such as Vulnerability, Ransomware, Data breach, Malware, Phishing, Supply chain, Threat intel or Policy",
+  "summary": "2 to 4 sentence executive summary written in an analyst tone, leading with what happened and why it matters",
+  "affected": "affected products, vendors, systems or versions, or 'Not specified'",
+  "cve": "comma-separated CVE IDs if explicitly present, else 'None'",
+  "exploitation": "exactly one of: Actively exploited, Proof-of-concept available, No known exploitation, Unknown",
+  "impact": "1 to 2 sentences on the business and technical risk",
+  "remediation": "specific and prioritised recommended actions, or 'Not specified'",
+  "date": "publication date if known, else 'Unknown'"
 }`;
 
   try {
@@ -56,10 +61,10 @@ Return ONLY a valid JSON object (no markdown, no commentary), all text written i
       body: JSON.stringify({
         model: process.env.NVIDIA_MODEL || DEFAULT_MODEL,
         messages: [
-          { role: "system", content: "You are a precise assistant that returns only valid JSON matching the requested schema." },
+          { role: "system", content: "You are a precise cybersecurity threat-intelligence analyst that returns only valid JSON matching the requested schema. You never fabricate identifiers, versions or dates, and you keep the tone neutral and professional." },
           { role: "user", content: prompt },
         ],
-        temperature: 0.3, top_p: 0.9, max_tokens: 700, stream: true,
+        temperature: 0.2, top_p: 0.9, max_tokens: 850, stream: true,
       }),
     });
     if (!up.ok || !up.body) return json({ error: "AI provider error", detail: (await up.text().catch(() => "")).slice(0, 200) }, 502);
