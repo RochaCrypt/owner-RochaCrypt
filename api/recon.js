@@ -1,4 +1,4 @@
-// api/recon.js — single-input intelligence aggregator (with per-source diagnostics).
+// api/recon.js - single-input intelligence aggregator (with per-source diagnostics).
 // Keys (Vercel env): SHODAN_API_KEY, VIRUSTOTAL_API_KEY, DNSDUMPSTER_API_KEY, NETLAS_API_KEY,
 //                    SAFE_BROWSING_KEY, ABUSEIPDB_KEY, GREYNOISE_KEY
 export const config = { runtime: "edge" };
@@ -42,7 +42,7 @@ function detect(input) {
 function mkDiag() { const d = []; return { list: d, add: (s, r, n) => d.push({ source: s, ok: !!(r && r.ok), code: r ? r.status : 0, n: n || 0, err: r && r.err }) }; }
 function diagModule(diag) {
   if (!diag.list.length) return null;
-  const items = diag.list.map(e => `${e.source}: ${e.ok ? "ok" : "failed"}${e.code ? " [HTTP " + e.code + "]" : e.err ? " [" + e.err + "]" : ""}${e.ok ? " — " + e.n + " result(s)" : ""}`);
+  const items = diag.list.map(e => `${e.source}: ${e.ok ? "ok" : "failed"}${e.code ? " [HTTP " + e.code + "]" : e.err ? " [" + e.err + "]" : ""}${e.ok ? ": " + e.n + " result(s)" : ""}`);
   return { id: "diag", title: "Data sources", note: "Which providers responded. Configure the matching API key if one shows 401/403.", rows: [["Providers queried", String(diag.list.length)]], items };
 }
 
@@ -106,6 +106,53 @@ async function vtDomain(domain, diag) { const k = env("VIRUSTOTAL_API_KEY"); if 
 async function shodanHost(ip) { const k = env("SHODAN_API_KEY"); if (!k) return null; const d = await jget(`https://api.shodan.io/shodan/host/${ip}?key=${k}`); if (!d) return null; const vulns = Array.isArray(d.vulns) ? d.vulns : (d.vulns ? Object.keys(d.vulns) : []); const services = (d.data || []).slice(0, 8).map(s => `${s.port}/${s.transport || "tcp"} ${s.product || ""}${s.version ? " " + s.version : ""}`.trim()); return { ports: d.ports || [], org: d.org || d.isp || "", vulns, services }; }
 function btoaUrl(u) { return btoa(u).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 
+// leaked data via XposedOrNot (free, no key)
+async function breachModule(email, diag) {
+  const r = await raw(`https://api.xposedornot.com/v1/breach-analytics?email=${encodeURIComponent(email)}`);
+  const j = r.ok ? parse(r.text) : null;
+  const details = j?.ExposedBreaches?.breaches_details || [];
+  const n = details.length;
+  diag.add("XposedOrNot (breaches)", r, n);
+  if (!r.ok) return null;
+  if (!n) return { id: "breaches", title: "Exposed in breaches", note: "Source: XposedOrNot", rows: [["Breaches found", "0"]], items: ["This email was not found in known breaches."] };
+  const items = details.map(d => { const recs = (typeof d.xposed_records === "number") ? d.xposed_records.toLocaleString("en-US") : (d.xposed_records || "?"); const data = String(d.xposed_data || "").replace(/;/g, ", "); return `${d.breach}  (${recs} records${d.xposed_date ? ", " + d.xposed_date : ""})${data ? "  |  exposed: " + data : ""}`; });
+  return { id: "breaches", title: "Exposed in breaches", note: "Source: XposedOrNot", rows: [["Breaches found", String(n)]], items };
+}
+
+// forced search type (from the UI selector)
+function forceDetect(input, type) {
+  const s = input.trim();
+  if (!type || type === "auto") return detect(input);
+  if (type === "domain") return { type: "domain", value: s.toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "") };
+  if (type === "ip") return { type: "ip", value: s };
+  if (type === "email") return { type: "email", value: s.toLowerCase() };
+  if (type === "cve") return { type: "cve", value: s.toUpperCase() };
+  if (type === "url") { try { const u = new URL(/^[a-z]+:\/\//i.test(s) ? s : "http://" + s); return { type: "url", value: u.href, host: u.hostname }; } catch { return { type: "unknown", value: s }; } }
+  if (type === "hash") { const algo = s.length === 32 ? "md5" : s.length === 40 ? "sha1" : s.length === 64 ? "sha256" : null; return algo ? { type: "hash", value: s.toLowerCase(), algo } : { type: "unknown", value: s }; }
+  return detect(input);
+}
+
+// environment health from the collected modules
+function rowOf(modules, id, re) { const m = modules.find(x => x.id === id); if (!m) return null; const r = (m.rows || []).find(x => re.test(x[0])); return r ? r[1] : null; }
+function computeHealth(modules) {
+  const stats = {};
+  const sub = rowOf(modules, "subdomains", /Unique subdomains/i); if (sub != null) stats.subdomains = parseInt(sub) || 0;
+  const ips = rowOf(modules, "ips", /IPs found/i); if (ips != null) stats.ips = parseInt(ips) || 0;
+  const exp = modules.find(x => x.id === "exposure"); let ports = 0, cves = 0;
+  if (exp) { const pr = (exp.rows || []).find(r => /Open ports/i.test(r[0])); if (pr && pr[1] && pr[1] !== "none") ports = pr[1].split(",").filter(Boolean).length; const cr = (exp.rows || []).find(r => /Known CVEs/i.test(r[0])); if (cr) cves = parseInt(cr[1]) || 0; }
+  if (exp) { stats.openPorts = ports; stats.cves = cves; }
+  const rep = rowOf(modules, "reputation", /Malicious/i); if (rep != null) { const m = String(rep).match(/(\d+)\s*\/\s*(\d+)/); stats.vendorFlags = m ? (+m[1]) + (+m[2]) : 0; }
+  const br = rowOf(modules, "breaches", /Breaches found/i); if (br != null) stats.breaches = parseInt(br) || 0;
+  const eg = rowOf(modules, "email", /Grade/i); if (eg) stats.emailGrade = eg;
+  let h = 100;
+  if (eg) h -= ({ A: 0, B: 5, C: 12, D: 20, F: 28 })[eg] || 0;
+  h -= Math.min(30, cves * 4); h -= Math.min(10, ports); h -= Math.min(24, (stats.breaches || 0) * 6); h -= Math.min(30, (stats.vendorFlags || 0) * 8);
+  h = Math.max(0, Math.min(100, Math.round(h)));
+  const grade = h >= 85 ? "A" : h >= 70 ? "B" : h >= 50 ? "C" : h >= 30 ? "D" : "F";
+  const status = h >= 80 ? "Healthy" : h >= 50 ? "Needs attention" : "At risk";
+  return { score: h, grade, status, stats };
+}
+
 async function build(det, diag) {
   const modules = []; const signals = []; let risk = 0; const push = m => { if (m) modules.push(m); };
 
@@ -127,18 +174,18 @@ async function build(det, diag) {
     if (env("SHODAN_API_KEY") && ips.length) {
       const pick = ips.slice(0, 5); const hosts = await Promise.all(pick.map(async ip => ({ ip, info: await shodanHost(ip) })));
       const items = []; let allV = [];
-      hosts.forEach(h => { if (h.info) { const p = [`${h.ip}  ${h.info.org}`.trim()]; if (h.info.ports.length) p.push("ports: " + h.info.ports.join(",")); if (h.info.vulns.length) { p.push("CVEs: " + h.info.vulns.slice(0, 8).join(",")); allV = allV.concat(h.info.vulns); } items.push(p.join("  |  ")); h.info.services.forEach(s => items.push("   " + h.ip + " -> " + s)); } else items.push(h.ip + "  (no Shodan host data — free plan or no credits)"); });
+      hosts.forEach(h => { if (h.info) { const p = [`${h.ip}  ${h.info.org}`.trim()]; if (h.info.ports.length) p.push("ports: " + h.info.ports.join(",")); if (h.info.vulns.length) { p.push("CVEs: " + h.info.vulns.slice(0, 8).join(",")); allV = allV.concat(h.info.vulns); } items.push(p.join("  |  ")); h.info.services.forEach(s => items.push("   " + h.ip + " -> " + s)); } else items.push(h.ip + "  (no public service data)"); });
       push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Hosts scanned", String(pick.length)], ["Known CVEs", String(uniq(allV).length)]], items });
-      if (uniq(allV).length) { risk += Math.min(40, uniq(allV).length * 6); signals.push(`${uniq(allV).length} known CVE(s) exposed across hosts.`); }
+      if (uniq(allV).length) { risk += Math.min(40, uniq(allV).length * 6); signals.push({ code: "cves", n: uniq(allV).length }); }
     } else if (ips[0]) {
       const idb = await jget(`https://internetdb.shodan.io/${ips[0]}`);
-      if (idb && (idb.ports?.length || idb.vulns?.length)) { push({ id: "exposure", title: "Exposure (Shodan InternetDB)", rows: [["IP", ips[0]], ["Open ports", (idb.ports || []).join(", ") || "none"], ["Known CVEs", String((idb.vulns || []).length)]], tags: idb.tags || [], items: idb.vulns || [] }); if (idb.vulns?.length) { risk += 30; signals.push(`${idb.vulns.length} known CVE(s) on the primary host.`); } }
+      if (idb && (idb.ports?.length || idb.vulns?.length)) { push({ id: "exposure", title: "Exposure (Shodan InternetDB)", rows: [["IP", ips[0]], ["Open ports", (idb.ports || []).join(", ") || "none"], ["Known CVEs", String((idb.vulns || []).length)]], tags: idb.tags || [], items: idb.vulns || [] }); if (idb.vulns?.length) { risk += 30; signals.push({ code: "cves", n: idb.vulns.length }); } }
     }
     if (ips[0]) push(await geoModule(ips[0]));
 
     if (vtd?.data?.attributes) { const a = vtd.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0);
       push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Harmless", String(st.harmless || 0)], ["Reputation", String(a.reputation ?? "n/a")], ["Categories", Object.values(a.categories || {}).slice(0, 4).join(", ") || "none"]] });
-      if (mal >= 1) { risk += Math.min(45, mal * 10); signals.push(`${mal} security vendor(s) flag this domain.`); } }
+      if (mal >= 1) { risk += Math.min(45, mal * 10); signals.push({ code: "vendors", n: mal }); } }
     push(email);
 
   } else if (det.type === "ip") {
@@ -146,27 +193,30 @@ async function build(det, diag) {
     const sh = await shodanHost(ip); diag.add("Shodan host", { ok: !!sh, status: sh ? 200 : 0 }, sh ? (sh.ports.length) : 0);
     const vr = await raw(`https://www.virustotal.com/api/v3/ip_addresses/${ip}`, env("VIRUSTOTAL_API_KEY") ? { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } } : {}); if (env("VIRUSTOTAL_API_KEY")) diag.add("VirusTotal IP", vr, 1);
     const [rdap, geo] = await Promise.all([rdapIp(ip), geoModule(ip)]); push(rdap); push(geo);
-    if (sh) { push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Open ports", sh.ports.join(", ") || "none"], ["Organisation", sh.org || "Unknown"], ["Known CVEs", String(sh.vulns.length)]], items: [...sh.services, ...(sh.vulns.length ? ["CVEs: " + sh.vulns.join(", ")] : [])] }); if (sh.vulns.length) { risk += Math.min(40, sh.vulns.length * 6); signals.push(`${sh.vulns.length} known CVE(s) exposed.`); } }
+    if (sh) { push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Open ports", sh.ports.join(", ") || "none"], ["Organisation", sh.org || "Unknown"], ["Known CVEs", String(sh.vulns.length)]], items: [...sh.services, ...(sh.vulns.length ? ["CVEs: " + sh.vulns.join(", ")] : [])] }); if (sh.vulns.length) { risk += Math.min(40, sh.vulns.length * 6); signals.push({ code: "cves", n: sh.vulns.length }); } }
     else { const idb = await jget(`https://internetdb.shodan.io/${ip}`); if (idb && (idb.ports?.length || idb.vulns?.length)) push({ id: "exposure", title: "Exposure (InternetDB)", rows: [["Open ports", (idb.ports || []).join(", ") || "none"], ["Known CVEs", String((idb.vulns || []).length)]], tags: idb.tags || [], items: idb.vulns || [] }); }
-    const vj = vr.ok ? parse(vr.text) : null; if (vj?.data?.attributes) { const a = vj.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0); push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Owner", a.as_owner || "Unknown"], ["Reputation", String(a.reputation ?? "n/a")]] }); if (mal >= 1) { risk += Math.min(45, mal * 10); signals.push(`${mal} vendor(s) flag this IP.`); } }
-    if (env("ABUSEIPDB_KEY")) { const ar = await raw(`https://api.abuseipdb.com/api/v2/check?ipAddress=${ip}&maxAgeInDays=90`, { headers: { Key: env("ABUSEIPDB_KEY"), Accept: "application/json" } }); diag.add("AbuseIPDB", ar, 1); const aj = ar.ok ? parse(ar.text) : null; const s = aj?.data?.abuseConfidenceScore; if (s != null) { push({ id: "abuse", title: "IP reputation (AbuseIPDB)", rows: [["Abuse score", s + "%"], ["Reports", String(aj.data.totalReports ?? 0)], ["Country", aj.data.countryCode || "?"]] }); if (s >= 25) { risk += 30; signals.push(`AbuseIPDB confidence ${s}%.`); } } }
+    const vj = vr.ok ? parse(vr.text) : null; if (vj?.data?.attributes) { const a = vj.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0); push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Owner", a.as_owner || "Unknown"], ["Reputation", String(a.reputation ?? "n/a")]] }); if (mal >= 1) { risk += Math.min(45, mal * 10); signals.push({ code: "vendors", n: mal }); } }
+    if (env("ABUSEIPDB_KEY")) { const ar = await raw(`https://api.abuseipdb.com/api/v2/check?ipAddress=${ip}&maxAgeInDays=90`, { headers: { Key: env("ABUSEIPDB_KEY"), Accept: "application/json" } }); diag.add("AbuseIPDB", ar, 1); const aj = ar.ok ? parse(ar.text) : null; const s = aj?.data?.abuseConfidenceScore; if (s != null) { push({ id: "abuse", title: "IP reputation (AbuseIPDB)", rows: [["Abuse score", s + "%"], ["Reports", String(aj.data.totalReports ?? 0)], ["Country", aj.data.countryCode || "?"]] }); if (s >= 25) { risk += 30; signals.push({ code: "abuse", n: s }); } } }
 
   } else if (det.type === "url") {
     const u = new URL(det.value); const host = u.hostname.toLowerCase();
     modules.push({ id: "url", title: "Link", rows: [["URL", det.value], ["Host", host], ["Scheme", u.protocol.replace(":", "")]] });
-    if (u.protocol === "http:") { risk += 15; signals.push("No HTTPS."); }
-    if (env("VIRUSTOTAL_API_KEY")) { const vr = await raw(`https://www.virustotal.com/api/v3/urls/${btoaUrl(det.value)}`, { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } }); diag.add("VirusTotal URL", vr, 1); const vj = vr.ok ? parse(vr.text) : null; if (vj?.data?.attributes) { const a = vj.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0); push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Final URL", a.last_final_url || det.value], ["Title", a.title || "Unknown"]] }); if (mal >= 1) { risk += Math.min(50, mal * 12); signals.push(`${mal} vendor(s) flag this URL.`); } } }
+    if (u.protocol === "http:") { risk += 15; signals.push({ code: "nohttps" }); }
+    if (env("VIRUSTOTAL_API_KEY")) { const vr = await raw(`https://www.virustotal.com/api/v3/urls/${btoaUrl(det.value)}`, { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } }); diag.add("VirusTotal URL", vr, 1); const vj = vr.ok ? parse(vr.text) : null; if (vj?.data?.attributes) { const a = vj.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0); push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Final URL", a.last_final_url || det.value], ["Title", a.title || "Unknown"]] }); if (mal >= 1) { risk += Math.min(50, mal * 12); signals.push({ code: "vendors", n: mal }); } } }
     const ips = await doh(host, "A"); if (ips[0]) { push(await geoModule(ips[0])); const idb = await jget(`https://internetdb.shodan.io/${ips[0]}`); if (idb?.ports?.length) push({ id: "exposure", title: "Host exposure", rows: [["IP", ips[0]], ["Open ports", idb.ports.join(", ")], ["Known CVEs", String((idb.vulns || []).length)]], items: idb.vulns || [] }); }
 
   } else if (det.type === "hash") {
-    if (env("VIRUSTOTAL_API_KEY")) { const fr = await raw(`https://www.virustotal.com/api/v3/files/${det.value}`, { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } }); diag.add("VirusTotal file", fr, 1); const fj = fr.ok ? parse(fr.text) : null; if (fj?.data?.attributes) { const a = fj.data.attributes; const st = a.last_analysis_stats || {}; const mal = st.malicious || 0; const total = Object.values(st).reduce((x, y) => x + y, 0); push({ id: "file", title: "File reputation (VirusTotal)", rows: [["Detections", `${mal} / ${total}`], ["Threat label", a.popular_threat_classification?.suggested_threat_label || "none"], ["Type", a.type_description || "Unknown"], ["Name", a.meaningful_name || (a.names || [])[0] || "Unknown"], ["Size", a.size ? a.size + " bytes" : "Unknown"]], items: (a.names || []).slice(0, 6) }); if (mal >= 1) { risk += Math.min(60, mal * 3); signals.push(`${mal} engine(s) detect this file as malicious.`); } return finish(modules, risk, signals, diag); } }
+    if (env("VIRUSTOTAL_API_KEY")) { const fr = await raw(`https://www.virustotal.com/api/v3/files/${det.value}`, { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } }); diag.add("VirusTotal file", fr, 1); const fj = fr.ok ? parse(fr.text) : null; if (fj?.data?.attributes) { const a = fj.data.attributes; const st = a.last_analysis_stats || {}; const mal = st.malicious || 0; const total = Object.values(st).reduce((x, y) => x + y, 0); push({ id: "file", title: "File reputation (VirusTotal)", rows: [["Detections", `${mal} / ${total}`], ["Threat label", a.popular_threat_classification?.suggested_threat_label || "none"], ["Type", a.type_description || "Unknown"], ["Name", a.meaningful_name || (a.names || [])[0] || "Unknown"], ["Size", a.size ? a.size + " bytes" : "Unknown"]], items: (a.names || []).slice(0, 6) }); if (mal >= 1) { risk += Math.min(60, mal * 3); signals.push({ code: "engines", n: mal }); } return finish(modules, risk, signals, diag); } }
     const d = await jget(`https://hashlookup.circl.lu/lookup/${det.algo}/${det.value}`, { headers: { accept: "application/json" } });
     push({ id: "file", title: "File reputation", rows: [["Hash", det.value], ["Algorithm", det.algo.toUpperCase()], ["Known file", (d && !d.message) ? "Yes (CIRCL hashlookup)" : "Not found"], ["Name", d?.FileName || "Unknown"]] });
 
   } else if (det.type === "email") {
-    const domain = det.value.split("@")[1]; modules.push({ id: "identity", title: "Email", rows: [["Address", det.value], ["Domain", domain]] }); push(await emailModule(domain));
+    const domain = det.value.split("@")[1]; modules.push({ id: "identity", title: "Email", rows: [["Address", det.value], ["Domain", domain]] });
+    const [br, em] = await Promise.all([breachModule(det.value, diag), emailModule(domain)]);
+    push(br); push(em);
+    const bn = br && br.rows ? (parseInt(br.rows[0][1]) || 0) : 0; if (bn) { risk += Math.min(45, bn * 8); signals.push({ code: "breaches", n: bn }); }
   } else if (det.type === "cve") {
-    const c = await cveModule(det.value); push(c?.module); if (c) { const sev = (c.severity || "").toUpperCase(); risk += sev === "CRITICAL" ? 40 : sev === "HIGH" ? 30 : sev ? 15 : 0; if (c.kev) { risk += 40; signals.push("Listed in CISA KEV (actively exploited)."); } signals.push(`Severity ${c.severity || "unknown"}, EPSS ${c.epss}.`); }
+    const c = await cveModule(det.value); push(c?.module); if (c) { const sev = (c.severity || "").toUpperCase(); risk += sev === "CRITICAL" ? 40 : sev === "HIGH" ? 30 : sev ? 15 : 0; if (c.kev) { risk += 40; signals.push({ code: "kev" }); } signals.push({ code: "cvesev", sev: c.severity || "unknown", epss: c.epss }); }
   }
   return finish(modules, risk, signals, diag);
 }
@@ -181,13 +231,14 @@ export default async function handler(req) {
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
   let b; try { b = await req.json(); } catch { return json({ error: "bad json" }, 400); }
   const input = String(b.input || "").trim().slice(0, 300);
-  if (!input) return json({ error: "Enter a domain, IP, URL, file hash or CVE." }, 400);
-  const det = detect(input);
-  if (det.type === "unknown") return json({ error: "Could not recognise that. Try a domain, IP, URL, file hash (md5/sha1/sha256) or a CVE id." }, 400);
+  if (!input) return json({ error: "Enter a domain, IP, URL, file hash, email or CVE." }, 400);
+  const det = forceDetect(input, String(b.type || "auto"));
+  if (det.type === "unknown") return json({ error: "Could not recognise that. Try a domain, IP, URL, file hash (md5/sha1/sha256), email or CVE id, or pick the type manually." }, 400);
   try {
     const diag = mkDiag();
     const { modules, risk } = await build(det, diag);
+    const health = computeHealth(modules);
     const sources = diag.list.filter(e => e.ok && e.n > 0).map(e => e.source);
-    return json({ result: { input: det.value, type: det.type, risk, modules, sources } }, 200);
+    return json({ result: { input: det.value, type: det.type, risk, health, modules, sources } }, 200);
   } catch (e) { return json({ error: "Aggregation failed: " + String(e && e.message || e) }, 500); }
 }
