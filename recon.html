@@ -275,6 +275,23 @@ function fallback(r){
     caveats:['Automated aggregation of public data, not a formal assessment.']};
 }
 function compact(r){return {input:r.input,type:r.type,risk:r.risk,health:r.health,modules:(r.modules||[]).map(m=>({title:m.title,rows:m.rows,items:(m.items||[]).slice(0,6)}))};}
+/* fallback health if an older API version did not return it */
+function clientHealth(modules){
+  const rowOf=(id,re)=>{const m=modules.find(x=>x.id===id);if(!m)return null;const r=(m.rows||[]).find(x=>re.test(x[0]));return r?r[1]:null;};
+  const st={};
+  const sub=rowOf('subdomains',/subdomains/i); if(sub!=null)st.subdomains=parseInt(sub)||0;
+  const ips=rowOf('ips',/IPs found/i); if(ips!=null)st.ips=parseInt(ips)||0;
+  const exp=modules.find(x=>x.id==='exposure'); if(exp){const pr=(exp.rows||[]).find(r=>/Open ports/i.test(r[0]));let ports=0;if(pr&&pr[1]&&pr[1]!=='none')ports=pr[1].split(',').filter(Boolean).length;const cr=(exp.rows||[]).find(r=>/Known CVEs/i.test(r[0]));st.openPorts=ports;st.cves=cr?parseInt(cr[1])||0:0;}
+  const rep=modules.find(x=>x.id==='reputation'); if(rep){const mr=(rep.rows||[]).find(r=>/Malicious/i.test(r[0]));if(mr){const m=String(mr[1]).match(/(\d+)\s*\/\s*(\d+)/);st.vendorFlags=m?(+m[1])+(+m[2]):0;}}
+  const brm=modules.find(x=>x.id==='breaches'); if(brm){const g=(brm.rows||[]).find(r=>/Breaches found/i.test(r[0]));if(g)st.breaches=parseInt(g[1])||0;}
+  const em=modules.find(x=>x.id==='email'); if(em){const g=(em.rows||[]).find(r=>/Grade/i.test(r[0]));if(g)st.emailGrade=g[1];}
+  let hh=100; if(st.emailGrade)hh-=({A:0,B:5,C:12,D:20,F:28})[st.emailGrade]||0;
+  hh-=Math.min(30,(st.cves||0)*4);hh-=Math.min(10,(st.openPorts||0));hh-=Math.min(24,(st.breaches||0)*6);hh-=Math.min(30,(st.vendorFlags||0)*8);
+  hh=Math.max(0,Math.min(100,Math.round(hh)));
+  const grade=hh>=85?'A':hh>=70?'B':hh>=50?'C':hh>=30?'D':'F';
+  const status=hh>=80?'Healthy':hh>=50?'Needs attention':'At risk';
+  return {score:hh,grade,status,stats:st};
+}
 
 async function run(){
   const input=$('q').value.trim(), lang=$('lang').value;
@@ -284,6 +301,8 @@ async function run(){
     const r=await fetch(RECON,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input,type:TYPE})});
     const d=await r.json(); if(!r.ok||!d.result) throw new Error(d.error||'Could not investigate that input.');
     const res=d.result; LAST=res; NARR=null;
+    if(!res.risk)res.risk={level:'-',score:0,signals:[]};
+    if(!res.health||res.health.score==null)res.health=clientHealth(res.modules||[]);
     const h=res.health;
     $('out').innerHTML=`<div class="fade">
       <div class="hpanel">
