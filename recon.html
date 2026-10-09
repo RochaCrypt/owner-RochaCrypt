@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action 'self'"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#08090c"/>
+<title>Intel Aggregator | rochacrypt</title>
+<meta name="description" content="One input, many sources. Investigate a domain, IP, URL, file hash or CVE across public intelligence APIs, analysed by AI."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--purple:#8a63ff;--accent:#8a63ff;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1000px 520px at 50% -10%,rgba(138,99,255,.18),transparent 60%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
+.wrap{max-width:1000px;margin:0 auto;padding:26px 18px 70px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.brand{font-weight:800}.brand span{color:var(--red)}
+.home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
+.home:hover{color:#fff;border-color:var(--accent)}
+.hero{text-align:center;margin:22px 0 20px}
+.hero .k{font-family:'Fira Code',monospace;color:var(--accent);font-size:13px;letter-spacing:1px}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,6vw,46px);font-weight:700;margin:6px 0;background:linear-gradient(90deg,#fff,#c9b8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:600px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+input.txt,select.txt{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 15px;color:var(--text);font-size:15px;outline:none;font-family:inherit}
+input.txt{flex:1;min-width:240px;font-family:'Fira Code',monospace}
+input.txt:focus,select.txt:focus{border-color:var(--accent)}
+.btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:default}
+.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.examples .lbl{font-size:12px;color:var(--muted);font-family:'Fira Code',monospace}
+.ex{cursor:pointer;font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:6px 11px}
+.ex:hover{color:#fff;border-color:var(--accent)}
+.err{color:#ff8a9b;font-size:14px;margin-top:14px}
+.loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}
+.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 6px}
+.tbadge{font-family:'Fira Code',monospace;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:7px 13px;border-radius:999px;background:rgba(138,99,255,.15);border:1px solid var(--purple);color:#c9b8ff}
+.subj{font-family:'Fira Code',monospace;font-size:14px;color:var(--text);word-break:break-all}
+.risk{margin-left:auto;font-family:'Fira Code',monospace;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:7px 13px;border-radius:999px}
+.risk.high{background:var(--red);color:#fff}.risk.elevated{background:var(--amber);color:#241700}.risk.low{background:var(--green);color:#06230f}
+.ai{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:14px;padding:18px 20px;margin:12px 0 18px}
+.ai h3{font-family:'Space Grotesk',sans-serif;font-size:17px;margin-bottom:6px}
+.ai .nvidia{font:600 10px/1 monospace;color:#76b900;border:1px solid #76b900;border-radius:4px;padding:3px 7px;margin-left:8px}
+.ai p{font-size:14.5px;color:var(--text);margin-bottom:10px}
+.ai h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:12px 0 5px;font-family:'Fira Code',monospace}
+.ai ul{margin:0 0 4px 18px}.ai li{font-size:13.5px;margin:3px 0}
+.modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.mod{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;overflow:hidden}
+.mod h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.mod h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13px}
+.kv .k{color:var(--muted);font-family:'Fira Code',monospace;font-size:11.5px;white-space:nowrap}
+.kv .v{color:var(--text);word-break:break-word}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-family:'Fira Code',monospace;font-size:11px;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:999px;padding:3px 9px}
+.items{margin-top:10px;display:grid;gap:5px;max-height:220px;overflow:auto}
+.items .it{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);word-break:break-all;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
+.items a.it{color:#aea0ff}
+.disc{font-size:12px;color:var(--muted);margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand mono" href="/">rocha<span>crypt</span></a>
+    <a class="home" href="/">&larr; Home</a>
+  </header>
+  <div class="hero">
+    <div class="k">// intel aggregator</div>
+    <h1>Investigate anything</h1>
+    <p>One input, many sources. Type a domain, IP, URL, file hash or CVE. The engine fans out to public intelligence APIs, and the AI turns the results into a single analysis and dashboard.</p>
+  </div>
+  <div class="card">
+    <div class="row">
+      <input class="txt" id="q" placeholder="example.com   ·   8.8.8.8   ·   https://...   ·   a file hash   ·   CVE-2024-3400" autocomplete="off" spellcheck="false"/>
+      <select class="txt" id="lang"><option>English</option><option>Português</option><option>Español</option></select>
+      <button class="btn" id="go">Investigate</button>
+    </div>
+    <div class="examples"><span class="lbl">Try:</span>
+      <span class="ex" data-v="github.com">github.com</span>
+      <span class="ex" data-v="1.1.1.1">1.1.1.1</span>
+      <span class="ex" data-v="CVE-2024-3400">CVE-2024-3400</span>
+    </div>
+    <div id="out"></div>
+  </div>
+  <div class="disc">Intel Aggregator &middot; rochacrypt &middot; public OSINT and reputation sources, analysed by AI. Use only on assets you are authorised to investigate.</div>
+</div>
+
+<script>
+const RECON="/api/recon", AI="/api/ai-explain";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const riskCls=l=>({High:'high',Elevated:'elevated',Low:'low'}[l]||'low');
+document.querySelectorAll('.ex').forEach(e=>e.addEventListener('click',()=>{$('q').value=e.getAttribute('data-v');run();}));
+
+function modHtml(m){
+  const kv=(m.rows||[]).map(r=>`<div class="k">${esc(r[0])}</div><div class="v">${esc(r[1])}</div>`).join('');
+  const tags=(m.tags&&m.tags.length)?`<div class="tags">${m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:'';
+  const items=(m.items&&m.items.length)?`<div class="items">${m.items.filter(Boolean).map(it=>{const s=String(it);return /^https?:\/\//.test(s)?`<a class="it" href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(s)}</a>`:`<div class="it">${esc(s)}</div>`;}).join('')}</div>`:'';
+  return `<div class="mod"><h3>${esc(m.title)}</h3><div class="kv">${kv}</div>${tags}${items}</div>`;
+}
+function explainHtml(n,mode){
+  const list=a=>(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  const badge=mode==='ai'?'<span class="nvidia">AI via NVIDIA</span>':'';
+  return `<div class="ai"><h3>Analysis ${badge}</h3>
+    <p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>
+    ${n.points&&n.points.length?`<h4>Notable findings</h4><ul>${list(n.points)}</ul>`:''}
+    <h4>Recommended next steps</h4><p style="margin-bottom:0">${esc(n.recommendation||'')}</p>
+    ${n.caveats&&n.caveats.length?`<h4>Caveats</h4><ul>${list(n.caveats)}</ul>`:''}</div>`;
+}
+function fallback(r){
+  return {headline:`${r.type.toUpperCase()} ${r.input}: risk read ${r.risk.level} (${r.risk.score}/100).`,
+    summary:`Collected ${r.modules.length} data module(s) from public sources. ${r.risk.signals.length?'Notable signals: '+r.risk.signals.join(' '):'No strong risk signals were raised.'}`,
+    points:r.risk.signals.length?r.risk.signals:['No high-risk indicators found in the available sources.'],
+    recommendation:r.risk.level==='Low'?'Nothing urgent stood out, but absence of evidence is not proof of safety. Review the modules below for context.':'Treat with caution and corroborate with additional sources before acting. Review the exposure and reputation modules below.',
+    caveats:['This is an automated aggregation of public data, not a formal assessment.','Some sources may be incomplete or rate-limited.']};
+}
+function compact(r){
+  return {input:r.input,type:r.type,risk:r.risk,modules:(r.modules||[]).map(m=>({title:m.title,rows:m.rows,tags:m.tags,items:(m.items||[]).slice(0,6)}))};
+}
+async function run(){
+  const input=$('q').value.trim(), lang=$('lang').value;
+  if(!input){$('out').innerHTML='<p class="err">Enter a domain, IP, URL, file hash or CVE.</p>';return;}
+  $('go').disabled=true; $('out').innerHTML='<div class="loading"><div class="spin"></div><div>Querying public intelligence sources...</div></div>';
+  try{
+    const r=await fetch(RECON,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input})});
+    const d=await r.json(); if(!r.ok||!d.result) throw new Error(d.error||'Could not investigate that input.');
+    const res=d.result;
+    $('out').innerHTML=`
+      <div class="summary">
+        <span class="tbadge">${esc(res.type)}</span><span class="subj">${esc(res.input)}</span>
+        <span class="risk ${riskCls(res.risk.level)}">Risk: ${esc(res.risk.level)} ${res.risk.score}/100</span>
+      </div>
+      <div id="ai"><div class="loading" style="padding:24px 0"><div class="spin"></div><div>AI is analysing the results...</div></div></div>
+      <div class="modules">${res.modules.map(modHtml).join('')}</div>`;
+    try{
+      const ar=await fetch(AI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'recon',lang,data:compact(res)})});
+      const ad=await ar.json();
+      if(ar.ok&&ad.narrative)$('ai').innerHTML=explainHtml(ad.narrative,'ai');
+      else $('ai').innerHTML=explainHtml(fallback(res),'fallback');
+    }catch(_){ $('ai').innerHTML=explainHtml(fallback(res),'fallback'); }
+  }catch(e){ $('out').innerHTML='<p class="err">'+esc(e.message)+'</p>'; }
+  $('go').disabled=false;
+}
+$('go').addEventListener('click',run);
+$('q').addEventListener('keydown',e=>{if(e.key==='Enter')run();});
+</script>
+</body>
+</html>
