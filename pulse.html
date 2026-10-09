@@ -66,9 +66,21 @@ a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
 .err{color:#ff8a9b;font-size:14px;margin-top:10px}
 
 /* briefing (shared by modal + analyzer) */
-.brief .bt{font-size:19px;font-weight:700;margin-bottom:10px}
-.brief .fields{display:grid;gap:10px;margin:12px 0}
+.brief .bt{font-size:19px;font-weight:700;margin-bottom:8px;line-height:1.35}
+.brief .bhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.sev{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;letter-spacing:.4px;padding:5px 11px;border-radius:999px;text-transform:uppercase}
+.sev.critical{background:#ff2e4c;color:#fff}
+.sev.high{background:#ff6a1a;color:#fff}
+.sev.medium{background:#ffb02e;color:#241700}
+.sev.low{background:#2ecc71;color:#06230f}
+.sev.informational{background:#2e6bff;color:#fff}
+.sev.unknown{background:var(--line2);color:var(--text)}
+.cat{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;text-transform:uppercase;letter-spacing:.3px}
+.brief .lead{font-size:14.5px;color:var(--text);background:var(--surface2);border-left:3px solid var(--red);border-radius:8px;padding:13px 15px;margin:4px 0 2px}
+.brief .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+@media(max-width:520px){.brief .fields{grid-template-columns:1fr}}
 .field{background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.field.full{grid-column:1 / -1}
 .field .l{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--faint);font-family:'Fira Code',monospace;margin-bottom:4px}
 .field .v{font-size:14px;color:var(--text)}
 .field.cve .v{color:#ffb86b;font-family:'Fira Code',monospace}
@@ -191,20 +203,30 @@ $('window').addEventListener('change',e=>{win=parseInt(e.target.value,10)||0;ren
 $('refresh').addEventListener('click',loadNews);
 
 /* briefing render + share */
+function sevClass(s){const t=String(s||'').toLowerCase();
+  if(t.includes('critical'))return'critical';if(t.includes('high'))return'high';
+  if(t.includes('medium'))return'medium';if(t.includes('low'))return'low';
+  if(t.includes('info'))return'informational';return'unknown';}
 function briefText(a){
-  return `${a.title}\n\n${a.summary}\n\nAffected: ${a.affected}\nDate: ${a.date}\nCVE: ${a.cve}\nImpact: ${a.impact}\nRemediation: ${a.remediation}\n\nSource: ${a.url}`;
+  const head=`${a.title}`;
+  const meta=`Severity: ${a.severity||'Unknown'}${a.category?'  |  '+a.category:''}${a.exploitation?'  |  '+a.exploitation:''}`;
+  return `${head}\n${meta}\n\n${a.summary||''}\n\nAffected: ${a.affected||'Not specified'}\nCVE: ${a.cve||'None'}\nImpact: ${a.impact||'Not specified'}\nRecommended actions: ${a.remediation||'Not specified'}\nDate: ${a.date||'Unknown'}\n\nSource: ${a.url}`;
 }
 function briefHtml(a){
-  const f=(l,v,cls)=>`<div class="field ${cls||''}"><div class="l">${l}</div><div class="v">${esc(v||'Not specified')}</div></div>`;
+  const f=(l,v,cls,full)=>`<div class="field ${cls||''} ${full?'full':''}"><div class="l">${l}</div><div class="v">${esc(v||'Not specified')}</div></div>`;
+  const sev=a.severity?`<span class="sev ${sevClass(a.severity)}">${esc(a.severity)}</span>`:'';
+  const cat=a.category?`<span class="cat">${esc(a.category)}</span>`:'';
   return `<div class="brief">
     <div class="bt">${esc(a.title)}</div>
+    ${(sev||cat)?`<div class="bhead">${sev}${cat}</div>`:''}
+    <div class="lead">${esc(a.summary||'Not specified')}</div>
     <div class="fields">
-      ${f('Summary',a.summary)}
-      ${f('Affected products',a.affected)}
-      ${f('Date',a.date)}
+      ${f('Affected products',a.affected,'',true)}
       ${f('CVE',a.cve,'cve')}
-      ${f('Impact',a.impact)}
-      ${f('Remediation',a.remediation)}
+      ${f('Exploitation',a.exploitation)}
+      ${f('Impact',a.impact,'',true)}
+      ${f('Recommended actions',a.remediation,'',true)}
+      ${f('Date',a.date)}
     </div>
     <a class="srclink" href="${esc(a.url)}" target="_blank" rel="noopener">Open original source</a>
     <div class="share">
