@@ -55,8 +55,11 @@ input.txt:focus,select.txt:focus{border-color:var(--accent)}
 .ai ul{margin:0 0 4px 18px}.ai li{font-size:13.5px;margin:3px 0}
 .modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .mod{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;overflow:hidden}
-.mod h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.mod h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
 .mod h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.mod .note{font-size:11px;color:var(--muted);font-family:'Fira Code',monospace;margin:0 0 10px 16px}
+.srcline{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);margin:2px 0 4px}
+.srcline b{color:#c9b8ff}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13px}
 .kv .k{color:var(--muted);font-family:'Fira Code',monospace;font-size:11.5px;white-space:nowrap}
 .kv .v{color:var(--text);word-break:break-word}
@@ -103,10 +106,11 @@ const riskCls=l=>({High:'high',Elevated:'elevated',Low:'low'}[l]||'low');
 document.querySelectorAll('.ex').forEach(e=>e.addEventListener('click',()=>{$('q').value=e.getAttribute('data-v');run();}));
 
 function modHtml(m){
+  const note=m.note?`<div class="note">${esc(m.note)}</div>`:'';
   const kv=(m.rows||[]).map(r=>`<div class="k">${esc(r[0])}</div><div class="v">${esc(r[1])}</div>`).join('');
   const tags=(m.tags&&m.tags.length)?`<div class="tags">${m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:'';
   const items=(m.items&&m.items.length)?`<div class="items">${m.items.filter(Boolean).map(it=>{const s=String(it);return /^https?:\/\//.test(s)?`<a class="it" href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(s)}</a>`:`<div class="it">${esc(s)}</div>`;}).join('')}</div>`:'';
-  return `<div class="mod"><h3>${esc(m.title)}</h3><div class="kv">${kv}</div>${tags}${items}</div>`;
+  return `<div class="mod"><h3>${esc(m.title)}</h3>${note}<div class="kv">${kv}</div>${tags}${items}</div>`;
 }
 function explainHtml(n,mode){
   const list=a=>(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join('');
@@ -140,6 +144,7 @@ async function run(){
         <span class="tbadge">${esc(res.type)}</span><span class="subj">${esc(res.input)}</span>
         <span class="risk ${riskCls(res.risk.level)}">Risk: ${esc(res.risk.level)} ${res.risk.score}/100</span>
       </div>
+      ${res.sources&&res.sources.length?`<div class="srcline">Sources used: <b>${res.sources.map(esc).join(', ')}</b></div>`:''}
       <div id="ai"><div class="loading" style="padding:24px 0"><div class="spin"></div><div>AI is analysing the results...</div></div></div>
       <div class="modules">${res.modules.map(modHtml).join('')}</div>`;
     try{
