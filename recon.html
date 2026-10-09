@@ -153,6 +153,23 @@ select.txt{background:var(--panel2);border:1px solid var(--line2);border-radius:
 .mod .ptbl{color:#dbe3ee}.mod .pr.info{background:rgba(148,163,184,.18);color:#94a3b8}
 .rep .ptbl{color:#1e293b}.rep .ptbl th{color:#475569;opacity:1}.rep .pr.info{background:#eef1f6;color:#475569}
 .rep .phh,.rep .phi{color:#0f172a}.rep .pho,.rep .php{color:#475569}
+/* visual intelligence: maps, cve register, port summary */
+.svgviz{display:block;width:100%;height:auto;margin:2px 0 4px}
+.vnote{font-size:11.5px;opacity:.8;margin:4px 0 2px}
+.vizwrap{display:flex;flex-direction:column;gap:14px;margin:16px 0}
+.vcard{background:var(--panel,#0f1218);border:1px solid var(--line,rgba(140,155,180,.16));border-radius:14px;padding:16px 18px}
+.vcard h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.vcard h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent,#8a63ff)}
+.psumrow{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 8px}
+.psum{flex:1 1 90px;min-width:90px;border:1px solid rgba(140,155,180,.2);border-radius:10px;padding:8px 12px;border-left-width:4px}
+.psum b{display:block;font:700 22px/1.1 'Space Grotesk',sans-serif}.psum span{font-size:11px;opacity:.75}
+.psum.high{border-left-color:#ef4444}.psum.med{border-left-color:#f59e0b}.psum.info{border-left-color:#64748b}
+.pcats{display:flex;flex-wrap:wrap;gap:6px 8px}
+.pcat{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(140,155,180,.14);white-space:nowrap}
+.cvetbl td.pp{width:auto}.cvetbl th:last-child,.cvetbl td:last-child{text-align:left}
+.rep .psum{border-color:#e2e8f0}.rep .psum b{color:#0f172a}.rep .psum span{color:#475569;opacity:1}
+.rep .pcat{background:#eef1f6;color:#334155}.rep .vnote{color:#475569}
+.rep .svgviz{border-radius:10px;break-inside:avoid}.rep .psumrow,.rep .cvetbl{break-inside:avoid}
 </style>
 </head>
 <body>
@@ -206,7 +223,8 @@ const RT={
    kpi:{subdomains:"Subdomains",ips:"IP addresses",openPorts:"Open ports",riskyPorts:"Risky ports",cves:"Known CVEs",breaches:"Breaches",vendorFlags:"Vendor flags",emailGrade:"Email grade"},
    exposedServices:"Exposed ports and services",portHdr:"Port",svcHdr:"Service",riskHdr:"Exposure",perHost:"Exposure by host",hostHdr:"Host",portsHdr:"Open ports",noRisky:"Only standard web ports are exposed; no high-risk management or database services were detected.",riskWord:{high:"High",med:"Review",info:"Standard"},
    mod:{dns:"DNS records",rdap:"Registration (WHOIS)",geo:"Network / Geo",email:"Email security",cve:"Vulnerability",breaches:"Exposed in breaches",subdomains:"Subdomains",ips:"Resolved IP addresses",reputation:"Reputation",exposure:"Exposed services",url:"Link",file:"File reputation",identity:"Email"},
-   s1:"1. Executive summary",s2:"2. Key findings",s3:"3. Recommendations",s4:"4. Detailed findings",s4e:"4. Data highlights",s5:"5. Methodology and data sources",s6:"6. Scope and limitations",
+   s1:"Executive summary",s2:"Key findings",s3:"Recommendations",s4:"Detailed findings",s4e:"Data highlights",s5:"Methodology and data sources",s6:"Scope and limitations",sMap:"Attack surface map",sVuln:"Vulnerability register",
+   viz:{attackSurfaceMap:"Attack surface map",geoFootprint:"Geographic footprint",cveRegister:"Vulnerability register (CVEs)",portRiskSummary:"Port risk summary",target:"Target",subsW:"subdomains",ipsW:"IPs",portsW:"ports",cvesW:"CVEs",moreHosts:"+{n} more exposed hosts",noExposure:"No internet-facing services were observed for this target.",hostedIn:"Hosted in",cveHdr:"CVE",sevHdr:"Severity",cvssHdr:"CVSS",epssHdr:"EPSS",kevHdr:"KEV",targetHdr:"Seen on",kevYes:"KEV",moreCves:"and {n} more CVE(s)",highRisk:"High risk",review:"Review",standard:"Standard",legendRisk:"Host risk",otherIps:"{n} further resolved IP(s) returned no public service data.",cat:{mgmt:"Management panels",database:"Databases",remote:"Remote access",web:"Web",mail:"Mail",net:"Network",other:"Other"}},
    sev:{high:"HIGH",med:"MED",low:"LOW",info:"INFO"},
    status:{"Healthy":"Healthy","Needs attention":"Needs attention","At risk":"At risk"},
    rlvl:{"Low":"Low","Elevated":"Elevated","High":"High"},
@@ -222,7 +240,8 @@ const RT={
    kpi:{subdomains:"Subdomínios",ips:"Endereços IP",openPorts:"Portas abertas",riskyPorts:"Portas de risco",cves:"CVEs conhecidos",breaches:"Vazamentos",vendorFlags:"Alertas de fornecedor",emailGrade:"Nota de e-mail"},
    exposedServices:"Portas e serviços expostos",portHdr:"Porta",svcHdr:"Serviço",riskHdr:"Exposição",perHost:"Exposição por host",hostHdr:"Host",portsHdr:"Portas abertas",noRisky:"Apenas portas web padrão estão expostas; nenhum serviço de gestão ou banco de dados de alto risco foi detectado.",riskWord:{high:"Alto",med:"Revisar",info:"Padrão"},
    mod:{dns:"Registros DNS",rdap:"Registro (WHOIS)",geo:"Rede / Geolocalização",email:"Segurança de e-mail",cve:"Vulnerabilidade",breaches:"Exposto em vazamentos",subdomains:"Subdomínios",ips:"Endereços IP resolvidos",reputation:"Reputação",exposure:"Serviços expostos",url:"Link",file:"Reputação do arquivo",identity:"E-mail"},
-   s1:"1. Resumo executivo",s2:"2. Principais achados",s3:"3. Recomendações",s4:"4. Achados detalhados",s4e:"4. Destaques dos dados",s5:"5. Metodologia e fontes de dados",s6:"6. Escopo e limitações",
+   s1:"Resumo executivo",s2:"Principais achados",s3:"Recomendações",s4:"Achados detalhados",s4e:"Destaques dos dados",s5:"Metodologia e fontes de dados",s6:"Escopo e limitações",sMap:"Mapa da superfície de ataque",sVuln:"Registro de vulnerabilidades",
+   viz:{attackSurfaceMap:"Mapa da superfície de ataque",geoFootprint:"Presença geográfica",cveRegister:"Registro de vulnerabilidades (CVEs)",portRiskSummary:"Resumo de risco das portas",target:"Alvo",subsW:"subdomínios",ipsW:"IPs",portsW:"portas",cvesW:"CVEs",moreHosts:"+{n} outros hosts expostos",noExposure:"Nenhum serviço voltado à internet foi observado para este alvo.",hostedIn:"Hospedado em",cveHdr:"CVE",sevHdr:"Severidade",cvssHdr:"CVSS",epssHdr:"EPSS",kevHdr:"KEV",targetHdr:"Visto em",kevYes:"KEV",moreCves:"e mais {n} CVE(s)",highRisk:"Alto risco",review:"Revisar",standard:"Padrão",legendRisk:"Risco do host",otherIps:"{n} outro(s) IP(s) resolvido(s) não retornaram dados públicos de serviço.",cat:{mgmt:"Painéis de gestão",database:"Bancos de dados",remote:"Acesso remoto",web:"Web",mail:"E-mail",net:"Rede",other:"Outros"}},
    sev:{high:"ALTA",med:"MÉDIA",low:"BAIXA",info:"INFO"},
    status:{"Healthy":"Saudável","Needs attention":"Requer atenção","At risk":"Em risco"},
    rlvl:{"Low":"Baixo","Elevated":"Elevado","High":"Alto"},
@@ -238,7 +257,8 @@ const RT={
    kpi:{subdomains:"Subdominios",ips:"Direcciones IP",openPorts:"Puertos abiertos",riskyPorts:"Puertos de riesgo",cves:"CVEs conocidos",breaches:"Filtraciones",vendorFlags:"Alertas de proveedor",emailGrade:"Nota de correo"},
    exposedServices:"Puertos y servicios expuestos",portHdr:"Puerto",svcHdr:"Servicio",riskHdr:"Exposición",perHost:"Exposición por host",hostHdr:"Host",portsHdr:"Puertos abiertos",noRisky:"Solo se exponen puertos web estándar; no se detectaron servicios de gestión o bases de datos de alto riesgo.",riskWord:{high:"Alto",med:"Revisar",info:"Estándar"},
    mod:{dns:"Registros DNS",rdap:"Registro (WHOIS)",geo:"Red / Geolocalización",email:"Seguridad de correo",cve:"Vulnerabilidad",breaches:"Expuesto en filtraciones",subdomains:"Subdominios",ips:"Direcciones IP resueltas",reputation:"Reputación",exposure:"Servicios expuestos",url:"Enlace",file:"Reputación del archivo",identity:"Correo"},
-   s1:"1. Resumen ejecutivo",s2:"2. Hallazgos clave",s3:"3. Recomendaciones",s4:"4. Hallazgos detallados",s4e:"4. Datos destacados",s5:"5. Metodología y fuentes de datos",s6:"6. Alcance y limitaciones",
+   s1:"Resumen ejecutivo",s2:"Hallazgos clave",s3:"Recomendaciones",s4:"Hallazgos detallados",s4e:"Datos destacados",s5:"Metodología y fuentes de datos",s6:"Alcance y limitaciones",sMap:"Mapa de superficie de ataque",sVuln:"Registro de vulnerabilidades",
+   viz:{attackSurfaceMap:"Mapa de superficie de ataque",geoFootprint:"Presencia geográfica",cveRegister:"Registro de vulnerabilidades (CVEs)",portRiskSummary:"Resumen de riesgo de puertos",target:"Objetivo",subsW:"subdominios",ipsW:"IPs",portsW:"puertos",cvesW:"CVEs",moreHosts:"+{n} hosts expuestos más",noExposure:"No se observaron servicios accesibles desde internet para este objetivo.",hostedIn:"Alojado en",cveHdr:"CVE",sevHdr:"Severidad",cvssHdr:"CVSS",epssHdr:"EPSS",kevHdr:"KEV",targetHdr:"Visto en",kevYes:"KEV",moreCves:"y {n} CVE(s) más",highRisk:"Alto riesgo",review:"Revisar",standard:"Estándar",legendRisk:"Riesgo del host",otherIps:"{n} IP(s) resuelta(s) adicional(es) no devolvieron datos públicos de servicio.",cat:{mgmt:"Paneles de gestión",database:"Bases de datos",remote:"Acceso remoto",web:"Web",mail:"Correo",net:"Red",other:"Otros"}},
    sev:{high:"ALTA",med:"MEDIA",low:"BAJA",info:"INFO"},
    status:{"Healthy":"Saludable","Needs attention":"Requiere atención","At risk":"En riesgo"},
    rlvl:{"Low":"Bajo","Elevated":"Elevado","High":"Alto"},
@@ -276,6 +296,100 @@ function gauge(score,grade){
   return `<div class="gaugewrap"><svg class="ring" viewBox="0 0 118 118"><circle class="bg" cx="59" cy="59" r="52"/><circle cx="59" cy="59" r="52" style="stroke:${col};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${off.toFixed(1)}"/></svg><div class="ctr"><div class="g" style="color:${col}">${grade}</div><div class="s">${score}/100</div></div></div>`;
 }
 function riskCls(r){return r==='high'?'high':r==='med'?'med':'info';}
+function V(){return L().viz||{};}
+function sevCls(s){s=String(s||'').toUpperCase();return (s==='CRITICAL'||s==='HIGH')?'high':s==='MEDIUM'?'med':'info';}
+const RKCOL={high:'#ef4444',med:'#f59e0b',info:'#64748b'};
+// ---- Attack surface map: target -> exposed hosts (risk-coloured), with context ----
+function surfaceGraph(r,dark){
+  const exp=(r.modules||[]).find(m=>m.id==='exposure');
+  const hosts=(exp&&exp.hosts?exp.hosts.filter(h=>h.ports&&h.ports.length):[]);
+  const st=(r.health&&r.health.stats)||{}, Vz=V();
+  const tcol=dark?'#e8edf5':'#0f172a', sub=dark?'#9fb0c4':'#64748b', line=dark?'rgba(180,195,215,.4)':'rgba(71,85,105,.4)', nodebg=dark?'#141821':'#f1f4f9', nodest=dark?'rgba(180,195,215,.25)':'rgba(71,85,105,.22)';
+  const shown=hosts.slice(0,8), W=760, rowH=50, top=84, H=Math.max(220, top+shown.length*rowH+14);
+  const tw=150, th=52, tx=24, ty=H/2;
+  let s=`<svg class="svgviz" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">`;
+  // context chips (subdomains / IPs) above the target
+  const chip=(x,y,label,val)=>`<g><rect x="${x}" y="${y}" width="150" height="30" rx="7" fill="${nodebg}" stroke="${nodest}"/><text x="${x+10}" y="${y+19}" fill="${sub}" font-size="11">${esc(label)}</text><text x="${x+140}" y="${y+19}" text-anchor="end" fill="${tcol}" font-size="13" font-weight="700">${esc(val)}</text></g>`;
+  if(st.subdomains!=null)s+=chip(24,16,Vz.subsW,st.subdomains);
+  if(st.ips!=null)s+=chip(186,16,Vz.ipsW,st.ips);
+  // target node
+  s+=`<rect x="${tx}" y="${ty-th/2}" width="${tw}" height="${th}" rx="10" fill="${dark?'#1b2130':'#0f172a'}" stroke="#ff2e4c" stroke-width="1.5"/>`;
+  s+=`<text x="${tx+tw/2}" y="${ty-4}" text-anchor="middle" fill="#ff5d73" font-size="10" font-weight="700" letter-spacing=".06em">${esc((Vz.target||'TARGET').toUpperCase())}</text>`;
+  s+=`<text x="${tx+tw/2}" y="${ty+13}" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">${esc(String(r.input).slice(0,22))}</text>`;
+  const hx=330, hw=406, hh=38;
+  shown.forEach((h,i)=>{
+    const y=top+i*rowH+hh/2, col=RKCOL[h.risk]||RKCOL.info;
+    s+=`<path d="M ${tx+tw} ${ty} C ${tx+tw+90} ${ty}, ${hx-90} ${y}, ${hx} ${y}" fill="none" stroke="${line}" stroke-width="1.2"/>`;
+    s+=`<rect x="${hx}" y="${y-hh/2}" width="${hw}" height="${hh}" rx="8" fill="${nodebg}" stroke="${nodest}"/>`;
+    s+=`<rect x="${hx}" y="${y-hh/2}" width="4" height="${hh}" rx="2" fill="${col}"/>`;
+    s+=`<text x="${hx+16}" y="${y-2}" fill="${tcol}" font-size="12.5" font-weight="600" font-family="'Fira Code',monospace">${esc(h.ip)}</text>`;
+    const meta=[h.city,h.country].filter(Boolean).join(', ')||h.org||'';
+    s+=`<text x="${hx+16}" y="${y+13}" fill="${sub}" font-size="10">${esc(String(meta).slice(0,40))}</text>`;
+    // badges on the right
+    const badge=(bx,txt,c)=>`<g><rect x="${bx}" y="${y-11}" width="64" height="22" rx="6" fill="${c}22" stroke="${c}66"/><text x="${bx+32}" y="${y+4}" text-anchor="middle" fill="${c}" font-size="10.5" font-weight="700" font-family="'Fira Code',monospace">${esc(txt)}</text></g>`;
+    s+=badge(hx+hw-150, h.ports.length+' '+Vz.portsW, dark?'#94a3b8':'#475569');
+    s+=badge(hx+hw-78, (h.cves?h.cves.length:0)+' '+Vz.cvesW, (h.cves&&h.cves.length)?'#ef4444':(dark?'#94a3b8':'#475569'));
+  });
+  if(hosts.length>shown.length){const y=top+shown.length*rowH+2;s+=`<text x="${hx+16}" y="${y}" fill="${sub}" font-size="11">${esc(tt(Vz.moreHosts,{n:hosts.length-shown.length}))}</text>`;}
+  s+=`</svg>`;
+  const other=Math.max(0,(st.ips||0)-hosts.length);
+  if(other>0)s+=`<div class="vnote">${esc(tt(Vz.otherIps,{n:other}))}</div>`;
+  return s;
+}
+// ---- Geographic footprint: equirectangular graticule with host markers ----
+function geoMap(r,dark){
+  const exp=(r.modules||[]).find(m=>m.id==='exposure');
+  const pts=(exp&&exp.hosts?exp.hosts:[]).filter(h=>typeof h.lat==='number'&&typeof h.lng==='number'&&!(h.lat===0&&h.lng===0));
+  if(!pts.length)return '';
+  const Vz=V(), W=760,H=380, px=l=>((l+180)/360*W), py=l=>((90-l)/180*H);
+  const grid=dark?'rgba(200,214,232,.14)':'rgba(71,85,105,.14)', axis=dark?'rgba(200,214,232,.28)':'rgba(71,85,105,.26)';
+  const panel=dark?'rgba(255,255,255,.03)':'#f3f6fb', bd=dark?'rgba(200,214,232,.2)':'rgba(71,85,105,.18)', tcol=dark?'#cfdbe9':'#334155';
+  let s=`<svg class="svgviz" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img">`;
+  s+=`<rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="${panel}" stroke="${bd}"/>`;
+  for(let lon=-150;lon<=150;lon+=30)s+=`<line x1="${px(lon)}" y1="0" x2="${px(lon)}" y2="${H}" stroke="${lon===0?axis:grid}" stroke-width="${lon===0?1:0.8}"/>`;
+  for(let lat=-60;lat<=60;lat+=30)s+=`<line x1="0" y1="${py(lat)}" x2="${W}" y2="${py(lat)}" stroke="${lat===0?axis:grid}" stroke-width="${lat===0?1:0.8}"/>`;
+  // markers (de-duplicate close points)
+  const seen={};
+  pts.forEach(h=>{const x=px(h.lng),y=py(h.lat),k=Math.round(x/6)+'_'+Math.round(y/6);if(seen[k])return;seen[k]=1;const col=RKCOL[h.risk]||RKCOL.info;
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="7" fill="${col}" fill-opacity="0.25"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" fill="${col}"/>`;
+    const lbl=[h.city,h.country].filter(Boolean).join(', ');if(lbl)s+=`<text x="${(x+8).toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${tcol}" font-size="9.5">${esc(String(lbl).slice(0,24))}</text>`;});
+  s+=`</svg>`;
+  // country rollup caption
+  const byC={};pts.forEach(h=>{const c=h.country||'?';byC[c]=(byC[c]||0)+1;});
+  const cap=Object.entries(byC).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`${esc(c)} (${n})`).join(' · ');
+  if(cap)s+=`<div class="vnote"><b>${esc(Vz.hostedIn)}:</b> ${cap}</div>`;
+  return s;
+}
+// ---- CVE register table ----
+function cveTable(r,max){
+  const m=(r.modules||[]).find(x=>x.id==='cves'); if(!m||!m.cves||!m.cves.length)return '';
+  const Vz=V(), lim=max||20, list=m.cves.slice(0,lim);
+  const rows=list.map(c=>{const kev=c.kev?`<span class="pr high">${esc(Vz.kevYes)}</span>`:'<span style="opacity:.4">-</span>';
+    const tg=c.hosts.slice(0,2).join(', ')+(c.hosts.length>2?' +'+(c.hosts.length-2):'');
+    return `<tr><td class="pp">${esc(c.id)}</td><td><span class="pr ${sevCls(c.severity)}">${esc(c.severity)}</span></td><td>${esc(c.cvss)}</td><td>${esc(c.epss)}</td><td>${kev}</td><td style="font-family:'Fira Code',monospace;font-size:11px">${esc(tg)}</td></tr>`;}).join('');
+  const more=m.cves.length>lim?`<div class="vnote">${esc(tt(Vz.moreCves,{n:m.cves.length-lim}))}</div>`:'';
+  return `<table class="ptbl cvetbl"><thead><tr><th>${esc(Vz.cveHdr)}</th><th>${esc(Vz.sevHdr)}</th><th>${esc(Vz.cvssHdr)}</th><th>${esc(Vz.epssHdr)}</th><th>${esc(Vz.kevHdr)}</th><th>${esc(Vz.targetHdr)}</th></tr></thead><tbody>${rows}</tbody></table>${more}`;
+}
+// ---- Port risk summary: tier counts + category breakdown ----
+function portSummaryBlock(r){
+  const exp=(r.modules||[]).find(m=>m.id==='exposure'); if(!exp||!exp.summary)return '';
+  const s=exp.summary, Vz=V();
+  const chips=[['high',Vz.highRisk,s.high||0],['med',Vz.review,s.med||0],['info',Vz.standard,s.info||0]]
+    .map(([c,l,n])=>`<div class="psum ${c}"><b>${n}</b><span>${esc(l)}</span></div>`).join('');
+  const cats=Object.entries(s.byCat||{}).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<span class="pcat">${esc((Vz.cat&&Vz.cat[k])||k)}: <b>${v}</b></span>`).join('');
+  return `<div class="psumrow">${chips}</div>${cats?`<div class="pcats">${cats}</div>`:''}`;
+}
+function vcard(title,inner){return inner?`<div class="vcard"><h3>${esc(title)}</h3>${inner}</div>`:'';}
+function vizBlock(r,dark){
+  const Vz=V(), parts=[];
+  parts.push(vcard(Vz.attackSurfaceMap,surfaceGraph(r,dark)));
+  parts.push(vcard(Vz.geoFootprint,geoMap(r,dark)));
+  parts.push(vcard(Vz.portRiskSummary,portSummaryBlock(r)));
+  parts.push(vcard(Vz.cveRegister,cveTable(r,15)));
+  const out=parts.filter(Boolean).join('');
+  return out?`<div class="vizwrap">${out}</div>`:'';
+}
 // shared renderer for the structured ports/services intelligence (dashboard + report)
 function exposureBlock(m){
   if(!m||!Array.isArray(m.ports)||!m.ports.length)return '';
@@ -288,6 +402,7 @@ function exposureBlock(m){
   return tbl+hostHtml;
 }
 function modHtml(m){
+  if(m.id==='cves')return '';  // the CVE register is rendered by vizBlock
   if(m.id==='exposure'&&Array.isArray(m.ports)&&m.ports.length){
     const kv=(m.rows||[]).filter(r=>!/Open ports/i.test(r[0])).map(r=>`<div class="k">${esc(r[0])}</div><div class="v">${esc(r[1])}</div>`).join('');
     const tags=(m.tags&&m.tags.length)?`<div class="tags">${m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:'';
@@ -359,6 +474,7 @@ async function run(){
       ${res.sources&&res.sources.length?`<div class="srcline">Sources used: <b>${res.sources.map(esc).join(', ')}</b></div>`:''}
       <div class="actions"><button class="btn" id="repExec">${esc(L().executive)} ${esc(L().securityReport)} (PDF)</button><button class="btn" id="repTech" style="background:#3a4454">${esc(L().technical)} ${esc(L().securityReport)} (PDF)</button><button class="btn ghost" id="newBtn">New search</button></div>
       <div id="ai"><div class="loading" style="padding:24px 0"><div class="spin"></div><div>AI is analysing the results...</div></div></div>
+      ${vizBlock(res,true)}
       <div class="modules">${res.modules.map(modHtml).join('')}</div>
     </div>`;
     $('repExec').onclick=()=>makeReport('exec');
@@ -418,12 +534,17 @@ function makeReport(mode){
   const findings=buildFindings(r).map(([s,t])=>`<div class="finding"><span class="sev ${s}">${T.sev[s]}</span><span>${esc(t)}</span></div>`).join('');
   const recs=buildRecs(r,n).map(x=>`<li>${esc(x)}</li>`).join('');
 
-  // section 4: technical = all modules in full; executive = highlights only
-  let sec4='';
+  // visual intelligence sections (report uses the light theme)
+  const mapHtml=surfaceGraph(r,false)+geoMap(r,false);
+  const hasMap=/svgviz/.test(mapHtml);
+  const vulnHtml=portSummaryBlock(r)+cveTable(r,20);
+  const hasVuln=/psumrow|cvetbl/.test(vulnHtml);
+
+  // detailed section body (no leading heading; the counter adds it)
+  let secDetail='';
   if(tech){
-    const dataMods=(r.modules||[]).filter(m=>m.id!=='diag');
-    sec4=`<h2>${T.s4}</h2>`+dataMods.map(m=>{
-      // exposed ports/services get the dedicated intelligence table instead of a raw dump
+    const dataMods=(r.modules||[]).filter(m=>m.id!=='diag'&&m.id!=='cves');
+    secDetail=dataMods.map(m=>{
       if(m.id==='exposure'&&Array.isArray(m.ports)&&m.ports.length){
         const rows=(m.rows||[]).filter(row=>!/Open ports/i.test(row[0])).map(row=>`<tr><td class="k">${esc(row[0])}</td><td class="v">${esc(row[1])}</td></tr>`).join('');
         return `<div class="sec"><h3>${esc(T.exposedServices)}</h3>${rows?`<table>${rows}</table>`:''}${exposureBlock(m)}</div>`;
@@ -440,15 +561,26 @@ function makeReport(mode){
     }).join('');
   } else {
     const sub=(r.modules||[]).find(m=>m.id==='subdomains'), br=(r.modules||[]).find(m=>m.id==='breaches');
-    const exp=(r.modules||[]).find(m=>m.id==='exposure');
-    sec4=`<h2>${T.s4e}</h2>`;
-    if(br&&st.breaches)sec4+=`<div class="sec"><h3>${T.dataExposure}</h3><ul>${(br.items||[]).slice(0,12).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
-    if(exp&&Array.isArray(exp.ports)&&exp.ports.length&&st.riskyPorts>0)sec4+=`<div class="sec"><h3>${T.exposedServices}</h3>${exposureBlock(exp)}</div>`;
-    if(sub&&st.subdomains)sec4+=`<div class="sec"><h3>${tt(T.attackSurface,{n:st.subdomains})}</h3><div class="cols">${(sub.items||[]).slice(0,30).map(x=>`<div>${esc(x)}</div>`).join('')}</div></div>`;
+    if(br&&st.breaches)secDetail+=`<div class="sec"><h3>${T.dataExposure}</h3><ul>${(br.items||[]).slice(0,12).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    if(sub&&st.subdomains)secDetail+=`<div class="sec"><h3>${tt(T.attackSurface,{n:st.subdomains})}</h3><div class="cols">${(sub.items||[]).slice(0,30).map(x=>`<div>${esc(x)}</div>`).join('')}</div></div>`;
   }
+  const hasDetail=/<div class="sec"/.test(secDetail);
 
   const diag=(r.modules||[]).find(m=>m.id==='diag');
   const diagHtml=(tech&&diag)?`<h3>${T.providers}</h3><div class="cols">${(diag.items||[]).map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:'';
+
+  // assemble sections in order, numbering only those that render
+  let sn=0; const H2=t=>`<h2>${++sn}. ${esc(t)}</h2>`;
+  const sections=[
+    H2(T.s1)+`<p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>`,
+    H2(T.s2)+findings,
+    hasMap?(H2(T.sMap)+mapHtml):'',
+    H2(T.s3)+`<ol class="rec">${recs}</ol>`,
+    hasVuln?(H2(T.sVuln)+vulnHtml):'',
+    hasDetail?(H2(tech?T.s4:T.s4e)+secDetail):'',
+    H2(T.s5)+`<p>${esc(T.methodology)}</p>`+(r.sources&&r.sources.length?`<p><b>${T.sourcesReturning}:</b> ${esc(r.sources.join(', '))}.</p>`:'')+diagHtml,
+    H2(T.s6)+`<p>${esc(T.scope)}</p>`
+  ].filter(Boolean).join('\n');
 
   $('report').innerHTML=`<div class="rep">
     <div class="letter">${SHIELD}${BRAND}<span class="rt">${esc(tt(T.secTitle||'{t} '+T.securityReport,{t:typeName}))}</span></div>
@@ -458,26 +590,7 @@ function makeReport(mode){
 
     <div class="hb"><div class="grade ${h.grade}">${h.grade}</div><div class="t"><b>${T.health}: ${esc(statusL)} (${h.score}/100)</b><div>${T.risk}: ${esc(riskL)} (${r.risk.score}/100) &middot; ${r.sources?r.sources.length:0} ${T.consulted}</div></div></div>
     <div class="rkpis">${tiles.join('')||'<div class="rk"><b>-</b><span>-</span></div>'}</div>
-
-    <h2>${T.s1}</h2>
-    <p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>
-
-    <h2>${T.s2}</h2>
-    ${findings}
-
-    <h2>${T.s3}</h2>
-    <ol class="rec">${recs}</ol>
-
-    ${sec4}
-
-    <h2>${T.s5}</h2>
-    <p>${esc(T.methodology)}</p>
-    ${r.sources&&r.sources.length?`<p><b>${T.sourcesReturning}:</b> ${esc(r.sources.join(', '))}.</p>`:''}
-    ${diagHtml}
-
-    <h2>${T.s6}</h2>
-    <p>${esc(T.scope)}</p>
-
+    ${sections}
     <div class="foot">${esc(T.disclaimer)} &middot; ${now} UTC &middot; ${reportId(r.input)}</div>
   </div>`;
   window.print();
