@@ -7,33 +7,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <meta name="theme-color" content="#08090c"/>
 <title>Intel Aggregator | rochacrypt</title>
-<meta name="description" content="One input, many sources. Investigate a domain, IP, URL, file hash or CVE across public intelligence APIs, analysed by AI."/>
+<meta name="description" content="One input, many sources. Investigate a domain, IP, URL, file hash, email or CVE across public intelligence APIs, analysed by AI, with an executive report."/>
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--purple:#8a63ff;--accent:#8a63ff;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:radial-gradient(1000px 520px at 50% -10%,rgba(138,99,255,.18),transparent 60%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
 a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
-.wrap{max-width:1000px;margin:0 auto;padding:26px 18px 70px}
-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.wrap{max-width:1040px;margin:0 auto;padding:26px 18px 70px}
+header.top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
 .brand{font-weight:800}.brand span{color:var(--red)}
 .home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
 .home:hover{color:#fff;border-color:var(--accent)}
-.hero{text-align:center;margin:22px 0 20px}
+.hero{text-align:center;margin:20px 0 18px}
 .hero .k{font-family:'Fira Code',monospace;color:var(--accent);font-size:13px;letter-spacing:1px}
 .hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,6vw,46px);font-weight:700;margin:6px 0;background:linear-gradient(90deg,#fff,#c9b8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:600px;margin:0 auto}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.hero p{color:var(--muted);max-width:620px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+.types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.ty{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);border:1px solid var(--line2);background:var(--panel2);border-radius:999px;padding:7px 13px;transition:.14s}
+.ty:hover{color:#fff;border-color:var(--accent)}
+.ty.on{color:#fff;background:rgba(138,99,255,.16);border-color:var(--accent)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
-input.txt,select.txt{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 15px;color:var(--text);font-size:15px;outline:none;font-family:inherit}
-input.txt{flex:1;min-width:240px;font-family:'Fira Code',monospace}
-input.txt:focus,select.txt:focus{border-color:var(--accent)}
+input.txt{flex:1;min-width:240px;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 15px;color:var(--text);font-size:15px;outline:none;font-family:'Fira Code',monospace}
+input.txt:focus{border-color:var(--accent)}
+select.txt{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
 .btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
 .btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--text)}
+.btn.ghost:hover{border-color:var(--accent);color:#fff}
 .examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
 .examples .lbl{font-size:12px;color:var(--muted);font-family:'Fira Code',monospace}
 .ex{cursor:pointer;font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:6px 11px}
@@ -42,12 +48,33 @@ input.txt:focus,select.txt:focus{border-color:var(--accent)}
 .loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}
 .spin{display:inline-block;width:24px;height:24px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 6px}
-.tbadge{font-family:'Fira Code',monospace;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:7px 13px;border-radius:999px;background:rgba(138,99,255,.15);border:1px solid var(--purple);color:#c9b8ff}
-.subj{font-family:'Fira Code',monospace;font-size:14px;color:var(--text);word-break:break-all}
-.risk{margin-left:auto;font-family:'Fira Code',monospace;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:7px 13px;border-radius:999px}
-.risk.high{background:var(--red);color:#fff}.risk.elevated{background:var(--amber);color:#241700}.risk.low{background:var(--green);color:#06230f}
-.ai{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:14px;padding:18px 20px;margin:12px 0 18px}
+.fade{animation:fade .4s ease}@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* health header */
+.hpanel{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:18px;padding:20px;margin:16px 0}
+@media(max-width:620px){.hpanel{grid-template-columns:1fr;text-align:center}}
+.ring{width:118px;height:118px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .bg{stroke:var(--panel)}
+.gaugewrap{position:relative;width:118px;height:118px;justify-self:center}
+.gaugewrap .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gaugewrap .ctr .g{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;line-height:1}
+.gaugewrap .ctr .s{font-size:11px;color:var(--muted);font-family:'Fira Code',monospace}
+.hmeta .subj{font-family:'Fira Code',monospace;font-size:14px;color:var(--text);word-break:break-all}
+.hmeta .badges{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 10px;justify-content:flex-start}
+@media(max-width:620px){.hmeta .badges{justify-content:center}}
+.tbadge{font-family:'Fira Code',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 11px;border-radius:999px;background:rgba(138,99,255,.15);border:1px solid var(--purple);color:#c9b8ff}
+.status{font-family:'Fira Code',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 11px;border-radius:999px}
+.status.healthy{background:var(--green);color:#06230f}.status.needs{background:var(--amber);color:#241700}.status.risk{background:var(--red);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:9px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 12px;text-align:center}
+.kpi .v{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;line-height:1}
+.kpi .v.bad{color:var(--red)}.kpi .v.warn{color:var(--amber)}.kpi .v.ok{color:var(--green)}
+.kpi .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:3px;font-family:'Fira Code',monospace}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+.srcline{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);margin:2px 0 10px}.srcline b{color:#c9b8ff}
+
+.ai{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:14px;padding:18px 20px;margin:0 0 16px}
 .ai h3{font-family:'Space Grotesk',sans-serif;font-size:17px;margin-bottom:6px}
 .ai .nvidia{font:600 10px/1 monospace;color:#76b900;border:1px solid #76b900;border-radius:4px;padding:3px 7px;margin-left:8px}
 .ai p{font-size:14.5px;color:var(--text);margin-bottom:10px}
@@ -55,36 +82,88 @@ input.txt:focus,select.txt:focus{border-color:var(--accent)}
 .ai ul{margin:0 0 4px 18px}.ai li{font-size:13.5px;margin:3px 0}
 .modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .mod{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;overflow:hidden}
+.mod.wide{grid-column:1 / -1}
 .mod h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
 .mod h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
 .mod .note{font-size:11px;color:var(--muted);font-family:'Fira Code',monospace;margin:0 0 10px 16px}
-.srcline{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);margin:2px 0 4px}
-.srcline b{color:#c9b8ff}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13px}
 .kv .k{color:var(--muted);font-family:'Fira Code',monospace;font-size:11.5px;white-space:nowrap}
 .kv .v{color:var(--text);word-break:break-word}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tag{font-family:'Fira Code',monospace;font-size:11px;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:999px;padding:3px 9px}
-.items{margin-top:10px;display:grid;gap:5px;max-height:220px;overflow:auto}
+.items{margin-top:10px;display:grid;gap:5px;max-height:260px;overflow:auto}
 .items .it{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);word-break:break-all;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
 .items a.it{color:#aea0ff}
 .disc{font-size:12px;color:var(--muted);margin-top:18px;text-align:center}
+
+/* executive report (print) */
+#report{display:none}
+@media print{
+  @page{size:A4;margin:12mm}
+  body>.wrap{display:none !important}
+  #report{display:block !important}
+  html,body{background:#fff !important}
+  #report *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+.rep{background:#fff;color:#0f172a;font-family:Inter,sans-serif;padding:6px 8px;font-size:14px}
+.rep .letter{display:flex;align-items:center;gap:9px;border-bottom:3px solid #ff2e4c;padding-bottom:10px;margin-bottom:14px}
+.rep .letter .mark{width:26px;height:26px;flex:0 0 auto}
+.rep .letter .wm{font-family:'Fira Code',monospace;font-weight:700;font-size:18px;color:#0f172a}
+.rep .letter .wm b{color:#ff2e4c;font-weight:700}
+.rep .letter .rt{margin-left:auto;font-family:'Fira Code',monospace;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.rep .rhead{text-align:center;border-bottom:2px solid #eee;padding-bottom:16px;margin-bottom:16px}
+.rep .tag{display:inline-block;font:600 11px/1 monospace;color:#7c3aed;border:1px solid #7c3aed;border-radius:4px;padding:4px 8px;margin-bottom:8px}
+.rep .tlp{display:inline-block;font:600 11px/1 monospace;color:#166534;border:1px solid #16a34a;border-radius:4px;padding:4px 8px;margin:0 0 8px 6px}
+.rep h1{font-family:'Space Grotesk',sans-serif;font-size:24px}
+.rep .who{color:#475569;font-size:12.5px;margin-top:5px;word-break:break-all}
+.rep .hb{display:flex;align-items:center;gap:16px;border:1px solid #e5e9f0;border-radius:12px;padding:16px;margin:14px 0;break-inside:avoid}
+.rep .hb .grade{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font:700 26px/1 'Space Grotesk',sans-serif;flex:0 0 auto}
+.rep .hb .t b{font-size:16px}.rep .hb .t div{color:#475569;font-size:13px}
+.rep .rkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;break-inside:avoid}
+.rep .rk{border:1px solid #e5e9f0;border-radius:10px;padding:12px;text-align:center}
+.rep .rk b{font:700 20px/1 'Space Grotesk',sans-serif;display:block}.rep .rk span{font-size:11px;color:#64748b}
+.rep h2{font-family:'Space Grotesk',sans-serif;font-size:16px;color:#0f172a;margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid #e5e9f0;break-after:avoid}
+.rep h3{font-size:13.5px;color:#0f172a;margin:14px 0 4px;break-after:avoid}
+.rep p{font-size:13.5px;color:#1e293b;margin-bottom:8px}
+.rep ul{margin:0 0 6px 18px}.rep li{font-size:13px;margin:3px 0}
+.rep .sec{break-inside:avoid}
+.rep table{width:100%;border-collapse:collapse;font-size:12.5px;margin:2px 0 8px}
+.rep th,.rep td{text-align:left;padding:6px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
+.rep td.k{color:#64748b;white-space:nowrap;width:170px;font-family:'Fira Code',monospace;font-size:11px}
+.rep td.v{word-break:break-word}
+.rep .finding{display:flex;gap:9px;align-items:flex-start;margin:5px 0;font-size:13px}
+.rep .sev{flex:0 0 auto;font:700 10px/1.8 'Fira Code',monospace;padding:0 7px;border-radius:4px;color:#fff;text-transform:uppercase}
+.rep .sev.high{background:#ef4444}.rep .sev.med{background:#f59e0b;color:#241700}.rep .sev.low{background:#64748b}.rep .sev.info{background:#2e6bff}
+.rep ol{margin:0 0 6px 20px}.rep ol li{font-size:13px;margin:4px 0}
+.rep .cols{columns:2;column-gap:18px;font-family:'Fira Code',monospace;font-size:11.5px;color:#334155}
+.rep .cols div{break-inside:avoid;padding:1px 0}
+.rep .foot{margin-top:20px;border-top:1px solid #eee;padding-top:10px;color:#94a3b8;font-size:11px;text-align:center}
+.grade.A{background:#16a34a}.grade.B{background:#67b32e}.grade.C{background:#f59e0b}.grade.D{background:#ff7a1a}.grade.F{background:#ef4444}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
+  <header class="top">
     <a class="brand mono" href="/">rocha<span>crypt</span></a>
     <a class="home" href="/">&larr; Home</a>
   </header>
   <div class="hero">
     <div class="k">// intel aggregator</div>
     <h1>Investigate anything</h1>
-    <p>One input, many sources. Type a domain, IP, URL, file hash or CVE. The engine fans out to public intelligence APIs, and the AI turns the results into a single analysis and dashboard.</p>
+    <p>One input, many sources. Pick a search type (or let it auto-detect), and the engine fans out to public intelligence APIs, scores the environment health, and the AI builds an analysis and an executive report.</p>
   </div>
   <div class="card">
+    <div class="types" id="types">
+      <span class="ty on" data-t="auto">Auto / everything</span>
+      <span class="ty" data-t="domain">Domain</span>
+      <span class="ty" data-t="ip">IP address</span>
+      <span class="ty" data-t="url">URL</span>
+      <span class="ty" data-t="hash">File hash</span>
+      <span class="ty" data-t="email">Email</span>
+      <span class="ty" data-t="cve">CVE</span>
+    </div>
     <div class="row">
-      <input class="txt" id="q" placeholder="example.com   ·   8.8.8.8   ·   https://...   ·   a file hash   ·   CVE-2024-3400" autocomplete="off" spellcheck="false"/>
+      <input class="txt" id="q" placeholder="example.com   ·   8.8.8.8   ·   https://...   ·   hash   ·   name@email.com   ·   CVE-2024-3400" autocomplete="off" spellcheck="false"/>
       <select class="txt" id="lang"><option>English</option><option>Português</option><option>Español</option></select>
       <button class="btn" id="go">Investigate</button>
     </div>
@@ -98,63 +177,234 @@ input.txt:focus,select.txt:focus{border-color:var(--accent)}
   <div class="disc">Intel Aggregator &middot; rochacrypt &middot; public OSINT and reputation sources, analysed by AI. Use only on assets you are authorised to investigate.</div>
 </div>
 
+<div id="report"></div>
+
 <script>
 const RECON="/api/recon", AI="/api/ai-explain";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const riskCls=l=>({High:'high',Elevated:'elevated',Low:'low'}[l]||'low');
+let TYPE="auto", LAST=null, NARR=null;
+
+/* report i18n */
+const RT={
+ "English":{executive:"Executive",technical:"Technical",reportType:"Report type",securityReport:"security report",
+   subject:"Subject",report:"Report",generated:"Generated",health:"Environment health",risk:"Risk level",consulted:"data source(s) consulted",
+   kpi:{subdomains:"Subdomains",ips:"IP addresses",openPorts:"Open ports",cves:"Known CVEs",breaches:"Breaches",vendorFlags:"Vendor flags",emailGrade:"Email grade"},
+   s1:"1. Executive summary",s2:"2. Key findings",s3:"3. Recommendations",s4:"4. Detailed findings",s4e:"4. Data highlights",s5:"5. Methodology and data sources",s6:"6. Scope and limitations",
+   sev:{high:"HIGH",med:"MED",low:"LOW",info:"INFO"},
+   status:{"Healthy":"Healthy","Needs attention":"Needs attention","At risk":"At risk"},
+   rlvl:{"Low":"Low","Elevated":"Elevated","High":"High"},
+   attackSurface:"Attack surface (sample of {n} subdomains)",dataExposure:"Data exposure",providers:"Providers queried",sourcesReturning:"Sources returning data",
+   methodology:"This assessment aggregates open-source intelligence and reputation data from public APIs. Each indicator is classified and enriched automatically; the AI narrative summarises the computed results and does not alter any value. Figures reflect data available at generation time and may be incomplete or rate-limited.",
+   scope:"This report covers passive, public data only. No active scanning, intrusion or exploitation was performed. It is decision-support material, not a formal security assessment, penetration test or guarantee. Act only on assets you are authorised to investigate.",
+   disclaimer:"Generated by rochacrypt Intel Aggregator",
+   f:{cves:"{n} known CVE(s) exposed on internet-facing hosts.",breaches:"Identity found in {n} known data breach(es).",vendor:"Flagged by {n} security vendor(s) in reputation data.",email:"Weak email authentication (grade {g}); the domain may be spoofable.",ports:"{n} network service(s) exposed to the internet.",subs:"{n} subdomain(s) discovered, widening the attack surface.",none:"No high-severity issues were identified in the available public data."},
+   r:{cves:"Patch or mitigate the exposed CVEs, prioritising any listed in CISA KEV.",ports:"Review internet-exposed services and restrict management ports (SSH, RDP, databases) to trusted networks.",email:"Strengthen email authentication: SPF ending in -all, DMARC at p=quarantine then p=reject with a rua address, and a valid DKIM key.",breaches:"Rotate credentials tied to the breached identity and enable multi-factor authentication.",subs:"Audit discovered subdomains, especially admin, dev, staging and CI/CD hosts, for unintended exposure.",vendor:"Investigate the vendor detections; if a false positive, request reclassification.",none:"Maintain current controls and re-run this assessment periodically to catch new exposure."}},
+ "Português":{executive:"Executivo",technical:"Técnico",reportType:"Tipo de relatório",securityReport:"relatório de segurança",
+   subject:"Assunto",report:"Relatório",generated:"Gerado",health:"Saúde do ambiente",risk:"Nível de risco",consulted:"fonte(s) consultada(s)",
+   kpi:{subdomains:"Subdomínios",ips:"Endereços IP",openPorts:"Portas abertas",cves:"CVEs conhecidos",breaches:"Vazamentos",vendorFlags:"Alertas de fornecedor",emailGrade:"Nota de e-mail"},
+   s1:"1. Resumo executivo",s2:"2. Principais achados",s3:"3. Recomendações",s4:"4. Achados detalhados",s4e:"4. Destaques dos dados",s5:"5. Metodologia e fontes de dados",s6:"6. Escopo e limitações",
+   sev:{high:"ALTA",med:"MÉDIA",low:"BAIXA",info:"INFO"},
+   status:{"Healthy":"Saudável","Needs attention":"Requer atenção","At risk":"Em risco"},
+   rlvl:{"Low":"Baixo","Elevated":"Elevado","High":"Alto"},
+   attackSurface:"Superfície de ataque (amostra de {n} subdomínios)",dataExposure:"Exposição de dados",providers:"Provedores consultados",sourcesReturning:"Fontes que retornaram dados",
+   methodology:"Esta avaliação agrega inteligência de fontes abertas e dados de reputação de APIs públicas. Cada indicador é classificado e enriquecido automaticamente; a narrativa da IA resume os resultados calculados e não altera nenhum valor. Os números refletem os dados disponíveis no momento da geração e podem estar incompletos ou limitados por taxa.",
+   scope:"Este relatório cobre apenas dados públicos e passivos. Nenhuma varredura ativa, intrusão ou exploração foi realizada. É material de apoio à decisão, não uma avaliação formal de segurança, teste de intrusão ou garantia. Aja apenas sobre ativos que você está autorizado a investigar.",
+   disclaimer:"Gerado pelo rochacrypt Intel Aggregator",
+   f:{cves:"{n} CVE(s) conhecido(s) exposto(s) em hosts voltados à internet.",breaches:"Identidade encontrada em {n} vazamento(s) de dados conhecido(s).",vendor:"Sinalizado por {n} fornecedor(es) de segurança em dados de reputação.",email:"Autenticação de e-mail fraca (nota {g}); o domínio pode ser falsificado.",ports:"{n} serviço(s) de rede exposto(s) à internet.",subs:"{n} subdomínio(s) descoberto(s), ampliando a superfície de ataque.",none:"Nenhum problema de alta severidade foi identificado nos dados públicos disponíveis."},
+   r:{cves:"Corrija ou mitigue os CVEs expostos, priorizando os listados no CISA KEV.",ports:"Revise os serviços expostos à internet e restrinja portas de gestão (SSH, RDP, bancos de dados) a redes confiáveis.",email:"Reforce a autenticação de e-mail: SPF terminando em -all, DMARC em p=quarantine e depois p=reject com rua, e uma chave DKIM válida.",breaches:"Rotacione as credenciais associadas à identidade vazada e ative a autenticação multifator.",subs:"Audite os subdomínios descobertos, especialmente admin, dev, staging e CI/CD, por exposição não intencional.",vendor:"Investigue as detecções de fornecedores; se for falso positivo, solicite reclassificação.",none:"Mantenha os controles atuais e refaça esta avaliação periodicamente para detectar novas exposições."}},
+ "Español":{executive:"Ejecutivo",technical:"Técnico",reportType:"Tipo de informe",securityReport:"informe de seguridad",
+   subject:"Asunto",report:"Informe",generated:"Generado",health:"Salud del entorno",risk:"Nivel de riesgo",consulted:"fuente(s) consultada(s)",
+   kpi:{subdomains:"Subdominios",ips:"Direcciones IP",openPorts:"Puertos abiertos",cves:"CVEs conocidos",breaches:"Filtraciones",vendorFlags:"Alertas de proveedor",emailGrade:"Nota de correo"},
+   s1:"1. Resumen ejecutivo",s2:"2. Hallazgos clave",s3:"3. Recomendaciones",s4:"4. Hallazgos detallados",s4e:"4. Datos destacados",s5:"5. Metodología y fuentes de datos",s6:"6. Alcance y limitaciones",
+   sev:{high:"ALTA",med:"MEDIA",low:"BAJA",info:"INFO"},
+   status:{"Healthy":"Saludable","Needs attention":"Requiere atención","At risk":"En riesgo"},
+   rlvl:{"Low":"Bajo","Elevated":"Elevado","High":"Alto"},
+   attackSurface:"Superficie de ataque (muestra de {n} subdominios)",dataExposure:"Exposición de datos",providers:"Proveedores consultados",sourcesReturning:"Fuentes que devolvieron datos",
+   methodology:"Esta evaluación agrega inteligencia de fuentes abiertas y datos de reputación de APIs públicas. Cada indicador se clasifica y enriquece automáticamente; la narrativa de la IA resume los resultados calculados y no altera ningún valor. Las cifras reflejan los datos disponibles al generar y pueden estar incompletas o limitadas por tasa.",
+   scope:"Este informe cubre solo datos públicos y pasivos. No se realizó ningún escaneo activo, intrusión ni explotación. Es material de apoyo a la decisión, no una evaluación formal de seguridad, prueba de intrusión ni garantía. Actúe solo sobre activos que esté autorizado a investigar.",
+   disclaimer:"Generado por rochacrypt Intel Aggregator",
+   f:{cves:"{n} CVE(s) conocido(s) expuesto(s) en hosts accesibles desde internet.",breaches:"Identidad encontrada en {n} filtración(es) de datos conocida(s).",vendor:"Marcado por {n} proveedor(es) de seguridad en datos de reputación.",email:"Autenticación de correo débil (nota {g}); el dominio puede ser suplantado.",ports:"{n} servicio(s) de red expuesto(s) a internet.",subs:"{n} subdominio(s) descubierto(s), ampliando la superficie de ataque.",none:"No se identificaron problemas de alta severidad en los datos públicos disponibles."},
+   r:{cves:"Corrija o mitigue los CVEs expuestos, priorizando los del CISA KEV.",ports:"Revise los servicios expuestos a internet y restrinja los puertos de gestión (SSH, RDP, bases de datos) a redes de confianza.",email:"Refuerce la autenticación de correo: SPF con -all, DMARC en p=quarantine y luego p=reject con rua, y una clave DKIM válida.",breaches:"Rote las credenciales asociadas a la identidad filtrada y active la autenticación multifactor.",subs:"Audite los subdominios descubiertos, especialmente admin, dev, staging y CI/CD, por exposición no intencional.",vendor:"Investigue las detecciones de proveedores; si es un falso positivo, solicite reclasificación.",none:"Mantenga los controles actuales y repita esta evaluación periódicamente para detectar nuevas exposiciones."}}
+};
+function L(){return RT[$('lang').value]||RT.English;}
+function tt(s,map){for(const k in map)s=s.replace('{'+k+'}',map[k]);return s;}
+
+document.querySelectorAll('#types .ty').forEach(t=>t.addEventListener('click',()=>{TYPE=t.getAttribute('data-t');document.querySelectorAll('#types .ty').forEach(x=>x.classList.toggle('on',x===t));}));
 document.querySelectorAll('.ex').forEach(e=>e.addEventListener('click',()=>{$('q').value=e.getAttribute('data-v');run();}));
 
+function statusCls(s){return s==='Healthy'?'healthy':s==='Needs attention'?'needs':'risk';}
+function gradeColor(g){return {A:'#2ecc71',B:'#67b32e',C:'#ffb02e',D:'#ff7a1a',F:'#ff2e4c'}[g]||'#8a98a8';}
+function kpiTile(v,l,cls){return `<div class="kpi"><div class="v ${cls||''}">${esc(v)}</div><div class="l">${esc(l)}</div></div>`;}
+function kpis(st){
+  const t=[];
+  if(st.subdomains!=null)t.push(kpiTile(st.subdomains,'Subdomains',st.subdomains>0?'':'ok'));
+  if(st.ips!=null)t.push(kpiTile(st.ips,'IP addresses',''));
+  if(st.openPorts!=null)t.push(kpiTile(st.openPorts,'Open ports',st.openPorts>0?'warn':'ok'));
+  if(st.cves!=null)t.push(kpiTile(st.cves,'Known CVEs',st.cves>0?'bad':'ok'));
+  if(st.breaches!=null)t.push(kpiTile(st.breaches,'Breaches',st.breaches>0?'bad':'ok'));
+  if(st.vendorFlags!=null)t.push(kpiTile(st.vendorFlags,'Vendor flags',st.vendorFlags>0?'bad':'ok'));
+  if(st.emailGrade)t.push(kpiTile(st.emailGrade,'Email grade',st.emailGrade==='A'||st.emailGrade==='B'?'ok':st.emailGrade==='C'?'warn':'bad'));
+  return t.join('');
+}
+function gauge(score,grade){
+  const C=2*Math.PI*52, off=C*(1-score/100), col=gradeColor(grade);
+  return `<div class="gaugewrap"><svg class="ring" viewBox="0 0 118 118"><circle class="bg" cx="59" cy="59" r="52"/><circle cx="59" cy="59" r="52" style="stroke:${col};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${off.toFixed(1)}"/></svg><div class="ctr"><div class="g" style="color:${col}">${grade}</div><div class="s">${score}/100</div></div></div>`;
+}
 function modHtml(m){
   const note=m.note?`<div class="note">${esc(m.note)}</div>`:'';
   const kv=(m.rows||[]).map(r=>`<div class="k">${esc(r[0])}</div><div class="v">${esc(r[1])}</div>`).join('');
   const tags=(m.tags&&m.tags.length)?`<div class="tags">${m.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:'';
   const items=(m.items&&m.items.length)?`<div class="items">${m.items.filter(Boolean).map(it=>{const s=String(it);return /^https?:\/\//.test(s)?`<a class="it" href="${esc(s)}" target="_blank" rel="noopener noreferrer">${esc(s)}</a>`:`<div class="it">${esc(s)}</div>`;}).join('')}</div>`:'';
-  return `<div class="mod"><h3>${esc(m.title)}</h3>${note}<div class="kv">${kv}</div>${tags}${items}</div>`;
+  const wide=['subdomains','exposure','breaches','certs','diag'].includes(m.id)?' wide':'';
+  return `<div class="mod${wide}"><h3>${esc(m.title)}</h3>${note}<div class="kv">${kv}</div>${tags}${items}</div>`;
 }
 function explainHtml(n,mode){
   const list=a=>(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join('');
   const badge=mode==='ai'?'<span class="nvidia">AI via NVIDIA</span>':'';
-  return `<div class="ai"><h3>Analysis ${badge}</h3>
-    <p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>
+  return `<div class="ai"><h3>Analysis ${badge}</h3><p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>
     ${n.points&&n.points.length?`<h4>Notable findings</h4><ul>${list(n.points)}</ul>`:''}
     <h4>Recommended next steps</h4><p style="margin-bottom:0">${esc(n.recommendation||'')}</p>
     ${n.caveats&&n.caveats.length?`<h4>Caveats</h4><ul>${list(n.caveats)}</ul>`:''}</div>`;
 }
 function fallback(r){
-  return {headline:`${r.type.toUpperCase()} ${r.input}: risk read ${r.risk.level} (${r.risk.score}/100).`,
-    summary:`Collected ${r.modules.length} data module(s) from public sources. ${r.risk.signals.length?'Notable signals: '+r.risk.signals.join(' '):'No strong risk signals were raised.'}`,
+  return {headline:`${r.type.toUpperCase()} ${r.input}: health ${r.health.grade} (${r.health.score}/100), risk ${r.risk.level}.`,
+    summary:`Collected ${r.modules.length} data module(s). ${r.risk.signals.length?'Signals: '+r.risk.signals.join(' '):'No strong risk signals were raised.'}`,
     points:r.risk.signals.length?r.risk.signals:['No high-risk indicators found in the available sources.'],
-    recommendation:r.risk.level==='Low'?'Nothing urgent stood out, but absence of evidence is not proof of safety. Review the modules below for context.':'Treat with caution and corroborate with additional sources before acting. Review the exposure and reputation modules below.',
-    caveats:['This is an automated aggregation of public data, not a formal assessment.','Some sources may be incomplete or rate-limited.']};
+    recommendation:r.health.status==='Healthy'?'Posture looks solid; keep monitoring and review the modules below.':'Address the items flagged above, starting with exposed CVEs and any breach or reputation hits.',
+    caveats:['Automated aggregation of public data, not a formal assessment.']};
 }
-function compact(r){
-  return {input:r.input,type:r.type,risk:r.risk,modules:(r.modules||[]).map(m=>({title:m.title,rows:m.rows,tags:m.tags,items:(m.items||[]).slice(0,6)}))};
-}
+function compact(r){return {input:r.input,type:r.type,risk:r.risk,health:r.health,modules:(r.modules||[]).map(m=>({title:m.title,rows:m.rows,items:(m.items||[]).slice(0,6)}))};}
+
 async function run(){
   const input=$('q').value.trim(), lang=$('lang').value;
-  if(!input){$('out').innerHTML='<p class="err">Enter a domain, IP, URL, file hash or CVE.</p>';return;}
+  if(!input){$('out').innerHTML='<p class="err">Enter something to investigate.</p>';return;}
   $('go').disabled=true; $('out').innerHTML='<div class="loading"><div class="spin"></div><div>Querying public intelligence sources...</div></div>';
   try{
-    const r=await fetch(RECON,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input})});
+    const r=await fetch(RECON,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input,type:TYPE})});
     const d=await r.json(); if(!r.ok||!d.result) throw new Error(d.error||'Could not investigate that input.');
-    const res=d.result;
-    $('out').innerHTML=`
-      <div class="summary">
-        <span class="tbadge">${esc(res.type)}</span><span class="subj">${esc(res.input)}</span>
-        <span class="risk ${riskCls(res.risk.level)}">Risk: ${esc(res.risk.level)} ${res.risk.score}/100</span>
+    const res=d.result; LAST=res; NARR=null;
+    const h=res.health;
+    $('out').innerHTML=`<div class="fade">
+      <div class="hpanel">
+        ${gauge(h.score,h.grade)}
+        <div class="hmeta">
+          <div class="subj">${esc(res.input)}</div>
+          <div class="badges"><span class="tbadge">${esc(res.type)}</span><span class="status ${statusCls(h.status)}">${esc(h.status)}</span><span class="status ${h.score>=80?'healthy':h.score>=50?'needs':'risk'}">Risk ${esc(res.risk.level)}</span></div>
+          <div class="kpis">${kpis(h.stats)}</div>
+        </div>
       </div>
       ${res.sources&&res.sources.length?`<div class="srcline">Sources used: <b>${res.sources.map(esc).join(', ')}</b></div>`:''}
+      <div class="actions"><button class="btn" id="repExec">${esc(L().executive)} ${esc(L().securityReport)} (PDF)</button><button class="btn" id="repTech" style="background:#3a4454">${esc(L().technical)} ${esc(L().securityReport)} (PDF)</button><button class="btn ghost" id="newBtn">New search</button></div>
       <div id="ai"><div class="loading" style="padding:24px 0"><div class="spin"></div><div>AI is analysing the results...</div></div></div>
-      <div class="modules">${res.modules.map(modHtml).join('')}</div>`;
+      <div class="modules">${res.modules.map(modHtml).join('')}</div>
+    </div>`;
+    $('repExec').onclick=()=>makeReport('exec');
+    $('repTech').onclick=()=>makeReport('tech');
+    $('newBtn').onclick=()=>{$('q').value='';$('q').focus();$('out').innerHTML='';};
     try{
       const ar=await fetch(AI,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'recon',lang,data:compact(res)})});
-      const ad=await ar.json();
-      if(ar.ok&&ad.narrative)$('ai').innerHTML=explainHtml(ad.narrative,'ai');
-      else $('ai').innerHTML=explainHtml(fallback(res),'fallback');
-    }catch(_){ $('ai').innerHTML=explainHtml(fallback(res),'fallback'); }
+      const ad=await ar.json(); NARR=(ar.ok&&ad.narrative)?ad.narrative:fallback(res);
+      $('ai').innerHTML=explainHtml(NARR,(ar.ok&&ad.narrative)?'ai':'fallback');
+    }catch(_){ NARR=fallback(res); $('ai').innerHTML=explainHtml(NARR,'fallback'); }
   }catch(e){ $('out').innerHTML='<p class="err">'+esc(e.message)+'</p>'; }
   $('go').disabled=false;
+}
+
+function reportId(input){let h=0;for(let i=0;i<input.length;i++){h=((h<<5)-h+input.charCodeAt(i))|0;}return 'RC-'+(new Date().toISOString().slice(0,10).replace(/-/g,''))+'-'+(Math.abs(h)%100000).toString().padStart(5,'0');}
+function buildFindings(r){
+  const f=[], st=r.health.stats, F=L().f;
+  if(st.cves>0)f.push(['high',tt(F.cves,{n:st.cves})]);
+  if(st.breaches>0)f.push(['high',tt(F.breaches,{n:st.breaches})]);
+  if(st.vendorFlags>0)f.push(['med',tt(F.vendor,{n:st.vendorFlags})]);
+  if(st.emailGrade&&['C','D','F'].includes(st.emailGrade))f.push(['med',tt(F.email,{g:st.emailGrade})]);
+  if(st.openPorts>0)f.push(['low',tt(F.ports,{n:st.openPorts})]);
+  if(st.subdomains>0)f.push(['info',tt(F.subs,{n:st.subdomains})]);
+  (r.risk.signals||[]).forEach(s=>{ if(!f.some(x=>x[1].slice(0,14)===s.slice(0,14))) f.push(['info',s]); });
+  if(!f.length)f.push(['low',F.none]);
+  return f;
+}
+function buildRecs(r,n){
+  const recs=[], st=r.health.stats, R=L().r;
+  if(n&&n.recommendation)recs.push(n.recommendation);
+  if(st.cves>0)recs.push(R.cves);
+  if(st.openPorts>0)recs.push(R.ports);
+  if(st.emailGrade&&['C','D','F'].includes(st.emailGrade))recs.push(R.email);
+  if(st.breaches>0)recs.push(R.breaches);
+  if(st.subdomains>0)recs.push(R.subs);
+  if(st.vendorFlags>0)recs.push(R.vendor);
+  if(!recs.length)recs.push(R.none);
+  return [...new Set(recs)];
+}
+const BRAND='<span class="wm">rocha<b>crypt</b></span>';
+const SHIELD='<svg class="mark" viewBox="0 0 24 24" fill="none" stroke="#ff2e4c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9.5 12l1.8 1.8L15 10"/></svg>';
+function makeReport(mode){
+  if(!LAST)return; const r=LAST, n=NARR||fallback(r), h=r.health, st=h.stats, T=L(), tech=(mode==='tech');
+  const now=new Date().toISOString().slice(0,16).replace('T',' ');
+  const typeName=tech?T.technical:T.executive;
+  const statusL=(T.status[h.status]||h.status), riskL=(T.rlvl[r.risk.level]||r.risk.level);
+  const kpi=(v,l)=>`<div class="rk"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+  const tiles=[];
+  Object.keys(T.kpi).forEach(k=>{ if(st[k]!=null)tiles.push(kpi(st[k],T.kpi[k])); });
+
+  const findings=buildFindings(r).map(([s,t])=>`<div class="finding"><span class="sev ${s}">${T.sev[s]}</span><span>${esc(t)}</span></div>`).join('');
+  const recs=buildRecs(r,n).map(x=>`<li>${esc(x)}</li>`).join('');
+
+  // section 4: technical = all modules in full; executive = highlights only
+  let sec4='';
+  if(tech){
+    const dataMods=(r.modules||[]).filter(m=>m.id!=='diag');
+    sec4=`<h2>${T.s4}</h2>`+dataMods.map(m=>{
+      const rows=(m.rows||[]).map(row=>`<tr><td class="k">${esc(row[0])}</td><td class="v">${esc(row[1])}</td></tr>`).join('');
+      let items='';
+      if(m.items&&m.items.length){
+        const capped=m.items.slice(0, m.id==='subdomains'?300:80);
+        if(['subdomains','ips','certs'].includes(m.id)) items=`<div class="cols">${capped.map(x=>`<div>${esc(x)}</div>`).join('')}</div>`;
+        else items=`<ul>${capped.map(x=>`<li style="font-family:'Fira Code',monospace;font-size:11.5px">${esc(x)}</li>`).join('')}</ul>`;
+      }
+      return `<div class="sec"><h3>${esc(m.title)}${m.note?` <span style="font-weight:400;color:#94a3b8;font-size:11px">(${esc(m.note)})</span>`:''}</h3>${rows?`<table>${rows}</table>`:''}${items}</div>`;
+    }).join('');
+  } else {
+    const sub=(r.modules||[]).find(m=>m.id==='subdomains'), br=(r.modules||[]).find(m=>m.id==='breaches');
+    sec4=`<h2>${T.s4e}</h2>`;
+    if(br&&st.breaches)sec4+=`<div class="sec"><h3>${T.dataExposure}</h3><ul>${(br.items||[]).slice(0,12).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+    if(sub&&st.subdomains)sec4+=`<div class="sec"><h3>${tt(T.attackSurface,{n:st.subdomains})}</h3><div class="cols">${(sub.items||[]).slice(0,30).map(x=>`<div>${esc(x)}</div>`).join('')}</div></div>`;
+  }
+
+  const diag=(r.modules||[]).find(m=>m.id==='diag');
+  const diagHtml=(tech&&diag)?`<h3>${T.providers}</h3><div class="cols">${(diag.items||[]).map(x=>`<div>${esc(x)}</div>`).join('')}</div>`:'';
+
+  $('report').innerHTML=`<div class="rep">
+    <div class="letter">${SHIELD}${BRAND}<span class="rt">${esc(typeName)} ${esc(T.securityReport)}</span></div>
+    <div class="rhead"><span class="tag">${esc(typeName.toUpperCase())} &middot; ${esc(T.securityReport.toUpperCase())}</span><span class="tlp">TLP:CLEAR</span>
+      <h1>${esc(r.type.toUpperCase())}</h1>
+      <div class="who">${T.subject}: ${esc(r.input)} &middot; ${T.report} ${reportId(r.input)} &middot; ${T.generated}: ${now} UTC</div></div>
+
+    <div class="hb"><div class="grade ${h.grade}">${h.grade}</div><div class="t"><b>${T.health}: ${esc(statusL)} (${h.score}/100)</b><div>${T.risk}: ${esc(riskL)} (${r.risk.score}/100) &middot; ${r.sources?r.sources.length:0} ${T.consulted}</div></div></div>
+    <div class="rkpis">${tiles.join('')||'<div class="rk"><b>-</b><span>-</span></div>'}</div>
+
+    <h2>${T.s1}</h2>
+    <p><b>${esc(n.headline||'')}</b></p><p>${esc(n.summary||'')}</p>
+
+    <h2>${T.s2}</h2>
+    ${findings}
+
+    <h2>${T.s3}</h2>
+    <ol class="rec">${recs}</ol>
+
+    ${sec4}
+
+    <h2>${T.s5}</h2>
+    <p>${esc(T.methodology)}</p>
+    ${r.sources&&r.sources.length?`<p><b>${T.sourcesReturning}:</b> ${esc(r.sources.join(', '))}.</p>`:''}
+    ${diagHtml}
+
+    <h2>${T.s6}</h2>
+    <p>${esc(T.scope)}</p>
+
+    <div class="foot">${esc(T.disclaimer)} &middot; ${now} UTC &middot; ${reportId(r.input)}</div>
+  </div>`;
+  window.print();
 }
 $('go').addEventListener('click',run);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')run();});
