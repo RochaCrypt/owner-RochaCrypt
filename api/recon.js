@@ -38,6 +38,31 @@ function detect(input) {
   return { type: "unknown", value: s };
 }
 
+/* port intelligence: map a port to a service name and an exposure-risk tier.
+   high  = remote admin / database / internal service that should rarely face the internet
+   med   = control panels, file transfer, mail submission that warrant review
+   info  = standard web / CDN ports, low concern on their own */
+const PORT_INTEL = {
+  21: ["FTP", "med"], 22: ["SSH", "med"], 23: ["Telnet", "high"], 25: ["SMTP", "info"],
+  53: ["DNS", "info"], 69: ["TFTP", "high"], 80: ["HTTP", "info"], 110: ["POP3", "info"],
+  111: ["RPCbind", "high"], 135: ["MS-RPC", "high"], 137: ["NetBIOS", "high"], 139: ["NetBIOS", "high"],
+  143: ["IMAP", "info"], 161: ["SNMP", "high"], 389: ["LDAP", "med"], 443: ["HTTPS", "info"],
+  445: ["SMB", "high"], 465: ["SMTPS", "info"], 587: ["SMTP submission", "info"], 631: ["IPP", "med"],
+  993: ["IMAPS", "info"], 995: ["POP3S", "info"], 1025: ["RPC", "med"], 1433: ["MSSQL", "high"],
+  1521: ["Oracle DB", "high"], 2049: ["NFS", "high"], 2082: ["cPanel", "med"], 2083: ["cPanel SSL", "med"],
+  2086: ["WHM", "med"], 2087: ["WHM SSL", "med"], 2095: ["Webmail", "med"], 2096: ["Webmail SSL", "med"],
+  2052: ["Cloudflare HTTP", "info"], 2053: ["Cloudflare HTTPS", "info"], 2082: ["cPanel", "med"],
+  3000: ["Dev / app server", "med"], 3306: ["MySQL", "high"], 3389: ["RDP", "high"], 4444: ["Metasploit / alt", "high"],
+  5432: ["PostgreSQL", "high"], 5900: ["VNC", "high"], 5985: ["WinRM", "high"], 5986: ["WinRM SSL", "high"],
+  6379: ["Redis", "high"], 7001: ["WebLogic", "high"], 8000: ["HTTP alt", "info"], 8008: ["HTTP alt", "info"],
+  8080: ["HTTP alt", "info"], 8443: ["HTTPS alt", "info"], 8880: ["HTTP alt", "info"], 8888: ["HTTP alt", "info"],
+  9000: ["App / PHP-FPM", "med"], 9092: ["Kafka", "high"], 9200: ["Elasticsearch", "high"], 9300: ["Elasticsearch", "high"],
+  11211: ["Memcached", "high"], 15672: ["RabbitMQ UI", "high"], 27017: ["MongoDB", "high"], 27018: ["MongoDB", "high"],
+  5601: ["Kibana", "high"], 6443: ["Kubernetes API", "high"], 2375: ["Docker API", "high"], 2376: ["Docker API", "high"]
+};
+function portName(p) { return (PORT_INTEL[p] && PORT_INTEL[p][0]) || "Unknown service"; }
+function portRisk(p) { return (PORT_INTEL[p] && PORT_INTEL[p][1]) || "info"; }
+
 /* diagnostics */
 function mkDiag() { const d = []; return { list: d, add: (s, r, n) => d.push({ source: s, ok: !!(r && r.ok), code: r ? r.status : 0, n: n || 0, err: r && r.err }) }; }
 function diagModule(diag) {
@@ -138,15 +163,19 @@ function computeHealth(modules) {
   const stats = {};
   const sub = rowOf(modules, "subdomains", /Unique subdomains/i); if (sub != null) stats.subdomains = parseInt(sub) || 0;
   const ips = rowOf(modules, "ips", /IPs found/i); if (ips != null) stats.ips = parseInt(ips) || 0;
-  const exp = modules.find(x => x.id === "exposure"); let ports = 0, cves = 0;
-  if (exp) { const pr = (exp.rows || []).find(r => /Open ports/i.test(r[0])); if (pr && pr[1] && pr[1] !== "none") ports = pr[1].split(",").filter(Boolean).length; const cr = (exp.rows || []).find(r => /Known CVEs/i.test(r[0])); if (cr) cves = parseInt(cr[1]) || 0; }
-  if (exp) { stats.openPorts = ports; stats.cves = cves; }
+  const exp = modules.find(x => x.id === "exposure"); let ports = 0, cves = 0, riskyPorts = 0;
+  if (exp) {
+    const pr = (exp.rows || []).find(r => /Open ports/i.test(r[0])); if (pr && pr[1] && pr[1] !== "none") ports = pr[1].split(",").map(s => s.trim()).filter(Boolean).length;
+    const cr = (exp.rows || []).find(r => /Known CVEs/i.test(r[0])); if (cr) cves = parseInt(cr[1]) || 0;
+    if (Array.isArray(exp.ports)) riskyPorts = exp.ports.filter(s => s.risk === "high" || s.risk === "med").length;
+    stats.openPorts = ports; stats.cves = cves; if (exp.ports) stats.riskyPorts = riskyPorts;
+  }
   const rep = rowOf(modules, "reputation", /Malicious/i); if (rep != null) { const m = String(rep).match(/(\d+)\s*\/\s*(\d+)/); stats.vendorFlags = m ? (+m[1]) + (+m[2]) : 0; }
   const br = rowOf(modules, "breaches", /Breaches found/i); if (br != null) stats.breaches = parseInt(br) || 0;
   const eg = rowOf(modules, "email", /Grade/i); if (eg) stats.emailGrade = eg;
   let h = 100;
   if (eg) h -= ({ A: 0, B: 5, C: 12, D: 20, F: 28 })[eg] || 0;
-  h -= Math.min(30, cves * 4); h -= Math.min(10, ports); h -= Math.min(24, (stats.breaches || 0) * 6); h -= Math.min(30, (stats.vendorFlags || 0) * 8);
+  h -= Math.min(30, cves * 4); h -= Math.min(8, ports); h -= Math.min(24, riskyPorts * 4); h -= Math.min(24, (stats.breaches || 0) * 6); h -= Math.min(30, (stats.vendorFlags || 0) * 8);
   h = Math.max(0, Math.min(100, Math.round(h)));
   const grade = h >= 85 ? "A" : h >= 70 ? "B" : h >= 50 ? "C" : h >= 30 ? "D" : "F";
   const status = h >= 80 ? "Healthy" : h >= 50 ? "Needs attention" : "At risk";
@@ -172,11 +201,22 @@ async function build(det, diag) {
     push({ id: "ips", title: "Resolved IP addresses", rows: [["IPs found", String(ips.length)]], items: ips.length ? ips.slice(0, 40) : ["No A records resolved."] });
 
     if (env("SHODAN_API_KEY") && ips.length) {
-      const pick = ips.slice(0, 5); const hosts = await Promise.all(pick.map(async ip => ({ ip, info: await shodanHost(ip) })));
-      const items = []; let allV = [];
-      hosts.forEach(h => { if (h.info) { const p = [`${h.ip}  ${h.info.org}`.trim()]; if (h.info.ports.length) p.push("ports: " + h.info.ports.join(",")); if (h.info.vulns.length) { p.push("CVEs: " + h.info.vulns.slice(0, 8).join(",")); allV = allV.concat(h.info.vulns); } items.push(p.join("  |  ")); h.info.services.forEach(s => items.push("   " + h.ip + " -> " + s)); } else items.push(h.ip + "  (no public service data)"); });
-      push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Hosts scanned", String(pick.length)], ["Known CVEs", String(uniq(allV).length)]], items });
+      const pick = ips.slice(0, 6); const hosts = await Promise.all(pick.map(async ip => ({ ip, info: await shodanHost(ip) })));
+      const portSet = new Set(); let allV = []; const hostList = [];
+      hosts.forEach(h => {
+        if (h.info) {
+          const ps = uniq(h.info.ports || []).sort((a, b) => a - b); ps.forEach(p => portSet.add(p));
+          if (h.info.vulns.length) allV = allV.concat(h.info.vulns);
+          hostList.push({ ip: h.ip, org: h.info.org || "", ports: ps, cves: uniq(h.info.vulns || []) });
+        } else hostList.push({ ip: h.ip, org: "", ports: [], cves: [] });
+      });
+      const portsSorted = [...portSet].sort((a, b) => a - b);
+      const svc = portsSorted.map(p => ({ port: p, service: portName(p), risk: portRisk(p) }));
+      const risky = svc.filter(s => s.risk === "high" || s.risk === "med");
+      const items = hostList.map(h => h.ports.length ? `${h.ip}${h.org ? "  (" + h.org + ")" : ""}: ${h.ports.join(", ")}` : `${h.ip}: no public service data`);
+      push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Hosts scanned", String(pick.length)], ["Open ports", portsSorted.join(", ") || "none"], ["Known CVEs", String(uniq(allV).length)]], items, ports: svc, hosts: hostList });
       if (uniq(allV).length) { risk += Math.min(40, uniq(allV).length * 6); signals.push({ code: "cves", n: uniq(allV).length }); }
+      if (risky.length) { risk += Math.min(25, risky.length * 5); signals.push({ code: "riskyports", n: risky.length, list: risky.slice(0, 8).map(s => s.port + "/" + s.service).join(", ") }); }
     } else if (ips[0]) {
       const idb = await jget(`https://internetdb.shodan.io/${ips[0]}`);
       if (idb && (idb.ports?.length || idb.vulns?.length)) { push({ id: "exposure", title: "Exposure (Shodan InternetDB)", rows: [["IP", ips[0]], ["Open ports", (idb.ports || []).join(", ") || "none"], ["Known CVEs", String((idb.vulns || []).length)]], tags: idb.tags || [], items: idb.vulns || [] }); if (idb.vulns?.length) { risk += 30; signals.push({ code: "cves", n: idb.vulns.length }); } }
@@ -193,7 +233,10 @@ async function build(det, diag) {
     const sh = await shodanHost(ip); diag.add("Shodan host", { ok: !!sh, status: sh ? 200 : 0 }, sh ? (sh.ports.length) : 0);
     const vr = await raw(`https://www.virustotal.com/api/v3/ip_addresses/${ip}`, env("VIRUSTOTAL_API_KEY") ? { headers: { "x-apikey": env("VIRUSTOTAL_API_KEY"), accept: "application/json" } } : {}); if (env("VIRUSTOTAL_API_KEY")) diag.add("VirusTotal IP", vr, 1);
     const [rdap, geo] = await Promise.all([rdapIp(ip), geoModule(ip)]); push(rdap); push(geo);
-    if (sh) { push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Open ports", sh.ports.join(", ") || "none"], ["Organisation", sh.org || "Unknown"], ["Known CVEs", String(sh.vulns.length)]], items: [...sh.services, ...(sh.vulns.length ? ["CVEs: " + sh.vulns.join(", ")] : [])] }); if (sh.vulns.length) { risk += Math.min(40, sh.vulns.length * 6); signals.push({ code: "cves", n: sh.vulns.length }); } }
+    if (sh) { const ps = uniq(sh.ports || []).sort((a, b) => a - b); const svc = ps.map(p => ({ port: p, service: portName(p), risk: portRisk(p) })); const risky = svc.filter(s => s.risk === "high" || s.risk === "med");
+      push({ id: "exposure", title: "Exposed services (Shodan)", rows: [["Open ports", ps.join(", ") || "none"], ["Organisation", sh.org || "Unknown"], ["Known CVEs", String(sh.vulns.length)]], items: [...sh.services, ...(sh.vulns.length ? ["CVEs: " + sh.vulns.join(", ")] : [])], ports: svc, hosts: [{ ip, org: sh.org || "", ports: ps, cves: uniq(sh.vulns || []) }] });
+      if (sh.vulns.length) { risk += Math.min(40, sh.vulns.length * 6); signals.push({ code: "cves", n: sh.vulns.length }); }
+      if (risky.length) { risk += Math.min(25, risky.length * 5); signals.push({ code: "riskyports", n: risky.length, list: risky.slice(0, 8).map(s => s.port + "/" + s.service).join(", ") }); } }
     else { const idb = await jget(`https://internetdb.shodan.io/${ip}`); if (idb && (idb.ports?.length || idb.vulns?.length)) push({ id: "exposure", title: "Exposure (InternetDB)", rows: [["Open ports", (idb.ports || []).join(", ") || "none"], ["Known CVEs", String((idb.vulns || []).length)]], tags: idb.tags || [], items: idb.vulns || [] }); }
     const vj = vr.ok ? parse(vr.text) : null; if (vj?.data?.attributes) { const a = vj.data.attributes; const st = a.last_analysis_stats || {}; const mal = (st.malicious || 0) + (st.suspicious || 0); push({ id: "reputation", title: "Reputation (VirusTotal)", rows: [["Malicious / suspicious", `${st.malicious || 0} / ${st.suspicious || 0}`], ["Owner", a.as_owner || "Unknown"], ["Reputation", String(a.reputation ?? "n/a")]] }); if (mal >= 1) { risk += Math.min(45, mal * 10); signals.push({ code: "vendors", n: mal }); } }
     if (env("ABUSEIPDB_KEY")) { const ar = await raw(`https://api.abuseipdb.com/api/v2/check?ipAddress=${ip}&maxAgeInDays=90`, { headers: { Key: env("ABUSEIPDB_KEY"), Accept: "application/json" } }); diag.add("AbuseIPDB", ar, 1); const aj = ar.ok ? parse(ar.text) : null; const s = aj?.data?.abuseConfidenceScore; if (s != null) { push({ id: "abuse", title: "IP reputation (AbuseIPDB)", rows: [["Abuse score", s + "%"], ["Reports", String(aj.data.totalReports ?? 0)], ["Country", aj.data.countryCode || "?"]] }); if (s >= 25) { risk += 30; signals.push({ code: "abuse", n: s }); } } }
