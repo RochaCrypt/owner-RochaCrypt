@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Incident Cost Estimator: quantify cyber risk and ROSI</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<style>
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07090d"><title>Cyber Risk Business Case | RochaCrypt</title><meta name="description" content="Translate cyber incident exposure and security investment assumptions into a decision-support business case with ALE, ROSI, payback, NPV and cost of inaction."><link rel="icon" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Fira+Code:wght@400;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
 :root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--accent:#ff2e4c;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -108,23 +100,10 @@ table.scn tr.base{background:#fff7f8}
   .kpis{grid-template-columns:repeat(3,1fr)}
   .kpi,.verdict,.narr,table.scn tr,.disc{break-inside:avoid;page-break-inside:avoid}
 }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <a class="brand mono" href="/">rocha<span>crypt</span></a>
-    <a class="home" href="/">&larr; Home</a>
-  </header>
-  <div class="hero">
-    <div class="k">// incident cost estimator</div>
-    <h1 id="heroH"></h1>
-    <p id="heroP"></p>
-  </div>
-  <div id="app"></div>
-</div>
 
-<script>
+/* RochaCrypt Cyber Risk Business Case redesign */
+:root{--bg:#07090d;--panel:#0d1118;--panel2:#121824;--line:#222c3a;--line2:#334052;--text:#eef2f7;--muted:#96a1b1;--red:#ff2e4c;--green:#2ecc71;--amber:#ffb02e;--accent:#ff2e4c}body{background:radial-gradient(900px 480px at 50% -8%,rgba(255,46,76,.13),transparent 60%),var(--bg)}.sitebar{height:76px;border-top:4px solid #434851;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;background:rgba(7,9,13,.94);backdrop-filter:blur(15px)}.sitebar .inner{max-width:1180px;height:100%;margin:auto;padding:0 22px;display:flex;align-items:center}.site-logo{width:128px;height:38px;object-fit:cover;object-position:center}.site-home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 13px}.site-home:hover{color:#fff;border-color:var(--red)}.wrap{max-width:1040px;padding:0 20px 70px}.wrap>header{display:none}.hero{margin:0;padding:68px 0 26px}.hero .k{font-size:12px;letter-spacing:1.5px}.hero h1{font-family:'Space Grotesk',Inter,sans-serif;font-size:clamp(41px,6.5vw,68px);line-height:1.04;letter-spacing:-2.4px;max-width:910px;margin:12px auto;background:none;color:#fff}.hero h1 .accent{color:var(--red)}.hero p{max-width:780px;font-size:17px;line-height:1.7}.value-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:26px auto 8px;max-width:880px}.value-strip div{background:#0b1017;border:1px solid var(--line);border-radius:12px;padding:13px}.value-strip b{display:block;color:var(--red);font:700 12px 'Fira Code'}.value-strip span{color:var(--muted);font-size:11.5px}.card{border-color:var(--line2);border-radius:20px;padding:28px;background:linear-gradient(150deg,#111720,#0a0e14);box-shadow:0 25px 75px rgba(0,0,0,.25)}.intro .block-title:first-child{margin-top:0}.block-title{color:var(--red);font-size:12px}.lead{max-width:760px;line-height:1.65}.how{grid-template-columns:repeat(4,1fr);gap:10px}.hcard{background:#0a0f16;border-color:var(--line);padding:17px;min-height:143px}.hcard .n{color:var(--red)}.hcard h4{font-size:15px}.hcard p{font-size:12px}.progress{height:5px;background:#1a222d;margin:-4px -4px 25px}.progress i{background:linear-gradient(90deg,var(--red),#ff788c)}.step h2{font-family:'Space Grotesk';font-size:27px}.step .sub{font-size:14px;max-width:740px;line-height:1.6}.step-counter{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font:600 11px 'Fira Code';margin-bottom:12px}.step-counter b{color:var(--red)}input.txt,select.txt{background:#090d13;border-color:var(--line2)}input.txt:focus,select.txt:focus{box-shadow:0 0 0 3px rgba(255,46,76,.08)}label.lbl{color:#aab4c1}.chip{background:#0a0f16}.chip.on{background:rgba(255,46,76,.12)}.note{background:#0a0f16;border-color:var(--line);border-left-color:var(--amber)}.nav{border-top:1px solid var(--line);padding-top:18px}.btn{border-radius:10px}.summary-live{margin-top:18px;border:1px solid var(--line);border-radius:14px;padding:16px;background:#090d13}.summary-live h4{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}.summary-live-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.summary-live-grid div{background:#111720;border:1px solid var(--line);border-radius:9px;padding:10px}.summary-live-grid b{display:block;font-family:'Fira Code';font-size:16px}.summary-live-grid span{font-size:10px;color:var(--muted)}.report{border-top:5px solid var(--red);box-shadow:0 25px 70px rgba(0,0,0,.3)}.report .rhead .tag{color:#be123c;border-color:#be123c}.kpis{grid-template-columns:repeat(3,1fr)}.trust-note{font-size:11px;color:var(--muted);text-align:center;margin:15px 0 0}.trust-note b{color:var(--green)}@media(max-width:800px){.value-strip,.how{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.wrap{padding-left:14px;padding-right:14px}.sitebar .inner{padding:0 14px}.site-logo{width:112px}.site-home span{display:none}.hero{padding-top:48px}.hero h1{letter-spacing:-1.5px}.value-strip,.how,.summary-live-grid{grid-template-columns:1fr}.card{padding:19px}.step h2{font-size:23px}.report{padding:26px 20px}.kpis{grid-template-columns:1fr 1fr}.actions .btn{flex:1 1 45%}}
+</style></head><body><header class="sitebar"><div class="inner"><a href="/" aria-label="RochaCrypt home"><img class="site-logo" src="/logo.png" alt="RochaCrypt"></a><a class="site-home" href="/">← <span>Back to main site</span></a></div></header><main><div class="wrap"><section class="hero"><div class="k">// cyber risk business case</div><h1 id="heroH"></h1><p id="heroP"></p><div class="value-strip"><div><b>ALE</b><span>Annualised loss exposure</span></div><div><b>ROSI</b><span>Return on security investment</span></div><div><b>PAYBACK</b><span>Time to recover investment</span></div><div><b>NPV</b><span>Value over the selected horizon</span></div></div><p class="trust-note"><b>● Local calculations</b> · AI receives only the final calculated figures for the executive narrative.</p></section><div id="app"></div></div></main><script>
 const API="/api/incident-narrative";
 
 /* ===================== DETERMINISTIC ENGINE (13/13 tested) ===================== */
@@ -183,7 +162,7 @@ const I18N={
   rConservative:"Conservative", rProbable:"Probable", rSevere:"Severe",
   recRecommended:"Recommended", recConditional:"Conditional", recNot:"Not justified on finance alone",
   disclaimer:"Decision-support estimate, not a guarantee. All figures are derived from the assumptions you entered (likelihood, cost per incident and expected control effectiveness) using standard risk-quantification formulas. They do not predict an actual loss or return and do not replace a formal risk assessment. The conservative and severe columns vary the likelihood and cost to reflect uncertainty.",
-  footer:"Incident Cost Estimator · rochacrypt · calculations run locally in your browser · generated {d}",
+  footer:"Cyber Risk Business Case · rochacrypt · calculations run locally in your browser · generated {d}",
   loadingSummary:"Writing the executive summary...",
   savePdf:"Save as PDF", share:"Share summary", edit:"Edit inputs", restart:"Start over",
   pdfHint:"For the PDF, choose \"Save as PDF\" as the destination (and enable \"Background graphics\" for colours).",
@@ -239,7 +218,7 @@ const I18N={
   rConservative:"Conservador", rProbable:"Provável", rSevere:"Severo",
   recRecommended:"Recomendado", recConditional:"Condicional", recNot:"Não se justifica só pela finança",
   disclaimer:"Estimativa de apoio à decisão, não uma garantia. Todos os valores derivam das premissas que você informou (probabilidade, custo por incidente e eficácia esperada do controle) usando fórmulas padrão de quantificação de risco. Não preveem perda ou retorno reais e não substituem uma análise formal de risco. As colunas conservador e severo variam a probabilidade e o custo para refletir a incerteza.",
-  footer:"Incident Cost Estimator · rochacrypt · cálculos rodam localmente no seu navegador · gerado em {d}",
+  footer:"Cyber Risk Business Case · rochacrypt · cálculos rodam localmente no seu navegador · gerado em {d}",
   loadingSummary:"Escrevendo o resumo executivo...",
   savePdf:"Salvar em PDF", share:"Compartilhar resumo", edit:"Editar dados", restart:"Recomeçar",
   pdfHint:"Para o PDF, escolha \"Salvar como PDF\" como destino (e ative \"Gráficos de fundo\" para as cores).",
@@ -295,7 +274,7 @@ const I18N={
   rConservative:"Conservador", rProbable:"Probable", rSevere:"Severo",
   recRecommended:"Recomendado", recConditional:"Condicional", recNot:"No se justifica solo por lo financiero",
   disclaimer:"Estimación de apoyo a la decisión, no una garantía. Todas las cifras derivan de las premisas que ingresaste (probabilidad, costo por incidente y eficacia esperada del control) usando fórmulas estándar de cuantificación de riesgo. No predicen una pérdida o retorno reales y no reemplazan una evaluación formal de riesgo. Las columnas conservador y severo varían la probabilidad y el costo para reflejar la incertidumbre.",
-  footer:"Incident Cost Estimator · rochacrypt · los cálculos corren localmente en tu navegador · generado el {d}",
+  footer:"Cyber Risk Business Case · rochacrypt · los cálculos corren localmente en tu navegador · generado el {d}",
   loadingSummary:"Escribiendo el resumen ejecutivo...",
   savePdf:"Guardar en PDF", share:"Compartir resumen", edit:"Editar datos", restart:"Empezar de nuevo",
   pdfHint:"Para el PDF, elige \"Guardar como PDF\" como destino (y activa \"Gráficos de fondo\" para los colores).",
@@ -345,7 +324,7 @@ function pct(v,signed){if(v==null||!isFinite(v))return t("na");return((signed&&v
 function months(v){if(v==null)return t("notReached");if(v>120)return t("gt10");return v.toLocaleString(LOCALE[A.language]||"en-US",{minimumFractionDigits:1,maximumFractionDigits:1})+" "+t("mo");}
 function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
 function listHtml(a){return(Array.isArray(a)?a:[]).map(x=>`<li>${esc(x)}</li>`).join("");}
-function applyHero(){document.getElementById('heroH').textContent=t("heroH");document.getElementById('heroP').textContent=t("heroP");}
+function applyHero(){document.getElementById('heroH').innerHTML=(A.language==="Português"?"Quanto o risco cibernético <span class=\"accent\">custa ao negócio?</span>":A.language==="Español"?"¿Cuánto cuesta el riesgo cibernético <span class=\"accent\">al negocio?</span>":"What does cyber risk <span class=\"accent\">cost the business?</span>");document.getElementById('heroP').textContent=t("heroP");}
 
 /* ===================== COMPUTE (conservative / probable / severe) ===================== */
 function computeAll(){
@@ -380,7 +359,7 @@ function render(){
 }
 function shell(inner,nextLabel){
   const p=Math.round((step/(NSTEPS-1))*100);
-  return `<div class="card"><div class="progress"><i style="width:${p}%"></i></div><div class="step">${inner}</div>
+  return `<div class="card"><div class="step-counter"><span>${A.language==="Português"?"CASO DE INVESTIMENTO":"INVESTMENT CASE"}</span><b>${Math.min(step+1,5)} / 5</b></div><div class="progress"><i style="width:${p}%"></i></div><div class="step">${inner}</div>
     <div class="nav"><button class="btn ghost" id="back">${t("back")}</button><div class="spacer"></div>
     <button class="btn" id="next">${nextLabel||t("next")}</button></div></div>`;
 }
@@ -602,6 +581,4 @@ function renderReport(R,narr,mode){
 }
 
 render();
-</script>
-</body>
-</html>
+</script></body></html>
