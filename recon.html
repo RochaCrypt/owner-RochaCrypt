@@ -1,216 +1,15 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="utf-8"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action 'self'"/>
-<meta name="referrer" content="strict-origin-when-cross-origin"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="theme-color" content="#08090c"/>
-<title>Intel Aggregator | rochacrypt</title>
-<meta name="description" content="One input, many sources. Investigate a domain, IP, URL, file hash, email or CVE across public intelligence APIs, analysed by AI, with an executive report."/>
-<link rel="icon" type="image/png" href="/favicon.png"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#1c2531;--line2:#2a3441;--text:#eef2f6;--muted:#8b98a8;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;--purple:#8a63ff;--accent:#8a63ff;
-  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:radial-gradient(1000px 520px at 50% -10%,rgba(138,99,255,.18),transparent 60%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
-a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
-.wrap{max-width:1040px;margin:0 auto;padding:26px 18px 70px}
-header.top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.brand{font-weight:800}.brand span{color:var(--red)}
-.home{margin-left:auto;color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 14px}
-.home:hover{color:#fff;border-color:var(--accent)}
-.hero{text-align:center;margin:20px 0 18px}
-.hero .k{font-family:'Fira Code',monospace;color:var(--accent);font-size:13px;letter-spacing:1px}
-.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,6vw,46px);font-weight:700;margin:6px 0;background:linear-gradient(90deg,#fff,#c9b8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:620px;margin:0 auto}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
-.types{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
-.ty{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--muted);border:1px solid var(--line2);background:var(--panel2);border-radius:999px;padding:7px 13px;transition:.14s}
-.ty:hover{color:#fff;border-color:var(--accent)}
-.ty.on{color:#fff;background:rgba(138,99,255,.16);border-color:var(--accent)}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-input.txt{flex:1;min-width:240px;background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px 15px;color:var(--text);font-size:15px;outline:none;font-family:'Fira Code',monospace}
-input.txt:focus{border-color:var(--accent)}
-select.txt{background:var(--panel2);border:1px solid var(--line2);border-radius:12px;padding:14px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
-.btn{background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
-.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5;cursor:default}
-.btn.ghost{background:transparent;border:1px solid var(--line2);color:var(--text)}
-.btn.ghost:hover{border-color:var(--accent);color:#fff}
-.examples{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
-.examples .lbl{font-size:12px;color:var(--muted);font-family:'Fira Code',monospace}
-.ex{cursor:pointer;font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:6px 11px}
-.ex:hover{color:#fff;border-color:var(--accent)}
-.err{color:#ff8a9b;font-size:14px;margin-top:14px}
-.loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}
-.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
-@keyframes sp{to{transform:rotate(360deg)}}
-.fade{animation:fade .4s ease}@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-/* health header */
-.hpanel{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:18px;padding:20px;margin:16px 0}
-@media(max-width:620px){.hpanel{grid-template-columns:1fr;text-align:center}}
-.ring{width:118px;height:118px;transform:rotate(-90deg)}
-.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
-.ring .bg{stroke:var(--panel)}
-.gaugewrap{position:relative;width:118px;height:118px;justify-self:center}
-.gaugewrap .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.gaugewrap .ctr .g{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;line-height:1}
-.gaugewrap .ctr .s{font-size:11px;color:var(--muted);font-family:'Fira Code',monospace}
-.hmeta .subj{font-family:'Fira Code',monospace;font-size:14px;color:var(--text);word-break:break-all}
-.hmeta .badges{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 10px;justify-content:flex-start}
-@media(max-width:620px){.hmeta .badges{justify-content:center}}
-.tbadge{font-family:'Fira Code',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 11px;border-radius:999px;background:rgba(138,99,255,.15);border:1px solid var(--purple);color:#c9b8ff}
-.status{font-family:'Fira Code',monospace;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:6px 11px;border-radius:999px}
-.status.healthy{background:var(--green);color:#06230f}.status.needs{background:var(--amber);color:#241700}.status.risk{background:var(--red);color:#fff}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:9px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 12px;text-align:center}
-.kpi .v{font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;line-height:1}
-.kpi .v.bad{color:var(--red)}.kpi .v.warn{color:var(--amber)}.kpi .v.ok{color:var(--green)}
-.kpi .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-top:3px;font-family:'Fira Code',monospace}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
-.srcline{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);margin:2px 0 10px}.srcline b{color:#c9b8ff}
-
-.ai{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:14px;padding:18px 20px;margin:0 0 16px}
-.ai h3{font-family:'Space Grotesk',sans-serif;font-size:17px;margin-bottom:6px}
-.ai .nvidia{font:600 10px/1 monospace;color:#76b900;border:1px solid #76b900;border-radius:4px;padding:3px 7px;margin-left:8px}
-.ai p{font-size:14.5px;color:var(--text);margin-bottom:10px}
-.ai h4{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin:12px 0 5px;font-family:'Fira Code',monospace}
-.ai ul{margin:0 0 4px 18px}.ai li{font-size:13.5px;margin:3px 0}
-.modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
-.mod{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;overflow:hidden}
-.mod.wide{grid-column:1 / -1}
-.mod h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
-.mod h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent)}
-.mod .note{font-size:11px;color:var(--muted);font-family:'Fira Code',monospace;margin:0 0 10px 16px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13px}
-.kv .k{color:var(--muted);font-family:'Fira Code',monospace;font-size:11.5px;white-space:nowrap}
-.kv .v{color:var(--text);word-break:break-word}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.tag{font-family:'Fira Code',monospace;font-size:11px;background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:999px;padding:3px 9px}
-.items{margin-top:10px;display:grid;gap:5px;max-height:260px;overflow:auto}
-.items .it{font-family:'Fira Code',monospace;font-size:12px;color:var(--muted);word-break:break-all;background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
-.items a.it{color:#aea0ff}
-.disc{font-size:12px;color:var(--muted);margin-top:18px;text-align:center}
-
-/* executive report (print) */
-#report{display:none}
-@media print{
-  @page{size:A4;margin:12mm}
-  body>.wrap{display:none !important}
-  #report{display:block !important}
-  html,body{background:#fff !important}
-  #report *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-}
-.rep{background:#fff;color:#0f172a;font-family:Inter,sans-serif;padding:6px 8px;font-size:14px}
-.rep .letter{display:flex;align-items:center;gap:9px;border-bottom:3px solid #ff2e4c;padding-bottom:10px;margin-bottom:14px}
-.rep .letter .mark{width:26px;height:26px;flex:0 0 auto}
-.rep .letter .wm{font-family:'Fira Code',monospace;font-weight:700;font-size:18px;color:#0f172a}
-.rep .letter .wm b{color:#ff2e4c;font-weight:700}
-.rep .letter .rt{margin-left:auto;font-family:'Fira Code',monospace;font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
-.rep .rhead{text-align:center;border-bottom:2px solid #eee;padding-bottom:16px;margin-bottom:16px}
-.rep .tag{display:inline-block;font:600 11px/1 monospace;color:#7c3aed;border:1px solid #7c3aed;border-radius:4px;padding:4px 8px;margin-bottom:8px}
-.rep .tlp{display:inline-block;font:600 11px/1 monospace;color:#166534;border:1px solid #16a34a;border-radius:4px;padding:4px 8px;margin:0 0 8px 6px}
-.rep h1{font-family:'Space Grotesk',sans-serif;font-size:24px}
-.rep .who{color:#475569;font-size:12.5px;margin-top:5px;word-break:break-all}
-.rep .hb{display:flex;align-items:center;gap:16px;border:1px solid #e5e9f0;border-radius:12px;padding:16px;margin:14px 0;break-inside:avoid}
-.rep .hb .grade{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font:700 26px/1 'Space Grotesk',sans-serif;flex:0 0 auto}
-.rep .hb .t b{font-size:16px}.rep .hb .t div{color:#475569;font-size:13px}
-.rep .rkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;break-inside:avoid}
-.rep .rk{border:1px solid #e5e9f0;border-radius:10px;padding:12px;text-align:center}
-.rep .rk b{font:700 20px/1 'Space Grotesk',sans-serif;display:block}.rep .rk span{font-size:11px;color:#64748b}
-.rep h2{font-family:'Space Grotesk',sans-serif;font-size:16px;color:#0f172a;margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid #e5e9f0;break-after:avoid}
-.rep h3{font-size:13.5px;color:#0f172a;margin:14px 0 4px;break-after:avoid}
-.rep p{font-size:13.5px;color:#1e293b;margin-bottom:8px}
-.rep ul{margin:0 0 6px 18px}.rep li{font-size:13px;margin:3px 0}
-.rep .sec{break-inside:avoid}
-.rep table{width:100%;border-collapse:collapse;font-size:12.5px;margin:2px 0 8px}
-.rep th,.rep td{text-align:left;padding:6px 8px;border-bottom:1px solid #eef2f7;vertical-align:top}
-.rep td.k{color:#64748b;white-space:nowrap;width:170px;font-family:'Fira Code',monospace;font-size:11px}
-.rep td.v{word-break:break-word}
-.rep .finding{display:flex;gap:9px;align-items:flex-start;margin:5px 0;font-size:13px}
-.rep .sev{flex:0 0 auto;font:700 10px/1.8 'Fira Code',monospace;padding:0 7px;border-radius:4px;color:#fff;text-transform:uppercase}
-.rep .sev.high{background:#ef4444}.rep .sev.med{background:#f59e0b;color:#241700}.rep .sev.low{background:#64748b}.rep .sev.info{background:#2e6bff}
-.rep ol{margin:0 0 6px 20px}.rep ol li{font-size:13px;margin:4px 0}
-.rep .cols{columns:2;column-gap:18px;font-family:'Fira Code',monospace;font-size:11.5px;color:#334155}
-.rep .cols div{break-inside:avoid;padding:1px 0}
-.rep .foot{margin-top:20px;border-top:1px solid #eee;padding-top:10px;color:#94a3b8;font-size:11px;text-align:center}
-.grade.A{background:#16a34a}.grade.B{background:#67b32e}.grade.C{background:#f59e0b}.grade.D{background:#ff7a1a}.grade.F{background:#ef4444}
-/* exposed ports / services intelligence table (shared by dashboard + report) */
-.ptbl{width:100%;border-collapse:collapse;font-size:12px;margin:6px 0 10px}
-.ptbl th{text-align:left;font:600 10.5px/1.6 'Fira Code',monospace;text-transform:uppercase;letter-spacing:.04em;padding:4px 8px;opacity:.7}
-.ptbl td{padding:5px 8px;border-top:1px solid rgba(128,140,160,.18)}
-.ptbl td.pp{font-family:'Fira Code',monospace;font-weight:600;width:70px}
-.pr{display:inline-block;font:700 10px/1.7 'Fira Code',monospace;padding:0 8px;border-radius:4px;text-transform:uppercase}
-.pr.high{background:#ef4444;color:#fff}.pr.med{background:#f59e0b;color:#241700}.pr.info{background:rgba(120,135,160,.22);color:#64748b}
-.phost{margin-top:4px}.phh{font:600 11px/1.6 'Space Grotesk',sans-serif;opacity:.75;margin-bottom:4px}
-.phr{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;padding:3px 0;border-top:1px solid rgba(128,140,160,.14);font-size:11.5px}
-.phi{font-family:'Fira Code',monospace;font-weight:600}.pho{opacity:.65;font-size:10.5px}
-.php{font-family:'Fira Code',monospace;opacity:.85}
-.mod .ptbl{color:#dbe3ee}.mod .pr.info{background:rgba(148,163,184,.18);color:#94a3b8}
-.rep .ptbl{color:#1e293b}.rep .ptbl th{color:#475569;opacity:1}.rep .pr.info{background:#eef1f6;color:#475569}
-.rep .phh,.rep .phi{color:#0f172a}.rep .pho,.rep .php{color:#475569}
-/* visual intelligence: maps, cve register, port summary */
-.svgviz{display:block;width:100%;height:auto;margin:2px 0 4px}
-.vnote{font-size:11.5px;opacity:.8;margin:4px 0 2px}
-.vizwrap{display:flex;flex-direction:column;gap:14px;margin:16px 0}
-.vcard{background:var(--panel,#0f1218);border:1px solid var(--line,rgba(140,155,180,.16));border-radius:14px;padding:16px 18px}
-.vcard h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
-.vcard h3:before{content:"";width:8px;height:8px;border-radius:2px;background:var(--accent,#8a63ff)}
-.psumrow{display:flex;gap:10px;flex-wrap:wrap;margin:2px 0 8px}
-.psum{flex:1 1 90px;min-width:90px;border:1px solid rgba(140,155,180,.2);border-radius:10px;padding:8px 12px;border-left-width:4px}
-.psum b{display:block;font:700 22px/1.1 'Space Grotesk',sans-serif}.psum span{font-size:11px;opacity:.75}
-.psum.high{border-left-color:#ef4444}.psum.med{border-left-color:#f59e0b}.psum.info{border-left-color:#64748b}
-.pcats{display:flex;flex-wrap:wrap;gap:6px 8px}
-.pcat{font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(140,155,180,.14);white-space:nowrap}
-.cvetbl td.pp{width:auto}.cvetbl th:last-child,.cvetbl td:last-child{text-align:left}
-.rep .psum{border-color:#e2e8f0}.rep .psum b{color:#0f172a}.rep .psum span{color:#475569;opacity:1}
-.rep .pcat{background:#eef1f6;color:#334155}.rep .vnote{color:#475569}
-.rep .svgviz{border-radius:10px;break-inside:avoid}.rep .psumrow,.rep .cvetbl{break-inside:avoid}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header class="top">
-    <a class="brand mono" href="/">rocha<span>crypt</span></a>
-    <a class="home" href="/">&larr; Home</a>
-  </header>
-  <div class="hero">
-    <div class="k">// intel aggregator</div>
-    <h1>Investigate anything</h1>
-    <p>One input, many sources. Pick a search type (or let it auto-detect), and the engine fans out to public intelligence APIs, scores the environment health, and the AI builds an analysis and an executive report.</p>
-  </div>
-  <div class="card">
-    <div class="types" id="types">
-      <span class="ty on" data-t="auto">Auto / everything</span>
-      <span class="ty" data-t="domain">Domain</span>
-      <span class="ty" data-t="ip">IP address</span>
-      <span class="ty" data-t="url">URL</span>
-      <span class="ty" data-t="hash">File hash</span>
-      <span class="ty" data-t="email">Email</span>
-      <span class="ty" data-t="cve">CVE</span>
-    </div>
-    <div class="row">
-      <input class="txt" id="q" placeholder="example.com   ·   8.8.8.8   ·   https://...   ·   hash   ·   name@email.com   ·   CVE-2024-3400" autocomplete="off" spellcheck="false"/>
-      <select class="txt" id="lang"><option>English</option><option>Português</option><option>Español</option></select>
-      <button class="btn" id="go">Investigate</button>
-    </div>
-    <div class="examples"><span class="lbl">Try:</span>
-      <span class="ex" data-v="github.com">github.com</span>
-      <span class="ex" data-v="1.1.1.1">1.1.1.1</span>
-      <span class="ex" data-v="CVE-2024-3400">CVE-2024-3400</span>
-    </div>
-    <div id="out"></div>
-  </div>
-  <div class="disc">Intel Aggregator &middot; rochacrypt &middot; public OSINT and reputation sources, analysed by AI. Use only on assets you are authorised to investigate.</div>
-</div>
-
-<div id="report"></div>
-
-<script>
+<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action 'self'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07090d"><title>Recon Intelligence | RochaCrypt</title><meta name="description" content="Passive OSINT investigation for domains, IP addresses, URLs, file hashes, email addresses and CVEs, enriched with AI-assisted analysis."><link rel="icon" href="/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet"><style>
+:root{--bg:#07090d;--panel:#0d1117;--panel2:#111720;--panel3:#151c27;--line:#202a38;--line2:#303c4d;--text:#eef3f8;--muted:#8f9baa;--red:#ff2e4c;--green:#2ecc71;--amber:#ffb02e;--purple:#8a63ff;--accent:#ff2e4c;box-sizing:border-box}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:radial-gradient(900px 460px at 50% -10%,rgba(255,46,76,.11),transparent 62%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}a{text-decoration:none;color:inherit}.mono{font-family:'Fira Code',monospace}.wrap{max-width:1180px;margin:auto;padding:0 22px}.topbar{height:76px;border-top:4px solid #434851;border-bottom:1px solid var(--line);background:rgba(7,9,13,.94);backdrop-filter:blur(16px);position:sticky;top:0;z-index:20}.topbar .wrap{height:100%;display:flex;align-items:center;gap:18px}.brand-logo{width:128px;height:38px;object-fit:cover;object-position:center}.top-links{margin-left:auto;display:flex;gap:8px;align-items:center}.home,.lang-top{color:var(--muted);font-size:13px;border:1px solid var(--line2);border-radius:999px;padding:8px 13px;background:#0b1017}.home:hover{color:#fff;border-color:var(--red)}
+.hero{padding:68px 0 32px;text-align:center}.hero .k{font:700 12px 'Fira Code',monospace;color:var(--red);letter-spacing:1.5px}.hero h1{font-family:'Space Grotesk';font-size:clamp(40px,6vw,67px);line-height:1.04;letter-spacing:-2.5px;margin:13px 0}.hero h1 span{color:var(--red)}.hero p{max-width:750px;margin:auto;color:var(--muted);font-size:17px}.trust-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:25px}.trust-row span{font:600 11px 'Fira Code',monospace;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:#0b1017;color:#aeb8c5}.trust-row b{color:var(--green)}
+.searchshell{padding:24px 0 34px}.investigator{background:linear-gradient(150deg,#111720,#0b0f15);border:1px solid var(--line2);border-radius:22px;padding:27px;box-shadow:0 24px 80px rgba(0,0,0,.25)}.search-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px}.search-title h2{font-family:'Space Grotesk';font-size:22px}.search-title p{color:var(--muted);font-size:13px}.types{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}.ty{cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--line2);background:#0b1017;border-radius:999px;padding:7px 12px;transition:.14s}.ty:hover{color:#fff;border-color:#75505a}.ty.on{background:rgba(255,46,76,.12);border-color:var(--red);color:#fff}.row{display:grid;grid-template-columns:1fr 150px 145px;gap:10px}input.txt,select.txt{width:100%;background:#090d13;border:1px solid var(--line2);border-radius:12px;padding:14px;color:var(--text);outline:none;font-size:14px}input.txt{font-family:'Fira Code',monospace}input.txt:focus,select.txt:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,46,76,.08)}.btn{background:var(--red);color:#fff;border:0;border-radius:12px;padding:14px 18px;font-weight:800;cursor:pointer}.btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.5}.btn.ghost{background:transparent;border:1px solid var(--line2);color:#fff}.examples{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px}.lbl{font:600 11px 'Fira Code';color:var(--muted)}.ex{cursor:pointer;font:500 11px 'Fira Code';padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}.ex:hover{border-color:var(--red);color:#fff}.legal-line{margin-top:16px;border-top:1px solid var(--line);padding-top:13px;color:var(--muted);font-size:11.5px;display:flex;gap:8px;align-items:flex-start}.legal-line b{color:var(--amber)}
+.capabilities{padding:35px 0 55px}.caphead{text-align:center;max-width:700px;margin:0 auto 23px}.caphead small{font:700 11px 'Fira Code';color:var(--red);letter-spacing:1.4px}.caphead h2{font-family:'Space Grotesk';font-size:30px;margin:8px}.caphead p{color:var(--muted)}.capgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.cap{border:1px solid var(--line);background:#0c1118;border-radius:14px;padding:17px}.cap b{display:block;margin:10px 0 5px}.cap p{font-size:12px;color:var(--muted);line-height:1.5}.cap i{font-style:normal;color:var(--red);font:800 12px 'Fira Code'}
+#out{margin-top:18px}.err{color:#ff8a9b;font-size:14px;margin-top:14px}.loading{text-align:center;padding:40px 0;color:var(--muted);font-family:'Fira Code',monospace}.spin{display:inline-block;width:24px;height:24px;border:3px solid var(--line2);border-top-color:var(--red);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}@keyframes sp{to{transform:rotate(360deg)}}.fade{animation:fade .35s ease}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hpanel{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:18px;padding:22px;margin:18px 0}.ring{width:118px;height:118px;transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:11;stroke-linecap:round}.ring .bg{stroke:#1a222d}.gaugewrap{position:relative;width:118px;height:118px;justify-self:center}.gaugewrap .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.gaugewrap .ctr .g{font-family:'Space Grotesk';font-size:34px;font-weight:700;line-height:1}.gaugewrap .ctr .s{font-size:11px;color:var(--muted);font-family:'Fira Code'}.hmeta .subj{font:600 14px 'Fira Code';word-break:break-all}.hmeta .badges{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 11px}.tbadge,.status{font:700 10px 'Fira Code';text-transform:uppercase;padding:5px 9px;border-radius:999px}.tbadge{background:rgba(255,46,76,.11);border:1px solid var(--red);color:#ff8a9b}.status.healthy{background:var(--green);color:#06230f}.status.needs{background:var(--amber);color:#241700}.status.risk{background:var(--red);color:#fff}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}.kpi{background:#0a0e14;border:1px solid var(--line);border-radius:11px;padding:10px;text-align:center}.kpi .v{font-family:'Space Grotesk';font-size:21px;font-weight:700}.kpi .v.bad{color:var(--red)}.kpi .v.warn{color:var(--amber)}.kpi .v.ok{color:var(--green)}.kpi .l{font:500 10px 'Fira Code';color:var(--muted);text-transform:uppercase}.actions{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0 14px}.srcline{font:500 11px 'Fira Code';color:var(--muted);margin:2px 0 10px}.srcline b{color:#ff899b}.ai{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line2);border-radius:14px;padding:19px;margin-bottom:16px;border-left:3px solid var(--red)}.ai h3{font-family:'Space Grotesk';font-size:17px}.ai .nvidia{font:600 10px monospace;color:#76b900;border:1px solid #76b900;border-radius:4px;padding:3px 6px;margin-left:7px}.ai p{font-size:14px;margin:6px 0}.ai h4{font:600 10px 'Fira Code';text-transform:uppercase;color:var(--muted);margin:12px 0 5px}.ai ul{margin-left:18px}.ai li{font-size:13px;margin:3px 0}.modules{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}.mod{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px;overflow:hidden}.mod.wide{grid-column:1/-1}.mod h3,.vcard h3{font-family:'Space Grotesk';font-size:15px;margin-bottom:8px;display:flex;gap:8px;align-items:center}.mod h3:before,.vcard h3:before{content:"";width:7px;height:7px;background:var(--red);border-radius:50%}.mod .note{font:500 10.5px 'Fira Code';color:var(--muted);margin:0 0 10px 15px}.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:13px}.kv .k{color:var(--muted);font:500 11px 'Fira Code';white-space:nowrap}.kv .v{word-break:break-word}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.tag{font:500 10px 'Fira Code';border:1px solid var(--line2);padding:3px 8px;border-radius:999px;color:var(--muted)}.items{margin-top:9px;display:grid;gap:5px;max-height:260px;overflow:auto}.items .it{font:500 11px 'Fira Code';color:var(--muted);word-break:break-all;background:#090d13;border:1px solid var(--line);padding:7px;border-radius:7px}.items a.it{color:#ff91a1}
+.vizwrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.vcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.vcard:first-child,.vcard:nth-child(2){grid-column:auto}.svgviz{display:block;width:100%;height:auto}.vnote{font-size:11px;color:var(--muted)}.psumrow{display:flex;gap:8px;flex-wrap:wrap}.psum{flex:1;min-width:90px;border:1px solid var(--line);border-left:4px solid #64748b;border-radius:9px;padding:8px}.psum.high{border-left-color:#ef4444}.psum.med{border-left-color:#f59e0b}.psum.info{border-left-color:#64748b}.psum b{display:block;font:700 20px 'Space Grotesk'}.psum span{font-size:10px;color:var(--muted)}.pcats{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.pcat{font-size:10px;background:#151c27;padding:3px 8px;border-radius:999px}.ptbl{width:100%;border-collapse:collapse;font-size:11px;margin:6px 0}.ptbl th{text-align:left;font:600 10px 'Fira Code';color:var(--muted);padding:5px}.ptbl td{padding:6px;border-top:1px solid var(--line)}.ptbl td.pp{font-family:'Fira Code';font-weight:600}.pr{font:700 9px 'Fira Code';padding:2px 6px;border-radius:4px;text-transform:uppercase}.pr.high{background:#ef4444}.pr.med{background:#f59e0b;color:#241700}.pr.info{background:#202b3b;color:#94a3b8}.phost{margin-top:5px}.phh{font-size:10px;color:var(--muted)}.phr{display:flex;gap:8px;flex-wrap:wrap;padding:4px 0;border-top:1px solid var(--line);font-size:10.5px}.phi,.php{font-family:'Fira Code'}.pho{color:var(--muted)}.disc{text-align:center;color:var(--muted);font-size:11px;padding:25px 0 45px}#report{display:none}
+/* executive report styles retained */
+.rep{background:#fff;color:#0f172a;font-family:Inter,sans-serif;padding:6px 8px;font-size:14px}.rep .letter{display:flex;align-items:center;gap:9px;border-bottom:3px solid #ff2e4c;padding-bottom:10px;margin-bottom:14px}.rep .letter .mark{width:26px;height:26px}.rep .letter .wm{font-family:'Fira Code';font-weight:700;font-size:18px}.rep .letter .wm b{color:#ff2e4c}.rep .letter .rt{margin-left:auto;font:500 11px 'Fira Code';color:#64748b;text-transform:uppercase}.rep .rhead{text-align:center;border-bottom:2px solid #eee;padding-bottom:16px;margin-bottom:16px}.rep .tag{display:inline-block;font:600 11px monospace;color:#be123c;border:1px solid #be123c;border-radius:4px;padding:4px 8px;margin-bottom:8px}.rep .tlp{display:inline-block;font:600 11px monospace;color:#166534;border:1px solid #16a34a;border-radius:4px;padding:4px 8px;margin:0 0 8px 6px}.rep h1{font-family:'Space Grotesk';font-size:24px}.rep .who{color:#475569;font-size:12px;margin-top:5px;word-break:break-all}.rep .hb{display:flex;align-items:center;gap:16px;border:1px solid #e5e9f0;border-radius:12px;padding:16px;margin:14px 0;break-inside:avoid}.rep .hb .grade{width:58px;height:58px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font:700 26px 'Space Grotesk'}.rep .hb .t b{font-size:16px}.rep .hb .t div{color:#475569;font-size:13px}.rep .rkpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0;break-inside:avoid}.rep .rk{border:1px solid #e5e9f0;border-radius:10px;padding:12px;text-align:center}.rep .rk b{font:700 20px 'Space Grotesk';display:block}.rep .rk span{font-size:11px;color:#64748b}.rep h2{font-family:'Space Grotesk';font-size:16px;margin:22px 0 8px;padding-bottom:5px;border-bottom:1px solid #e5e9f0}.rep h3{font-size:13.5px;margin:14px 0 4px}.rep p{font-size:13px;color:#1e293b;margin-bottom:8px}.rep ul,.rep ol{margin:0 0 6px 19px}.rep li{font-size:12.7px;margin:3px 0}.rep .sec{break-inside:avoid}.rep table{width:100%;border-collapse:collapse;font-size:12px}.rep th,.rep td{text-align:left;padding:6px 8px;border-bottom:1px solid #eef2f7}.rep td.k{color:#64748b;white-space:nowrap;width:170px;font:500 11px 'Fira Code'}.rep .finding{display:flex;gap:9px;align-items:flex-start;margin:5px 0;font-size:13px}.rep .sev{font:700 10px/1.8 'Fira Code';padding:0 7px;border-radius:4px;color:#fff}.rep .sev.high{background:#ef4444}.rep .sev.med{background:#f59e0b;color:#241700}.rep .sev.low{background:#64748b}.rep .sev.info{background:#2e6bff}.rep .cols{columns:2;column-gap:18px;font:500 11px 'Fira Code';color:#334155}.rep .foot{margin-top:20px;border-top:1px solid #eee;padding-top:10px;color:#94a3b8;font-size:11px;text-align:center}.grade.A{background:#16a34a}.grade.B{background:#67b32e}.grade.C{background:#f59e0b}.grade.D{background:#ff7a1a}.grade.F{background:#ef4444}.rep .psum{border-color:#e2e8f0}.rep .psum b{color:#0f172a}.rep .psum span{color:#475569}.rep .pcat{background:#eef1f6;color:#334155}.rep .vnote{color:#475569}.rep .pr.info{background:#eef1f6;color:#475569}.rep .phh,.rep .phi{color:#0f172a}.rep .pho,.rep .php{color:#475569}
+@media print{@page{size:A4;margin:12mm}body>*:not(#report){display:none!important}#report{display:block!important}html,body{background:#fff!important}#report *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}@media(max-width:860px){.capgrid{grid-template-columns:1fr 1fr}.row{grid-template-columns:1fr 140px}.row .btn{grid-column:1/-1}.vizwrap{grid-template-columns:1fr}.brand-logo{width:116px}}@media(max-width:560px){.wrap{padding-left:15px;padding-right:15px}.hero{padding-top:45px}.hero h1{font-size:40px;letter-spacing:-1.6px}.investigator{padding:18px}.search-title{display:block}.search-title p{margin-top:5px}.row{grid-template-columns:1fr}.capgrid{grid-template-columns:1fr}.hpanel{grid-template-columns:1fr}.hmeta{text-align:center}.hmeta .badges{justify-content:center}.modules{grid-template-columns:1fr}.home span{display:none}}
+</style></head><body><header class="topbar"><div class="wrap"><a href="/" aria-label="RochaCrypt home"><img class="brand-logo" src="/logo.png" alt="RochaCrypt"></a><div class="top-links"><a class="home" href="/">← <span>Back to main site</span></a></div></div></header><main><section class="hero"><div class="wrap"><div class="k">// passive intelligence workspace</div><h1>Investigate the public<br><span>security footprint.</span></h1><p>Start with one indicator. RochaCrypt aggregates passive public intelligence, organises the returned evidence, calculates an environment-health view and can enrich the results with an AI-assisted explanation.</p><div class="trust-row"><span><b>●</b> Passive OSINT</span><span>Domain · IP · URL · Hash · Email · CVE</span><span>Executive + technical reports</span></div></div></section><section class="searchshell"><div class="wrap"><div class="investigator"><div class="search-title"><div><h2>Start an investigation</h2><p>Select a type or leave Auto enabled.</p></div><p class="mono">public sources · no active exploitation</p></div><div class="types" id="types"><span class="ty on" data-t="auto">Auto detect</span><span class="ty" data-t="domain">Domain</span><span class="ty" data-t="ip">IP address</span><span class="ty" data-t="url">URL</span><span class="ty" data-t="hash">File hash</span><span class="ty" data-t="email">Email</span><span class="ty" data-t="cve">CVE</span></div><div class="row"><input class="txt" id="q" aria-label="Investigation target" placeholder="example.com · 1.1.1.1 · https://... · SHA256 · name@email.com · CVE-2024-3400" autocomplete="off" spellcheck="false"><select class="txt" id="lang" aria-label="Report language"><option>English</option><option>Português</option><option>Español</option></select><button class="btn" id="go">Investigate</button></div><div class="examples"><span class="lbl">Examples:</span><span class="ex" data-v="github.com">github.com</span><span class="ex" data-v="1.1.1.1">1.1.1.1</span><span class="ex" data-v="CVE-2024-3400">CVE-2024-3400</span></div><div class="legal-line"><b>Authorised use only.</b><span>The workspace is designed for passive, public-data investigation. Results depend on the availability and coverage of the connected sources.</span></div><div id="out"></div></div></div></section><section class="capabilities"><div class="wrap"><div class="caphead"><small>WHAT THE WORKSPACE DOES</small><h2>Evidence first. Analysis second.</h2><p>The interface separates collected intelligence from interpretation so the user can review the underlying modules and then use the AI summary as decision support.</p></div><div class="capgrid"><article class="cap"><i>01 / COLLECT</i><b>Multi-source OSINT</b><p>Send the chosen indicator to the existing public-intelligence aggregation workflow.</p></article><article class="cap"><i>02 / ORGANISE</i><b>Structured evidence</b><p>Surface returned DNS, exposure, reputation, vulnerability and other available modules in one workspace.</p></article><article class="cap"><i>03 / INTERPRET</i><b>AI-assisted context</b><p>Use the existing AI explanation endpoint to summarise calculated results without changing source values.</p></article><article class="cap"><i>04 / REPORT</i><b>Decision-ready output</b><p>Generate executive or technical print-ready reports from the retrieved evidence.</p></article></div></div></section></main><div class="disc">RochaCrypt Recon Intelligence · Passive public intelligence · Use only on assets you are authorised to investigate.</div><div id="report"></div><script>
 const RECON="/api/recon", AI="/api/ai-explain";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -454,7 +253,7 @@ function clientHealth(modules){
 async function run(){
   const input=$('q').value.trim(), lang=$('lang').value;
   if(!input){$('out').innerHTML='<p class="err">Enter something to investigate.</p>';return;}
-  $('go').disabled=true; $('out').innerHTML='<div class="loading"><div class="spin"></div><div>Querying public intelligence sources...</div></div>';
+  $('go').disabled=true; $('out').innerHTML='<div class="loading"><div class="spin"></div><div>Collecting passive intelligence from public sources...</div></div>';
   try{
     const r=await fetch(RECON,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input,type:TYPE})});
     const d=await r.json(); if(!r.ok||!d.result) throw new Error(d.error||'Could not investigate that input.');
@@ -472,7 +271,7 @@ async function run(){
         </div>
       </div>
       ${res.sources&&res.sources.length?`<div class="srcline">Sources used: <b>${res.sources.map(esc).join(', ')}</b></div>`:''}
-      <div class="actions"><button class="btn" id="repExec">${esc(L().executive)} ${esc(L().securityReport)} (PDF)</button><button class="btn" id="repTech" style="background:#3a4454">${esc(L().technical)} ${esc(L().securityReport)} (PDF)</button><button class="btn ghost" id="newBtn">New search</button></div>
+      <div class="actions"><button class="btn" id="repExec">${esc(L().executive)} ${esc(L().securityReport)} (PDF)</button><button class="btn" id="repTech" style="background:#3a4454">${esc(L().technical)} ${esc(L().securityReport)} (PDF)</button><button class="btn ghost" id="newBtn">New investigation</button></div>
       <div id="ai"><div class="loading" style="padding:24px 0"><div class="spin"></div><div>AI is analysing the results...</div></div></div>
       ${vizBlock(res,true)}
       <div class="modules">${res.modules.map(modHtml).join('')}</div>
@@ -597,6 +396,4 @@ function makeReport(mode){
 }
 $('go').addEventListener('click',run);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')run();});
-</script>
-</body>
-</html>
+</script></body></html>
