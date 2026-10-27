@@ -282,6 +282,12 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 
 /* 2026 home refresh */
 .hero{padding:92px 0 68px}.hero h1{font-size:clamp(42px,7vw,72px);max-width:920px;margin:12px auto 0}.hero-accent{color:var(--red);-webkit-text-fill-color:var(--red)}.hero .sub{max-width:760px;font-size:17px;line-height:1.7}.hero .role{color:#cfd7e2}.term{margin-bottom:18px}.chips{margin-top:26px}.profile-grid{display:grid;grid-template-columns:1.45fr .9fr;gap:18px}.profile-main,.profile-facts{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:26px}.profile-main h3{font-family:'Space Grotesk';font-size:25px;margin-bottom:10px}.profile-main p{color:#c9d3df;line-height:1.75}.profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.profile-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profile-facts div{border:1px solid var(--line);background:#090d13;border-radius:12px;padding:16px}.profile-facts b{display:block;color:var(--red);font:700 22px 'Space Grotesk'}.profile-facts span{display:block;color:var(--muted);font-size:12px;margin-top:3px}#resources{background:linear-gradient(180deg,transparent,rgba(255,46,76,.025),transparent)}#resources .projects{grid-template-columns:repeat(2,1fr)}nav .brand{padding-right:8px}@media(max-width:760px){.hero{padding:66px 0 48px}.profile-grid{grid-template-columns:1fr}#resources .projects{grid-template-columns:1fr}.profile-facts{grid-template-columns:1fr 1fr}}
+
+/* Cinematic cyber-operations hero */
+.hero{position:relative;overflow:hidden;min-height:700px;display:flex;align-items:center;isolation:isolate}.hero>.wrap{position:relative;z-index:4}.war-carousel{position:absolute;inset:0;z-index:0}.war-slide{position:absolute;inset:-2%;background-size:cover;background-position:center;opacity:0;transform:scale(1.04);transition:opacity 1.6s ease,transform 9s ease}.war-slide.active{opacity:.68;transform:scale(1.10)}.war-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,6,10,.93) 0%,rgba(4,6,10,.75) 43%,rgba(4,6,10,.52) 70%,rgba(4,6,10,.74) 100%),linear-gradient(0deg,var(--bg) 0%,transparent 30%,rgba(4,6,10,.15) 100%);z-index:2}.war-scan{position:absolute;inset:0;z-index:3;opacity:.12;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(255,255,255,.035) 4px)}.hero:after{content:'';position:absolute;left:0;right:0;bottom:0;height:160px;background:linear-gradient(transparent,var(--bg));z-index:3;pointer-events:none}.hero h1{text-shadow:0 3px 32px rgba(0,0,0,.75)}.hero .sub,.hero .role{filter:drop-shadow(0 2px 9px rgba(0,0,0,.95))}.term{background:rgba(7,9,13,.78);backdrop-filter:blur(8px)}.hero .chips .chip{background:rgba(7,9,13,.72);backdrop-filter:blur(7px);border-color:rgba(120,132,150,.28)}.hero .btn-ghost{background:rgba(7,9,13,.58);backdrop-filter:blur(8px)}
+.hero-status{display:inline-flex;align-items:center;gap:9px;margin:2px 0 14px;padding:7px 11px;border:1px solid rgba(255,46,76,.35);border-radius:999px;background:rgba(8,10,14,.68);backdrop-filter:blur(8px);font:600 11px var(--mono);letter-spacing:.6px;color:#cbd4df}.hero-status i{width:7px;height:7px;background:#23d18b;border-radius:50%;box-shadow:0 0 10px #23d18b}
+@media(max-width:760px){.hero{min-height:650px}.war-slide{background-position:60% center}.war-overlay{background:linear-gradient(90deg,rgba(4,6,10,.94),rgba(4,6,10,.72)),linear-gradient(0deg,var(--bg),transparent 45%)}.hero h1{font-size:clamp(39px,12vw,58px)}}
+@media(prefers-reduced-motion:reduce){.war-slide{transition:opacity .3s ease;transform:none!important}}
 </style>
 </head>
 <body>
@@ -637,6 +643,15 @@ document.getElementById('cpExp').addEventListener('click',toggleMax);
   send.addEventListener('click',()=>ask(input.value));
   input.addEventListener('keydown',e=>{if(e.key==='Enter')ask(input.value);});
   document.getElementById('csug').addEventListener('click',e=>{const s=e.target.closest('.s');if(!s)return;ask(s.textContent);});
+})();
+
+// Cinematic hero background rotation
+(function(){
+  const slides=[...document.querySelectorAll('.war-slide')];
+  if(slides.length<2) return;
+  let current=0;
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduced){setInterval(()=>{slides[current].classList.remove('active');current=(current+1)%slides.length;slides[current].classList.add('active');},8000);}
 })();
 </script>
 </body>
