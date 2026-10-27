@@ -11,7 +11,7 @@
 <meta property="og:title" content="Alexandre Rocha | Cybersecurity Engineer"/>
 <meta property="og:description" content="Offensive security, threat detection and response, and security tools anyone can use."/>
 <meta property="og:type" content="website"/>
-<meta property="og:image" content="https://i.ibb.co/8gmTp11L/Designer.png"/>
+<meta property="og:image" content="/logo.png"/>
 <link rel="icon" type="image/png" href="/favicon.png"/>
 <link rel="apple-touch-icon" href="/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -61,7 +61,7 @@ nav{position:sticky;top:0;z-index:60;background:rgba(9,11,15,.72);backdrop-filte
   border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
 .nav-in{max-width:1120px;margin:0 auto;height:var(--nav-h);padding:0 20px;display:flex;align-items:center;gap:20px}
 .brand{display:flex;align-items:center}
-.brand .logo{height:40px;display:block;filter:drop-shadow(0 2px 10px rgba(255,46,76,.25))}
+.brand .logo{height:30px;width:118px;object-fit:cover;object-position:center;display:block;filter:drop-shadow(0 2px 8px rgba(255,46,76,.18))}
 .nav-desktop{margin-left:auto;display:flex;gap:6px;align-items:center}
 .nav-desktop>a,.ddt{color:var(--muted);font-size:14px;font-weight:600;padding:9px 12px;border-radius:9px;transition:.15s;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .nav-desktop>a:hover,.ddt:hover{color:#fff;background:rgba(255,255,255,.05)}
@@ -273,12 +273,15 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   .nav-toggle{display:flex}
 }
 @media(min-width:861px){ .m-menu{display:none} }
-@media(max-width:480px){ .brand .logo{height:34px} .hero{padding:40px 0 30px} }
+@media(max-width:480px){ .brand .logo{height:27px;width:106px} .hero{padding:40px 0 30px} }
 
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   html{scroll-behavior:auto}
 }
+
+/* 2026 home refresh */
+.hero{padding:92px 0 68px}.hero h1{font-size:clamp(42px,7vw,72px);max-width:920px;margin:12px auto 0}.hero-accent{color:var(--red);-webkit-text-fill-color:var(--red)}.hero .sub{max-width:760px;font-size:17px;line-height:1.7}.hero .role{color:#cfd7e2}.term{margin-bottom:18px}.chips{margin-top:26px}.profile-grid{display:grid;grid-template-columns:1.45fr .9fr;gap:18px}.profile-main,.profile-facts{background:linear-gradient(165deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:26px}.profile-main h3{font-family:'Space Grotesk';font-size:25px;margin-bottom:10px}.profile-main p{color:#c9d3df;line-height:1.75}.profile-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}.profile-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.profile-facts div{border:1px solid var(--line);background:#090d13;border-radius:12px;padding:16px}.profile-facts b{display:block;color:var(--red);font:700 22px 'Space Grotesk'}.profile-facts span{display:block;color:var(--muted);font-size:12px;margin-top:3px}#resources{background:linear-gradient(180deg,transparent,rgba(255,46,76,.025),transparent)}#resources .projects{grid-template-columns:repeat(2,1fr)}nav .brand{padding-right:8px}@media(max-width:760px){.hero{padding:66px 0 48px}.profile-grid{grid-template-columns:1fr}#resources .projects{grid-template-columns:1fr}.profile-facts{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -290,9 +293,11 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 
 <nav>
   <div class="nav-in">
-    <a href="/" class="brand" aria-label="rochacrypt home"><img src="https://i.ibb.co/8gmTp11L/Designer.png" alt="rochacrypt" class="logo"/></a>
+    <a href="/" class="brand" aria-label="rochacrypt home"><img src="/logo.png" alt="rochacrypt" class="logo"/></a>
     <div class="nav-desktop">
       <a href="/about.html">About</a>
+      <a href="#profile">Profile</a>
+      <a href="#resources">Resources</a>
       <a href="#expertise">Expertise</a>
       <div class="dd">
         <span class="ddt" tabindex="0" role="button">Projects</span>
@@ -305,7 +310,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
       <div class="dd">
         <span class="ddt" tabindex="0" role="button">Tools</span>
         <div class="menu">
-          <a href="https://career.rochacrypt.com" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
+          <a href="/career.html" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
           <a href="/incident.html">Incident Cost Estimator<small>Quantify risk and ROSI (AI)</small></a>
           <a href="https://url.rochacrypt.com" target="_blank" rel="noopener noreferrer">URL Sentinel<small>Coming soon</small></a>
           <a href="https://cve.rochacrypt.com" target="_blank" rel="noopener noreferrer">CVE Radar<small>Coming soon</small></a>
@@ -313,7 +318,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
       </div>
       <a href="#contact">Contact</a>
       <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a class="nav-cta" href="#" id="navChat">Chat with AI</a>
+      <a class="nav-cta" href="#" id="navChat">Ask my AI</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
@@ -323,6 +328,10 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
 
 <div class="m-menu" id="mobileMenu">
   <a href="/about.html">About</a>
+  <a href="#profile">Profile</a>
+      <a href="#resources">Resources</a>
+      <a href="#profile">Profile</a>
+  <a href="#resources">Resources</a>
   <a href="#expertise">Expertise</a>
   <div class="m-group">
     <button class="m-head" type="button">Projects</button>
@@ -335,7 +344,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   <div class="m-group">
     <button class="m-head" type="button">Tools</button>
     <div class="m-sub">
-      <a href="https://rochacrypt.com/carrer.html" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
+      <a href="/career.html" target="_blank" rel="noopener noreferrer">Career Compass<small>Find your path in tech (AI)</small></a>
       <a href="/incident.html">Incident Cost Estimator<small>Quantify risk and ROSI (AI)</small></a>
       <a href="https://rochacrypt.com/url.html" target="_blank" rel="noopener noreferrer">URL Sentinel<small>Coming soon</small></a>
       <a href="https://rochacrypt.com/cve.html" target="_blank" rel="noopener noreferrer">CVE Radar<small>Coming soon</small></a>
@@ -343,17 +352,18 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   </div>
   <a href="#contact">Contact</a>
   <a href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a>
-  <a class="m-cta" href="#" id="mChat">Chat with AI</a>
+  <a class="m-cta" href="#" id="mChat">Ask my AI</a>
 </div>
 
 <header class="hero">
   <div class="wrap">
-    <img src="https://i.ibb.co/8gmTp11L/Designer.png" class="hero-logo" alt="rochacrypt"/>
     <div class="term mono"><span class="d"></span> root@rochacrypt:~# whoami</div>
-    <div class="role">Cybersecurity engineer, builder and <b>purple-team hacker</b>, based in Dublin</div>
-    <p class="sub">I break things ethically, hunt threats, and turn what I learn into security tools and knowledge anyone can use.</p>
+    <h1>Cybersecurity engineer.<br/>Builder. <span class="hero-accent">Knowledge sharer.</span></h1>
+    <div class="role">Security engineering, offensive security and threat detection · Dublin, Ireland</div>
+    <p class="sub">14+ years in IT and 7+ years in cybersecurity. I build practical security tools, publish learning resources, and turn hands-on experience into knowledge the community can use.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="#projects">Explore what I build</a>
+      <a class="btn btn-primary" href="#profile">View my profile</a>
+      <a class="btn btn-ghost" href="#resources">Explore resources</a>
       <button class="btn btn-ghost" id="heroChat">Ask my AI</button>
     </div>
     <div class="chips">
@@ -363,10 +373,26 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   </div>
 </header>
 
-<section id="projects"><div class="wrap reveal">
-  <div class="sec-tag">// what i build</div><h2>Projects and products</h2>
-  <p class="lead">The things I ship. Free to use, built to be genuinely helpful, and the foundation of what I am creating.</p>
+
+<section id="profile"><div class="wrap reveal">
+  <div class="sec-tag">// professional profile</div><h2>Experience built across security operations</h2>
+  <p class="lead">A concise view of my background, focus areas and credentials. The full project and technical sections below provide the supporting detail.</p>
+  <div class="profile-grid">
+    <div class="profile-main">
+      <h3>Cybersecurity Engineer</h3>
+      <p>I work across security operations, endpoint security, cloud, vulnerability management, detection and offensive security. My focus is practical: understand exposure, improve controls, automate repetitive work and communicate risk clearly.</p>
+      <div class="profile-actions"><a class="btn btn-primary" href="/about.html">View full profile</a><a class="btn btn-ghost" href="https://linkedin.com/in/alexandrevrocha" target="_blank" rel="noopener noreferrer">LinkedIn</a><a class="btn btn-ghost" href="https://github.com/RochaCrypt" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+    </div>
+    <div class="profile-facts">
+      <div><b>14+</b><span>years in IT</span></div><div><b>7+</b><span>years in cybersecurity</span></div><div><b>Dublin</b><span>Ireland</span></div><div><b>AWS</b><span>cloud + security credentials</span></div>
+    </div>
+  </div>
+</div></section>
+<section id="resources"><div class="wrap reveal">
+  <div class="sec-tag">// start here</div><h2>Featured resources</h2>
+  <p class="lead">Practical resources for cybersecurity professionals and people learning technology. Start with security intelligence, career guidance, or certification references.</p>
   <div class="projects">
+    <a class="pcard" style="--accent:var(--red)" href="/career.html"><span class="pill">NEW</span><h3>IT Career Navigator</h3><p>Explore the main areas of IT in plain language, compare career paths and create a personalised study plan from fundamentals to advanced skills.</p><span class="go">Explore careers &rarr;</span></a>
     <a class="pcard" style="--accent:var(--red)" href="/pulse.html">
       <span class="pill">LIVE</span><h3>Cyber Pulse</h3>
       <p>A live cybersecurity news portal. Click any headline and the AI returns a full briefing: summary, affected products, CVE, impact and remediation. Share to WhatsApp, email or LinkedIn.</p>
@@ -386,7 +412,7 @@ footer{border-top:1px solid var(--line);padding:26px 0;text-align:center;color:v
   <div class="sec-tag">// free tools</div><h2>Security Tools</h2>
   <p class="lead">Hands-on utilities, free and no signup. Built to be genuinely useful and to give a taste of what my platforms do.</p>
   <div class="tools">
-    <a class="tool" style="--accent:#2e6bff" href="https://rochacrypt.com/carrer.html" target="_blank" rel="noopener noreferrer">
+    <a class="tool" style="--accent:#2e6bff" href="/career.html" target="_blank" rel="noopener noreferrer">
       <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 11 11 8.5 15.5 13 13"/></svg></div>
       <h3>Career Compass</h3>
       <p>New to tech and unsure where to start? Answer a few questions and get a personalised roadmap across all IT areas: the paths that fit your personality, with beginner steps, skills and certs. Download as PDF or send to WhatsApp.</p>
