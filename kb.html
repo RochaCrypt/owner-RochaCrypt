@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Security Knowledge Base — Alexandre Rocha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#08090c;--panel:#0d1117;--panel2:#11161f;--line:#20141a;--text:#e6edf3;--muted:#8b949e;--red:#ff2e4c;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0)}
+body{margin:0;background:radial-gradient(1200px 500px at 100% -10%,rgba(255,46,76,.18),transparent 60%),var(--bg);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.5}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 60px}
+header{text-align:center;margin-bottom:14px}
+.mono{font-family:'Fira Code',monospace}
+h1{font-size:clamp(28px,6vw,48px);font-weight:800;margin:.1em 0 .1em;
+  background:linear-gradient(90deg,#fff,#ff2e4c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--muted);font-size:14px}
+.back{display:inline-flex;gap:8px;align-items:center;margin-top:12px;padding:9px 16px;border:1px solid var(--red);
+  border-radius:999px;color:#fff;background:rgba(255,46,76,.08);font-weight:600;font-size:13px}
+.back:hover{background:var(--red)}
+.bar{position:sticky;top:env(safe-area-inset-top,0);z-index:10;background:rgba(8,9,12,.9);backdrop-filter:blur(10px);
+  padding:14px 0;margin:16px 0;border-bottom:1px solid var(--line)}
+.search{width:100%;padding:13px 15px;border-radius:12px;border:1px solid #23303d;background:var(--panel);
+  color:var(--text);font-size:16px;font-family:'Fira Code',monospace;outline:none}
+.search:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,46,76,.15)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.chip{cursor:pointer;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid #2a2330;
+  background:var(--panel2);color:var(--muted);white-space:nowrap}
+.chip:hover{color:#fff;border-color:var(--red)}
+.chip.on{color:#fff;border-color:transparent}
+.chip .c{opacity:.7;font-weight:400;margin-left:5px}
+.count{margin-left:auto;color:var(--muted);font-size:12.5px;font-family:'Fira Code',monospace}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid #1c2531;border-radius:14px;padding:16px;display:flex;flex-direction:column;
+  gap:8px;transition:.14s;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.card h3{margin:0;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.held{font-size:10px;font-weight:700;color:#fff;background:var(--red);padding:2px 7px;border-radius:6px}
+.card p{margin:0;color:var(--muted);font-size:13.5px;flex:1}
+.meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px}
+.tag{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:'Fira Code',monospace;
+  background:color-mix(in srgb,var(--accent) 20%,#0d1117);color:#fff}
+.lvl{font-size:11px;color:#ffb02e;font-family:'Fira Code',monospace;letter-spacing:1px}
+.empty{text-align:center;color:var(--muted);padding:50px 0;font-family:'Fira Code',monospace}
+footer{margin-top:34px;text-align:center;color:var(--muted);font-size:12px}
+.legend{color:var(--muted);font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="mono sub">root@rochacrypt:~# ls ~/knowledge-base</div>
+  <h1>Security Knowledge Base</h1>
+  <div class="sub">50 certifications & frameworks — search, filter, and open any mind map.</div>
+  <a class="back" href="https://rochacrypt.com/">Back to profile</a>
+</header>
+
+<div class="bar">
+  <input id="q" class="search" placeholder="Search 50 maps — name or focus..." autocomplete="off"/>
+  <div class="chips" id="chips"><span class="chip on" data-track="all" style="background:#ff2e4c">All</span><span class="count" id="count"></span></div>
+  <div class="legend">Level: ★ foundation → ★★★★★ expert · <b style="color:#fff">held</b> = a credential I personally hold</div>
+</div>
+
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty" style="display:none">// nothing matches your filters</div>
+
+<footer>Curated by <b>Alexandre Rocha</b> · maps open on GitHub with rendered mind maps · <span class="mono">github.com/RochaCrypt</span></footer>
+</div>
+
+<script>
+const DATA={"cats": {"offensive": ["Offensive Security", "#ff2e4c"], "defensive": ["Defensive & Blue Team", "#2e6bff"], "cloud": ["Cloud Security", "#8a63ff"], "grc": ["Governance, Risk & AI", "#ffb02e"], "framework": ["Frameworks & Standards", "#2ecc71"]}, "items": [{"name": "CEH", "track": "offensive", "focus": "Broad offensive fundamentals", "level": 3, "held": true, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ceh.md"}, {"name": "eJPT", "track": "offensive", "focus": "Beginner practical pentest", "level": 1, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ejpt.md"}, {"name": "BSCP", "track": "offensive", "focus": "Hands-on web (Burp)", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/bscp.md"}, {"name": "PenTest+", "track": "offensive", "focus": "Pentest + engagement mgmt", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/pentest-plus.md"}, {"name": "PNPT", "track": "offensive", "focus": "Real-world engagement + debrief", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/pnpt.md"}, {"name": "GWAPT", "track": "offensive", "focus": "Web app pentest (GIAC)", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gwapt.md"}, {"name": "CRTP", "track": "offensive", "focus": "Active Directory attacks", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/crtp.md"}, {"name": "OSCP", "track": "offensive", "focus": "Hands-on pentest benchmark", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/oscp.md"}, {"name": "CRTO", "track": "offensive", "focus": "Red team ops & C2", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/crto.md"}, {"name": "OSEP", "track": "offensive", "focus": "Evasion & advanced attacks", "level": 5, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/osep.md"}, {"name": "OSWE", "track": "offensive", "focus": "White-box web exploitation", "level": 5, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/oswe.md"}, {"name": "GXPN", "track": "offensive", "focus": "Exploit dev & advanced pentest", "level": 5, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gxpn.md"}, {"name": "EHE & NDE", "track": "defensive", "focus": "Attack + defence basics", "level": 1, "held": true, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/essentials.md"}, {"name": "Security+", "track": "defensive", "focus": "Security foundations", "level": 1, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/security-plus.md"}, {"name": "Fortinet FCA", "track": "defensive", "focus": "FortiGate fundamentals", "level": 1, "held": true, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/fortinet-fca.md"}, {"name": "BTL1", "track": "defensive", "focus": "Practical blue team", "level": 2, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/btl1.md"}, {"name": "GSEC", "track": "defensive", "focus": "Broad security essentials", "level": 2, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gsec.md"}, {"name": "SSCP", "track": "defensive", "focus": "Operational security", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/sscp.md"}, {"name": "CySA+", "track": "defensive", "focus": "SOC & threat analytics", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cysa-plus.md"}, {"name": "GCIH", "track": "defensive", "focus": "Incident handling", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gcih.md"}, {"name": "CCFA", "track": "defensive", "focus": "CrowdStrike Falcon admin", "level": 3, "held": true, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ccfa.md"}, {"name": "SC-200", "track": "defensive", "focus": "Microsoft SOC (Sentinel)", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/sc-200.md"}, {"name": "GCFA", "track": "defensive", "focus": "Forensics & DFIR", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gcfa.md"}, {"name": "BTL2", "track": "defensive", "focus": "Advanced blue team", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/btl2.md"}, {"name": "CCSK", "track": "cloud", "focus": "Vendor-neutral cloud basics", "level": 2, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ccsk.md"}, {"name": "AZ-500", "track": "cloud", "focus": "Azure security engineer", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/az-500.md"}, {"name": "AWS Security", "track": "cloud", "focus": "Security across AWS", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/aws-security.md"}, {"name": "CCSP", "track": "cloud", "focus": "Vendor-neutral cloud (ISC2)", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ccsp.md"}, {"name": "GCP Security", "track": "cloud", "focus": "Security on Google Cloud", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/gcp-security.md"}, {"name": "CKS", "track": "cloud", "focus": "Kubernetes security", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cks.md"}, {"name": "SC-100", "track": "cloud", "focus": "Cybersecurity architect", "level": 5, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/sc-100.md"}, {"name": "CLLMSP", "track": "grc", "focus": "LLM application security", "level": 2, "held": true, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cllmsp.md"}, {"name": "CGRC", "track": "grc", "focus": "Authorisation & RMF", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cgrc.md"}, {"name": "CDPSE", "track": "grc", "focus": "Technical data privacy", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cdpse.md"}, {"name": "CIPP/E", "track": "grc", "focus": "European privacy law (GDPR)", "level": 3, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cipp-e.md"}, {"name": "CRISC", "track": "grc", "focus": "IT risk management", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/crisc.md"}, {"name": "CISA", "track": "grc", "focus": "IT audit & assurance", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cisa.md"}, {"name": "CISM", "track": "grc", "focus": "Security programme mgmt", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cism.md"}, {"name": "CISSP", "track": "grc", "focus": "Senior security management", "level": 4, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cissp.md"}, {"name": "MITRE ATT&CK", "track": "framework", "focus": "Adversary tactics matrix", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/mitre-attack.md"}, {"name": "MITRE D3FEND", "track": "framework", "focus": "Defensive countermeasures", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/mitre-d3fend.md"}, {"name": "Cyber Kill Chain", "track": "framework", "focus": "7-stage intrusion model", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cyber-kill-chain.md"}, {"name": "NIST CSF 2.0", "track": "framework", "focus": "Risk-based framework", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/nist-csf.md"}, {"name": "CIS Controls", "track": "framework", "focus": "Prioritised safeguards", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cis-controls.md"}, {"name": "ISO/IEC 27001", "track": "framework", "focus": "ISMS standard", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/iso-27001.md"}, {"name": "SOC 2", "track": "framework", "focus": "Trust & assurance report", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/soc2.md"}, {"name": "PCI DSS", "track": "framework", "focus": "Payment card security", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/pci-dss.md"}, {"name": "OWASP Top 10", "track": "framework", "focus": "Web app risks", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/owasp-top10.md"}, {"name": "PTES", "track": "framework", "focus": "Pentest methodology", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/ptes.md"}, {"name": "CVSS", "track": "framework", "focus": "Vulnerability scoring", "level": 0, "held": false, "url": "https://github.com/RochaCrypt/security-knowledge-base/blob/main/catalog/cvss.md"}]}; const CATS=DATA.cats, ITEMS=DATA.items;
+let cur="all", q="";
+const chips=document.getElementById('chips'), count=document.getElementById('count'),
+      grid=document.getElementById('grid'), empty=document.getElementById('empty');
+Object.entries(CATS).forEach(([k,v])=>{
+  const n=ITEMS.filter(i=>i.track===k).length;
+  const c=document.createElement('span'); c.className='chip'; c.dataset.track=k;
+  c.innerHTML=v[0]+'<span class="c">'+n+'</span>'; c.style.setProperty('--x',v[1]);
+  chips.insertBefore(c,count);
+});
+function stars(n){return n===0?'—':'★'.repeat(n);}
+function render(){
+  const l=ITEMS.filter(i=>(cur==="all"||i.track===cur) &&
+    (!q || (i.name+' '+i.focus).toLowerCase().includes(q)));
+  count.textContent=l.length+' / '+ITEMS.length;
+  grid.innerHTML=''; empty.style.display=l.length?'none':'block';
+  for(const i of l){
+    const color=CATS[i.track][1];
+    const a=document.createElement('a'); a.className='card'; a.href=i.url; a.target="_blank"; a.rel="noopener";
+    a.style.setProperty('--accent',color);
+    a.innerHTML=`<h3>${i.name}${i.held?'<span class="held">held</span>':''}</h3>
+      <p>${i.focus}</p>
+      <div class="meta"><span class="tag">${CATS[i.track][0]}</span><span class="lvl">${stars(i.level)}</span></div>`;
+    grid.appendChild(a);
+  }
+}
+chips.addEventListener('click',e=>{const c=e.target.closest('.chip'); if(!c)return;
+  cur=c.dataset.track;
+  [...chips.querySelectorAll('.chip')].forEach(x=>{x.classList.toggle('on',x===c);
+    x.style.background=x===c?(x.dataset.track==="all"?"#ff2e4c":CATS[x.dataset.track][1]):"";});
+  render();});
+document.getElementById('q').addEventListener('input',e=>{q=e.target.value.toLowerCase();render();});
+render();
+</script>
+</body>
+</html>
