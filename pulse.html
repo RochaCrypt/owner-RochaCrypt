@@ -3,70 +3,119 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#070809"/>
 <title>Cyber Pulse - Alexandre Rocha</title>
+<meta name="description" content="Live cybersecurity news portal with AI-generated briefings: summary, affected products, CVE, impact and remediation."/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="apple-touch-icon" href="/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#070809;--surface:#0d1117;--surface2:#11161f;--elev:#151b26;--line:#1e2733;--line2:#2a3441;
   --text:#eef2f6;--muted:#8b98a8;--faint:#5b6675;--red:#ff2e4c;--blue:#2e6bff;--green:#2ecc71;--amber:#ffb02e;
   box-sizing:border-box;padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{background:radial-gradient(1100px 520px at 100% -10%,rgba(255,46,76,.13),transparent 55%),var(--bg);
-  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55}
+  color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
-.wrap{max-width:1020px;margin:0 auto;padding:24px 18px 70px}
-.head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.title h1{font-size:clamp(26px,5vw,38px);font-weight:800;background:linear-gradient(90deg,#fff,#ff6a80);-webkit-background-clip:text;background-clip:text;color:transparent}
-.title .k{font-family:'Fira Code',monospace;color:var(--muted);font-size:13px}
+.wrap{max-width:1020px;margin:0 auto;padding:0 18px 70px}
+img{max-width:100%}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:70;background:rgba(7,8,9,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0)}
+.topbar-in{max-width:1020px;margin:0 auto;padding:0 18px;height:62px;display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.brand img{height:26px;width:auto;display:block}
+.brand span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14.5px;color:var(--text);white-space:nowrap}
+.brand small{display:block;color:var(--red);font-family:'Fira Code',monospace;font-size:10.5px;font-weight:600;letter-spacing:.3px}
 .spacer{flex:1}
-.back{border:1px solid var(--line2);border-radius:999px;padding:9px 15px;color:var(--text);font-weight:600;font-size:13px;background:var(--surface)}
+.back{border:1px solid var(--line2);border-radius:999px;padding:9px 16px;color:var(--text);font-weight:600;font-size:13px;background:var(--surface);display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
 .back:hover{border-color:var(--red);color:#fff}
-.tabs{display:flex;gap:8px;margin:20px 0 16px}
-.tab{cursor:pointer;padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted)}
-.tab.on{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ---------- hero ---------- */
+.hero{padding:34px 0 22px}
+.k{font-family:'Fira Code',monospace;color:var(--muted);font-size:12.5px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:999px;padding:6px 13px;background:var(--surface);margin-bottom:14px}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5.5vw,42px);font-weight:700;letter-spacing:-.5px;
+  background:linear-gradient(90deg,#fff,#ff6a80);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
+.hero-sub{color:var(--muted);font-size:15px;max-width:640px;margin-bottom:14px}
+.live{display:inline-flex;align-items:center;gap:8px;font-family:'Fira Code',monospace;font-size:12px;color:var(--green);font-weight:600}
+.live .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(46,204,113,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,204,113,.5)}70%{box-shadow:0 0 0 8px rgba(46,204,113,0)}100%{box-shadow:0 0 0 0 rgba(46,204,113,0)}}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;margin:4px 0 20px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px;width:fit-content;max-width:100%}
+.tab{cursor:pointer;padding:10px 20px;border-radius:10px;font-weight:700;font-size:14px;color:var(--muted);display:inline-flex;align-items:center;gap:8px;transition:.15s;white-space:nowrap}
+.tab.on{background:var(--red);color:#fff;box-shadow:0 6px 18px rgba(255,46,76,.35)}
 .tab:hover{color:#fff}
 
-/* toolbar */
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.search{flex:1;min-width:180px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line2);border-radius:10px;padding:0 13px}
-.search input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:15px;font-family:'Fira Code',monospace;padding:11px 0}
-.sel select{appearance:none;background:var(--surface);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-size:13px;font-weight:600;padding:10px 30px 10px 12px;cursor:pointer;outline:none}
-.refresh{background:var(--red);color:#fff;border:none;border-radius:10px;padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer}
-.refresh:disabled{opacity:.6}
-.count{margin-left:auto;color:var(--muted);font-size:12.5px;font-family:'Fira Code',monospace}
+/* ---------- toolbar ---------- */
+.toolbar-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.search{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:0 13px}
+.search svg{width:16px;height:16px;flex:0 0 auto;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
+.search input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14.5px;font-family:'Fira Code',monospace;padding:12px 0}
+.sel select{appearance:none;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;color:var(--text);font-size:13px;font-weight:600;padding:11px 32px 11px 13px;cursor:pointer;outline:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' stroke='%238b98a8' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 10px center}
+.refresh{background:var(--red);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.refresh:hover{filter:brightness(1.08)}
+.refresh:disabled{opacity:.6;cursor:default}
+.toolbar-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.source-label{color:var(--faint);font-size:12px;font-family:'Fira Code',monospace;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.count{color:var(--muted);font-size:12.5px;font-family:'Fira Code',monospace;white-space:nowrap}
+.chipswrap{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
 .chips{display:flex;gap:8px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;flex:1 1 auto}.chips::-webkit-scrollbar{display:none}
-.chipswrap{display:flex;align-items:center;gap:6px;margin-bottom:14px}
-.charr{flex:0 0 auto;width:30px;height:34px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);border-radius:9px;cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
+.charr{flex:0 0 auto;width:26px;height:26px;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);border-radius:8px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center}
 .charr:hover{color:#fff;border-color:var(--red)}
 .charr:disabled{opacity:.3;cursor:default}
-
 .chip{cursor:pointer;white-space:nowrap;flex:0 0 auto;padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid var(--line2);background:var(--surface2);color:var(--muted)}
 .chip.on{background:var(--red);border-color:var(--red);color:#fff}
+.chip:hover{color:#fff}
 
-/* list */
-.list{display:grid;gap:12px}
-.item{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer;transition:.14s}
-.item:hover{transform:translateY(-2px);border-color:var(--line2);background:var(--elev)}
-.item .bar{width:3px;align-self:stretch;border-radius:3px;background:var(--red)}
+/* ---------- list ---------- */
+.list-head{display:flex;align-items:baseline;justify-content:space-between;margin:4px 0 12px}
+.list-head h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+.list{display:grid;gap:11px}
+.item{position:relative;display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 44px 16px 18px;cursor:pointer;transition:.15s}
+.item:hover{transform:translateY(-2px);border-color:var(--line2);background:var(--elev);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.item .bar{width:3px;align-self:stretch;border-radius:3px;background:var(--red);flex:0 0 auto}
 .item.cve .bar{background:var(--amber)}.item.kev .bar{background:var(--green)}
 .item .body{flex:1;min-width:0}
+.item .body::before{content:'Security News';display:inline-block;font-family:'Fira Code',monospace;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  color:var(--red);background:rgba(255,46,76,.12);border:1px solid rgba(255,46,76,.35);border-radius:999px;padding:3px 9px;margin-bottom:8px}
+.item.cve .body::before{content:'CVE Advisory';color:var(--amber);background:rgba(255,176,46,.12);border-color:rgba(255,176,46,.35)}
+.item.kev .body::before{content:'Known Exploited';color:var(--green);background:rgba(46,204,113,.12);border-color:rgba(46,204,113,.35)}
 .item h3{font-size:15.5px;font-weight:600;line-height:1.4;margin-bottom:7px}
-.item .meta{display:flex;gap:12px;color:var(--faint);font-size:12px;font-family:'Fira Code',monospace}
+.item .meta{display:flex;gap:12px;color:var(--faint);font-size:12px;font-family:'Fira Code',monospace;flex-wrap:wrap}
 .item .src{color:#ff8a9b;font-weight:600}
-.empty{text-align:center;color:var(--muted);padding:50px 0;font-family:'Fira Code',monospace}
+.item::after{content:'\2192';position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;opacity:.45;transition:.15s}
+.item:hover::after{opacity:1;color:var(--red);transform:translateY(-50%) translateX(3px)}
+.empty{text-align:center;color:var(--muted);padding:60px 0;font-family:'Fira Code',monospace}
+.empty .ic{font-size:26px;margin-bottom:10px;opacity:.6}
 
-/* analyzer */
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
-.panel h2{font-size:20px;margin-bottom:4px}.panel .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.row input.url{flex:1;min-width:220px;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:13px 15px;color:var(--text);font-size:15px;outline:none}
+/* ---------- analyzer ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.panel-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.panel-icon{width:44px;height:44px;border-radius:12px;background:rgba(46,107,255,.14);border:1px solid rgba(46,107,255,.4);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.panel-icon svg{width:22px;height:22px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.panel h2{font-size:20px;margin-bottom:4px;font-family:'Space Grotesk',sans-serif}.panel .sub{color:var(--muted);font-size:14px;line-height:1.5}
+.field-label{color:var(--faint);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;font-family:'Fira Code',monospace;margin-bottom:7px;display:block}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.row input.url{flex:1;min-width:220px;width:100%;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;padding:14px 15px;color:var(--text);font-size:15px;outline:none;font-family:'Fira Code',monospace}
 .row input.url:focus{border-color:var(--blue)}
-.btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:13px 20px;font-weight:700;cursor:pointer;font-size:14px}
+.row2{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-weight:700;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:8px}
 .btn:hover{filter:brightness(1.07)}.btn:disabled{opacity:.6}
 .err{color:#ff8a9b;font-size:14px;margin-top:10px}
+.aPlaceholder{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;background:var(--surface2);border:1px dashed var(--line2);border-radius:10px;padding:16px;margin-top:18px}
+#aOut:empty{display:none}
 
-/* briefing (shared by modal + analyzer) */
-.brief .bt{font-size:19px;font-weight:700;margin-bottom:8px;line-height:1.35}
+/* ---------- briefing (shared by modal + analyzer) ---------- */
+.brief{margin-top:4px}
+.brief .bt{font-size:19px;font-weight:700;margin-bottom:8px;line-height:1.35;font-family:'Space Grotesk',sans-serif}
 .brief .bhead{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .sev{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;letter-spacing:.4px;padding:5px 11px;border-radius:999px;text-transform:uppercase}
 .sev.critical{background:#ff2e4c;color:#fff}
@@ -87,60 +136,103 @@ a{color:inherit;text-decoration:none}.mono{font-family:'Fira Code',monospace}
 .share{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .sbtn{border:none;border-radius:10px;padding:10px 15px;font-weight:700;font-size:13px;cursor:pointer;color:#fff;display:inline-flex;align-items:center;gap:7px}
 .sbtn.wa{background:#25D366}.sbtn.mail{background:#5b6675}.sbtn.li{background:#0A66C2}.sbtn.copy{background:transparent;border:1px solid var(--line2);color:var(--text)}
+.sbtn:hover{filter:brightness(1.08)}
 .srclink{display:inline-block;margin-top:10px;color:#8fb4ff;font-size:13px}
 
-/* modal */
+/* ---------- modal ---------- */
 .modal{position:fixed;inset:0;z-index:80;background:rgba(5,6,8,.72);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:28px 16px;overflow:auto}
 .modal.open{display:flex}
-.sheet{background:var(--surface);border:1px solid var(--line2);border-radius:18px;max-width:640px;width:100%;padding:24px;box-shadow:0 30px 70px rgba(0,0,0,.6);animation:pop .18s ease}
+.sheet{position:relative;background:var(--surface);border:1px solid var(--line2);border-radius:18px;max-width:640px;width:100%;padding:26px 24px 24px;box-shadow:0 30px 70px rgba(0,0,0,.6);animation:pop .18s ease}
 @keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.sheet .x{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
-.loading{text-align:center;padding:30px 0;color:var(--muted);font-family:'Fira Code',monospace}
+.sheet .x{position:absolute;top:16px;right:16px;background:var(--surface2);border:1px solid var(--line2);color:var(--muted);font-size:18px;cursor:pointer;line-height:1;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.sheet .x:hover{color:#fff;border-color:var(--red)}
+.loading{text-align:center;padding:36px 0;color:var(--muted);font-family:'Fira Code',monospace}
 .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line2);border-top-color:var(--red);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:10px}
 @keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---------- responsive ---------- */
+@media(max-width:620px){
+  .toolbar-foot{flex-direction:column;align-items:stretch}
+  .chipswrap{order:2}
+  .count{order:1;text-align:right}
+  .tabs{width:100%}
+  .tab{flex:1;justify-content:center}
+  .brand span{display:none}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="head">
-    <div class="title"><div class="k">root@rochacrypt:~# tail -f /var/log/threat-intel</div><h1>Cyber Pulse</h1></div>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <a href="/" class="brand" aria-label="rochacrypt home">
+      <img src="/logo.png" alt="rochacrypt"/>
+      <span>RochaCrypt<small>Cyber Pulse</small></span>
+    </a>
     <div class="spacer"></div>
-    <a class="back" href="/">Back to home</a>
+    <a class="back" href="/">&larr; Back to home</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="k mono">root@rochacrypt:~# tail -f /var/log/threat-intel</div>
+    <h1>Cyber Pulse</h1>
+    <p class="hero-sub">Live cybersecurity headlines curated from multiple sources. Click any story to get an instant AI briefing: summary, affected products, CVE, impact and remediation.</p>
+    <div class="live"><span class="dot"></span> Live feed &middot; updates automatically</div>
   </div>
 
-  <div class="tabs">
-    <span class="tab on" data-tab="feed">Feed</span>
-    <span class="tab" data-tab="analyzer">News Analyzer</span>
+  <div class="tabs" role="tablist">
+    <span class="tab on" data-tab="feed" role="tab">Feed</span>
+    <span class="tab" data-tab="analyzer" role="tab">News Analyzer</span>
   </div>
 
   <!-- FEED -->
   <div id="feedTab">
-    <div class="toolbar">
-      <div class="search"><input id="q" placeholder="Search headlines..." autocomplete="off"/></div>
-      <div class="sel"><select id="window"><option value="0">Any time</option><option value="10">10 min</option><option value="30">30 min</option><option value="60">1 hour</option><option value="120">2 hours</option><option value="360">6 hours</option><option value="720">12 hours</option><option value="1440">24 hours</option></select></div>
-      <button class="refresh" id="refresh">Refresh</button>
-      <span class="count" id="count"></span>
+    <div class="toolbar-card">
+      <div class="toolbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="q" placeholder="Search headlines..." autocomplete="off"/>
+        </div>
+        <div class="sel"><select id="window"><option value="0">Any time</option><option value="10">Last 10 min</option><option value="30">Last 30 min</option><option value="60">Last 1 hour</option><option value="120">Last 2 hours</option><option value="360">Last 6 hours</option><option value="720">Last 12 hours</option><option value="1440">Last 24 hours</option></select></div>
+        <button class="refresh" id="refresh">&#8635; Refresh</button>
+      </div>
+      <div class="toolbar-foot">
+        <div class="chipswrap">
+          <span class="source-label">Source</span>
+          <button class="charr" id="chL" aria-label="Scroll left">&#8249;</button>
+          <div class="chips" id="chips"><span class="chip on" data-src="all">All sources</span></div>
+          <button class="charr" id="chR" aria-label="Scroll right">&#8250;</button>
+        </div>
+        <span class="count" id="count"></span>
+      </div>
     </div>
-    <div class="chipswrap">
-      <button class="charr" id="chL" aria-label="Scroll left">&#8249;</button>
-      <div class="chips" id="chips"><span class="chip on" data-src="all">All sources</span></div>
-      <button class="charr" id="chR" aria-label="Scroll right">&#8250;</button>
-    </div>
+
+    <div class="list-head"><h2>Latest headlines</h2></div>
     <div class="list" id="list"></div>
-    <div class="empty" id="empty" style="display:none">Loading...</div>
+    <div class="empty" id="empty" style="display:none"><div class="ic">&#8987;</div>Loading...</div>
   </div>
 
   <!-- ANALYZER -->
   <div id="analyzerTab" style="display:none">
     <div class="panel">
-      <h2>News Analyzer</h2>
-      <div class="sub">Paste any security news link. The AI reads it and returns a clear briefing: summary, affected products, CVE, impact and remediation.</div>
+      <div class="panel-head">
+        <div class="panel-icon"><svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 1 3 3v1h-6V5a3 3 0 0 1 3-3z"/><rect x="4" y="8" width="16" height="12" rx="3"/><line x1="9" y1="14" x2="9" y2="14"/><line x1="15" y1="14" x2="15" y2="14"/><line x1="12" y1="6" x2="12" y2="8"/></svg></div>
+        <div>
+          <h2>News Analyzer</h2>
+          <div class="sub">Paste any security news link. The AI reads it and returns a clear briefing: summary, affected products, CVE, impact and remediation.</div>
+        </div>
+      </div>
+      <span class="field-label">Article URL</span>
       <div class="row">
         <input class="url" id="aUrl" placeholder="https://..." autocomplete="off"/>
-        <div class="sel"><select id="aLang"><option>English</option><option>Português</option><option>Español</option></select></div>
-        <button class="btn" id="aGo">Analyze</button>
       </div>
-      <div id="aOut"></div>
+      <div class="row2">
+        <div class="sel"><select id="aLang"><option>English</option><option>Português</option><option>Español</option></select></div>
+        <button class="btn" id="aGo">Analyze &rarr;</button>
+      </div>
+      <div id="aOut"><div class="aPlaceholder">Paste a link above and click Analyze to generate an AI briefing.</div></div>
     </div>
   </div>
 </div>
@@ -275,9 +367,7 @@ $('aGo').addEventListener('click',async()=>{
     const a=d.analysis; a.url=a.url||url;
     $('aOut').innerHTML=briefHtml(a); wireShare($('aOut'),a);
   }catch(e){ $('aOut').innerHTML='<p class="err">'+esc(e.message)+'</p>'; }
-  $('aGo').disabled=false;
-});
-$('aUrl').addEventListener('keydown',e=>{if(e.key==='Enter')$('aGo').click();});
+  $('Url').addEventListener('keydown',e=>{if(e.key==='Enter')$('aGo').click();});
 
 loadNews();
 setInterval(render,60000);
